@@ -1,4 +1,4 @@
-package com.pokitmonz
+package com.pokitmonz.com.pokitmonz.pokit
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
