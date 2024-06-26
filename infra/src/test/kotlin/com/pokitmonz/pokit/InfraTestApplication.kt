@@ -1,11 +1,11 @@
-package com.pokitmonz
+package com.pokitmonz.pokit
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(scanBasePackages = ["com.pokitmonz"])
-class PokitApplication
+@SpringBootApplication
+class InfraTestApplication
 
 fun main(args: Array<String>) {
-    runApplication<PokitApplication>(*args)
+    runApplication<InfraTestApplication>(*args)
 }

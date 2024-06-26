@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("plugin.spring") version "1.9.24"
     kotlin("plugin.jpa") version "1.9.24"
+    `java-test-fixtures`
 }
 
 dependencies {
@@ -19,7 +20,11 @@ dependencies {
 
     // 테스팅
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.1")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // 테스트 픽쳐
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
+    testFixturesImplementation("org.testcontainers:testcontainers:1.19.7")
+    testFixturesImplementation("org.testcontainers:mysql:1.19.7")
 }
 
 tasks {
