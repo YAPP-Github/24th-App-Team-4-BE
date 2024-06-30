@@ -1,0 +1,76 @@
+name: api deploy
+
+on:
+  push:
+    branches:
+      - feat/#8
+      - main
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  DOCKERHUB_API_IMAGE: ${{ secrets.DOCKERHUB_API_IMAGE }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        kotlin-version: [ "1.9.23" ]
+        java-version: [ "17" ]
+
+    steps:
+      - name: Check Out The Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Kotlin
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          kotlin-version: ${{ matrix.kotlin-version }}
+          distribution: 'corretto'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew :entry:web:build --no-daemon
+
+      - name: Docker build and push
+        run: |
+          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+          docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE:latest .
+          docker push $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE:latest
+
+      - name: Get Public IP
+        id: publicip
+        run: |
+          response=$(curl -s canhazip.com)
+          echo "ip='$response'" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Add GitHub IP to AWS
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.publicip.outputs.ip  }}/32
+
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd pokit-server
+
+            sudo docker-compose pull
+            sudo docker-compose down
+            sudo docker-compose up --force-recreate --remove-orphans -d
+            sudo docker image prune -f
