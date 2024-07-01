@@ -9,6 +9,7 @@ plugins {
 dependencies {
     // 모듈
     implementation(project(":adapters:in-web"))
+    implementation(project(":adapters:out-persistence"))
     implementation(project(":domain"))
 
     // 라이브러리
