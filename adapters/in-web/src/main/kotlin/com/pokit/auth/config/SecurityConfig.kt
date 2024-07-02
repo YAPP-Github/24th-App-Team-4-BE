@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfig(
     private val customAuthenticationFilter: CustomAuthenticationFilter,
+    private val entryPoint: AuthenticationEntryPoint,
 ) {
     companion object {
         private val WHITE_LIST = arrayOf("/api/v1/auth/**")
@@ -29,10 +31,11 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .anonymous { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers(*WHITE_LIST)
-                it.anyRequest().permitAll()
+                it.requestMatchers(*WHITE_LIST).permitAll()
+                it.anyRequest().authenticated()
             }
             .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java) // 인증 처리
+            .exceptionHandling { it.authenticationEntryPoint(entryPoint) } // JWT 예외 처리
             .build()
     }
 }

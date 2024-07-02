@@ -1,6 +1,8 @@
 package com.pokit.auth.filter
 
+import com.pokit.auth.exception.AuthErrorCode
 import com.pokit.auth.port.`in`.TokenProvider
+import com.pokit.common.exception.ClientValidationException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -22,9 +24,13 @@ class CustomAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        val authentication = getAuthentication(request)
-        authentication?.let {
-            SecurityContextHolder.getContext().authentication = it
+        try {
+            val authentication = getAuthentication(request)
+            authentication?.let {
+                SecurityContextHolder.getContext().authentication = it
+            }
+        } catch (e: Exception) {
+            request.setAttribute("exception", e)
         }
 
         filterChain.doFilter(request, response)
@@ -34,6 +40,7 @@ class CustomAuthenticationFilter(
         val header = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (StringUtils.hasText(header)) {
             val token = header.split(" ")[1]
+            val userId = tokenProvider.getUserId(token)
 
             /** TODO
              * tokenProvider 통해서 유저 정보 가져오기
@@ -47,8 +54,8 @@ class CustomAuthenticationFilter(
                 )
             authentication.details = WebAuthenticationDetails(request)
             return authentication
+        } else {
+            throw ClientValidationException(AuthErrorCode.TOKEN_REQUIRED)
         }
-
-        return null
     }
 }
