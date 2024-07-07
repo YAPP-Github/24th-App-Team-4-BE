@@ -38,24 +38,24 @@ class CustomAuthenticationFilter(
 
     private fun getAuthentication(request: HttpServletRequest): Authentication? {
         val header = request.getHeader(HttpHeaders.AUTHORIZATION)
-        if (StringUtils.hasText(header)) {
-            val token = header.split(" ")[1]
-            val userId = tokenProvider.getUserId(token)
-
-            /** TODO
-             * tokenProvider 통해서 유저 정보 가져오기
-             *
-             */
-            val authentication =
-                UsernamePasswordAuthenticationToken(
-                    null,
-                    null,
-                    null,
-                )
-            authentication.details = WebAuthenticationDetails(request)
-            return authentication
-        } else {
+        if(!StringUtils.hasText(header)) {
             throw ClientValidationException(AuthErrorCode.TOKEN_REQUIRED)
         }
+
+        val token = header.split(" ")[1]
+        val userId = tokenProvider.getUserId(token)
+
+        /** TODO
+         * tokenProvider 통해서 유저 정보 가져오기
+         *
+         */
+        val authentication =
+            UsernamePasswordAuthenticationToken(
+                null,
+                null,
+                null,
+            )
+        authentication.details = WebAuthenticationDetails(request)
+        return authentication
     }
 }
