@@ -29,7 +29,8 @@ class JwtTokenProvider(
 
     override fun reissueToken(refreshToken: String): String {
         val userId = getUserId(refreshToken)
-        refreshTokenRepository.findByUserId(userId) ?: throw ClientValidationException(AuthErrorCode.NOT_FOUND_TOKEN)
+        refreshTokenRepository.findByUserId(userId)
+            ?: throw ClientValidationException(AuthErrorCode.NOT_FOUND_TOKEN)
         return generateToken(userId, jwtProperty.accessExpiryTime)
     }
 
