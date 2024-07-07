@@ -13,6 +13,9 @@ dependencies {
     // 라이브러리
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework:spring-tx")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 
     // 테스팅
     testImplementation("io.mockk:mockk:1.13.7")
