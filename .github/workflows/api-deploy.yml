@@ -5,6 +5,7 @@ on:
     branches:
       - feat/#8
       - main
+      - develop
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
