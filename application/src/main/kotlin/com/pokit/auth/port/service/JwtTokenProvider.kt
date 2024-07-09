@@ -1,10 +1,10 @@
 package com.pokit.auth.port.service
 
-import com.pokit.auth.exception.AuthErrorCode
 import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.auth.port.out.RefreshTokenRepository
 import com.pokit.auth.property.JwtProperty
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.token.exception.AuthErrorCode
 import com.pokit.token.model.RefreshToken
 import com.pokit.token.model.Token
 import io.jsonwebtoken.*

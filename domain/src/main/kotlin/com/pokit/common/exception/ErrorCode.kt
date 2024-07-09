@@ -4,5 +4,4 @@ interface ErrorCode {
     val message: String
 
     val code: String
-
 }
