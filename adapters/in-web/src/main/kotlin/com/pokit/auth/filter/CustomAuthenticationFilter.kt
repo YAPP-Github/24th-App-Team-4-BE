@@ -1,8 +1,8 @@
 package com.pokit.auth.filter
 
-import com.pokit.auth.exception.AuthErrorCode
 import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.token.exception.AuthErrorCode
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -19,6 +19,16 @@ import org.springframework.web.filter.OncePerRequestFilter
 class CustomAuthenticationFilter(
     private val tokenProvider: TokenProvider,
 ) : OncePerRequestFilter() {
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val excludePath = arrayOf("/api/v1/auth/signin")
+        val path = request.requestURI
+        val shouldNotFilter =
+            excludePath
+                .any { it.equals(path) }
+        println(shouldNotFilter)
+        return shouldNotFilter
+    }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -38,7 +48,7 @@ class CustomAuthenticationFilter(
 
     private fun getAuthentication(request: HttpServletRequest): Authentication? {
         val header = request.getHeader(HttpHeaders.AUTHORIZATION)
-        if(!StringUtils.hasText(header)) {
+        if (!StringUtils.hasText(header)) {
             throw ClientValidationException(AuthErrorCode.TOKEN_REQUIRED)
         }
 
