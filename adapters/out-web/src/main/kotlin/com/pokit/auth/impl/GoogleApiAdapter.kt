@@ -6,11 +6,13 @@ import com.pokit.user.dto.UserInfo
 import org.springframework.stereotype.Component
 
 @Component
-class GoogleApiAdapter : GoogleApiClient{
+class GoogleApiAdapter(
+    private val firebaseAuth: FirebaseAuth
+) : GoogleApiClient{
     override fun getUserInfo(authorizationCode: String): UserInfo {
         val decodedToken = verifyIdToken(authorizationCode)
         return UserInfo(decodedToken.email) // 로그인 한 사용자의 이메일
     }
 
-    private fun verifyIdToken(idToken: String) = FirebaseAuth.getInstance().verifyIdToken(idToken)
+    private fun verifyIdToken(idToken: String) = firebaseAuth.verifyIdToken(idToken)
 }
