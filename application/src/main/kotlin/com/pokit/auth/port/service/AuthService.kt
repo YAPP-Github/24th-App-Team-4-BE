@@ -9,14 +9,14 @@ import com.pokit.token.model.Token
 import com.pokit.user.dto.UserInfo
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
-import com.pokit.user.port.out.UserRepository
+import com.pokit.user.port.out.UserPort
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
     private val googleApiClient: GoogleApiClient,
     private val tokenProvider: TokenProvider,
-    private val userRepository: UserRepository,
+    private val userPort: UserPort,
 ) : AuthUseCase {
     override fun signIn(request: SignInRequest): Token {
         val platformType = AuthPlatform.of(request.authPlatform)
@@ -28,7 +28,7 @@ class AuthService(
             }
 
         val userEmail = userInfo.email
-        val user = userRepository.findByEmail(userEmail) ?: createUser(userEmail) // 없으면 저장
+        val user = userPort.loadByEmail(userEmail) ?: createUser(userEmail) // 없으면 저장
 
         val token = tokenProvider.createToken(user.id)
 
@@ -37,6 +37,6 @@ class AuthService(
 
     private fun createUser(email: String): User {
         val user = User(email = email, role = Role.USER)
-        return userRepository.save(user)
+        return userPort.persist(user)
     }
 }

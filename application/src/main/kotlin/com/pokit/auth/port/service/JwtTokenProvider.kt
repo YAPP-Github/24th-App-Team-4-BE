@@ -1,7 +1,7 @@
 package com.pokit.auth.port.service
 
 import com.pokit.auth.port.`in`.TokenProvider
-import com.pokit.auth.port.out.RefreshTokenRepository
+import com.pokit.auth.port.out.RefreshTokenPort
 import com.pokit.auth.property.JwtProperty
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.token.exception.AuthErrorCode
@@ -17,25 +17,25 @@ import java.util.*
 @Component
 class JwtTokenProvider(
     private val jwtProperty: JwtProperty,
-    private val refreshTokenRepository: RefreshTokenRepository,
+    private val refreshTokenPort: RefreshTokenPort,
 ) : TokenProvider {
     override fun createToken(userId: Long): Token {
         val accessToken = generateToken(userId, jwtProperty.accessExpiryTime)
         val refreshToken = generateToken(userId, jwtProperty.refreshExpiryTime)
-        refreshTokenRepository.save(RefreshToken(userId, refreshToken))
+        refreshTokenPort.persist(RefreshToken(userId, refreshToken))
 
         return Token(accessToken, refreshToken)
     }
 
     override fun reissueToken(refreshToken: String): String {
         val userId = getUserId(refreshToken)
-        refreshTokenRepository.findByUserId(userId)
+        refreshTokenPort.loadByUserId(userId)
             ?: throw ClientValidationException(AuthErrorCode.NOT_FOUND_TOKEN)
         return generateToken(userId, jwtProperty.accessExpiryTime)
     }
 
     override fun deleteRefreshToken(refreshTokenId: Long) {
-        refreshTokenRepository.deleteById(refreshTokenId)
+        refreshTokenPort.deleteById(refreshTokenId)
     }
 
     override fun getUserId(token: String): Long {
