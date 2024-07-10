@@ -25,7 +25,7 @@ class CustomAuthenticationFilter(
         val shouldNotFilter =
             excludePath
                 .any { it.equals(path) }
-        println(shouldNotFilter)
+
         return shouldNotFilter
     }
 
