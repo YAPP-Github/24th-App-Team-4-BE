@@ -1,4 +1,4 @@
-package com.pokit.auth.exception
+package com.pokit.token.exception
 
 import com.pokit.common.exception.ErrorCode
 
@@ -12,4 +12,5 @@ enum class AuthErrorCode(
     UNSUPPORTED_TOKEN("지원하지 않는 형식의 토큰입니다.", "A_004"),
     WRONG_SIGNATURE("JWT 서명이 서버에 산정된 서명과 일치하지 않습니다.", "A_005"),
     TOKEN_REQUIRED("토큰이 비어있습니다.", "A_006"),
+    INVALID_PLATFORM("플랫폼 타입이 올바르지 않습니다.", "A_007"),
 }

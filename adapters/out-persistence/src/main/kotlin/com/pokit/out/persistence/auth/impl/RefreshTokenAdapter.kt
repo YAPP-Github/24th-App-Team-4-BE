@@ -1,28 +1,28 @@
 package com.pokit.out.persistence.auth.impl
 
-import com.pokit.auth.port.out.RefreshTokenRepository
+import com.pokit.auth.port.out.RefreshTokenPort
 import com.pokit.out.persistence.auth.persist.RefreshTokenJpaEntity
-import com.pokit.out.persistence.auth.persist.RefreshTokenJpaRepository
+import com.pokit.out.persistence.auth.persist.RefreshTokenRepository
 import com.pokit.out.persistence.auth.persist.toDomain
 import com.pokit.token.model.RefreshToken
 import org.springframework.stereotype.Repository
 
 @Repository
 class RefreshTokenAdapter(
-    private val refreshTokenJpaRepository: RefreshTokenJpaRepository,
-) : RefreshTokenRepository {
-    override fun save(refreshToken: RefreshToken): RefreshToken {
+    private val refreshTokenRepository: RefreshTokenRepository,
+) : RefreshTokenPort {
+    override fun persist(refreshToken: RefreshToken): RefreshToken {
         val refreshTokenEntity = RefreshTokenJpaEntity.of(refreshToken)
-        val savedToken = refreshTokenJpaRepository.save(refreshTokenEntity)
+        val savedToken = refreshTokenRepository.save(refreshTokenEntity)
         return savedToken.toDomain()
     }
 
-    override fun findByUserId(userId: Long): RefreshToken? {
-        val refreshToken = refreshTokenJpaRepository.findByUserId(userId)
+    override fun loadByUserId(userId: Long): RefreshToken? {
+        val refreshToken = refreshTokenRepository.findByUserId(userId)
         return refreshToken?.toDomain()
     }
 
     override fun deleteById(id: Long) {
-        refreshTokenJpaRepository.deleteById(id)
+        refreshTokenRepository.deleteById(id)
     }
 }

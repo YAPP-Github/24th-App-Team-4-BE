@@ -7,19 +7,11 @@ plugins {
 }
 
 dependencies {
-    // 모듈
+    implementation(project(":application"))
     implementation(project(":domain"))
 
-    // 라이브러리
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework:spring-tx")
-    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
-
-    // 테스팅
-    testImplementation("io.mockk:mockk:1.13.7")
-    testImplementation(testFixtures(project(":adapters:out-persistence")))
+    implementation("com.google.firebase:firebase-admin:8.1.0")
 }
 
 tasks {
