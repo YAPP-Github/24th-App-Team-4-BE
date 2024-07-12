@@ -45,3 +45,4 @@ out/
 ### Resources ###
 **/src/main/resources/application-*.yml
 **/src/main/resources/google-services.json
+**/src/main/resources/*.p8
