@@ -7,7 +7,6 @@ import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.token.dto.request.SignInRequest
 import com.pokit.token.model.AuthPlatform
 import com.pokit.token.model.Token
-import com.pokit.user.dto.UserInfo
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
@@ -25,8 +24,8 @@ class AuthService(
 
         val userInfo =
             when (platformType) {
-                AuthPlatform.GOOGLE -> googleApiClient.getUserInfo(request.authorizationCode)
-                AuthPlatform.APPLE -> appleApiClient.getUserInfo(request.authorizationCode)
+                AuthPlatform.GOOGLE -> googleApiClient.getUserInfo(request.idToken)
+                AuthPlatform.APPLE -> appleApiClient.getUserInfo(request.idToken)
             }
 
         val userEmail = userInfo.email
