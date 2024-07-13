@@ -8,6 +8,16 @@ plugins {
     `java-test-fixtures`
 }
 
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
+}
+
+noArg {
+    annotation("jakarta.persistence.Entity")
+}
+
 dependencies {
     // 모듈
     implementation(project(":application"))
