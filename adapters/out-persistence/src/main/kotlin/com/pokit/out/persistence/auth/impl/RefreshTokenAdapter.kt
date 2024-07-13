@@ -1,7 +1,7 @@
 package com.pokit.out.persistence.auth.impl
 
 import com.pokit.auth.port.out.RefreshTokenPort
-import com.pokit.out.persistence.auth.persist.RefreshTokenJpaEntity
+import com.pokit.out.persistence.auth.persist.RefreshTokenEntity
 import com.pokit.out.persistence.auth.persist.RefreshTokenRepository
 import com.pokit.out.persistence.auth.persist.toDomain
 import com.pokit.token.model.RefreshToken
@@ -12,7 +12,7 @@ class RefreshTokenAdapter(
     private val refreshTokenRepository: RefreshTokenRepository,
 ) : RefreshTokenPort {
     override fun persist(refreshToken: RefreshToken): RefreshToken {
-        val refreshTokenEntity = RefreshTokenJpaEntity.of(refreshToken)
+        val refreshTokenEntity = RefreshTokenEntity.of(refreshToken)
         val savedToken = refreshTokenRepository.save(refreshTokenEntity)
         return savedToken.toDomain()
     }

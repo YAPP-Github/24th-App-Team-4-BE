@@ -1,6 +1,6 @@
 package com.pokit.out.persistence.user.impl
 
-import com.pokit.out.persistence.user.persist.UserJpaEntity
+import com.pokit.out.persistence.user.persist.UserEntity
 import com.pokit.out.persistence.user.persist.UserRepository
 import com.pokit.out.persistence.user.persist.toDomain
 import com.pokit.user.model.User
@@ -12,8 +12,8 @@ class UserAdapter(
     private val userRepository: UserRepository,
 ) : UserPort {
     override fun persist(user: User): User {
-        val userJpaEntity = UserJpaEntity.of(user)
-        val savedUser = userRepository.save(userJpaEntity)
+        val userEntity = UserEntity.of(user)
+        val savedUser = userRepository.save(userEntity)
         return savedUser.toDomain()
     }
 

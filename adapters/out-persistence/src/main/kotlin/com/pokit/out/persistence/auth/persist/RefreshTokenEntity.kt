@@ -5,23 +5,25 @@ import jakarta.persistence.*
 
 @Table(name = "REFRESH_TOKEN")
 @Entity
-class RefreshTokenJpaEntity(
+class RefreshTokenEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     val id: Long = 0L,
+
     @Column(name = "userId")
     val userId: Long,
+
     @Column(name = "token")
     val token: String,
 ) {
     companion object {
         fun of(refreshToken: RefreshToken) =
-            RefreshTokenJpaEntity(
+            RefreshTokenEntity(
                 userId = refreshToken.userId,
                 token = refreshToken.token,
             )
     }
 }
 
-fun RefreshTokenJpaEntity.toDomain() = RefreshToken(userId = this.userId, token = this.token)
+fun RefreshTokenEntity.toDomain() = RefreshToken(userId = this.userId, token = this.token)
