@@ -10,8 +10,12 @@ dependencies {
     implementation(project(":application"))
     implementation(project(":domain"))
 
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("com.google.firebase:firebase-admin:8.1.0")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 }
 
 tasks {
