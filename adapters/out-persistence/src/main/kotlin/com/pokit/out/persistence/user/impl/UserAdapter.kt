@@ -5,6 +5,7 @@ import com.pokit.out.persistence.user.persist.UserRepository
 import com.pokit.out.persistence.user.persist.toDomain
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -20,5 +21,10 @@ class UserAdapter(
     override fun loadByEmail(email: String): User? {
         val userJpaEntity = userRepository.findByEmail(email)
         return userJpaEntity?.toDomain()
+    }
+
+    override fun loadById(id: Long): User? {
+        val userEntity = userRepository.findByIdOrNull(id)
+        return userEntity?.toDomain()
     }
 }
