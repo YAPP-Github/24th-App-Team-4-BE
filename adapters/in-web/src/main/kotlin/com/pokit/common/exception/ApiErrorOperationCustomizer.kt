@@ -19,7 +19,7 @@ class ApiErrorOperationCustomizer : OperationCustomizer {
         if (annotation != null) {
             val errorCodeClass = annotation.value.java
             val errorCodes = errorCodeClass.enumConstants
-            val apiResponses = ApiResponses()
+            val apiResponses = operation.responses ?: ApiResponses()
 
             for (errorCode in errorCodes) {
                 val exampleContent = ErrorResponse(errorCode.message, errorCode.code)
