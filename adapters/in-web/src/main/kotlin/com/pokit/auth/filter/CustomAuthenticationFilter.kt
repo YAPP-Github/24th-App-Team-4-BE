@@ -20,7 +20,15 @@ class CustomAuthenticationFilter(
     private val tokenProvider: TokenProvider,
 ) : OncePerRequestFilter() {
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        val excludePath = arrayOf("/api/v1/auth/signin")
+        val excludePath = arrayOf(
+            "/api/v1/auth/signin",
+            "/swagger-ui/index.html#/",
+            "/swagger", "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/api-docs",
+            "/api-docs/**",
+            "/v3/api-docs/**"
+        )
         val path = request.requestURI
         val shouldNotFilter =
             excludePath
