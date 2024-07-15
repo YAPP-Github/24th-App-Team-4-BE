@@ -17,6 +17,9 @@ class UserEntity(
 
     @Column(name = "role")
     val role: Role,
+
+    @Column(name = "nickname")
+    var nickName: String = email,
 ) {
     companion object {
         fun of(user: User) =
@@ -30,3 +33,7 @@ class UserEntity(
 fun UserEntity.toDomain() = User(id = this.id, email = this.email, role = this.role)
 
 fun UserEntity.toPrincipalUser() = null // Security Context에 담을 user
+
+fun UserEntity.registerInfo(user: User) {
+    this.nickName = user.nickName
+}
