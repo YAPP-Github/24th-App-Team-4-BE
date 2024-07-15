@@ -5,7 +5,6 @@ import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.auth.port.out.AppleApiClient
 import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.common.exception.ClientValidationException
-import com.pokit.out.persistence.user.persist.UserRepository
 import com.pokit.user.UserFixture
 import com.pokit.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow

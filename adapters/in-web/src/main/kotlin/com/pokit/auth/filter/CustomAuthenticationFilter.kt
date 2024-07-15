@@ -1,14 +1,19 @@
 package com.pokit.auth.filter
 
+import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.token.exception.AuthErrorCode
+import com.pokit.user.exception.UserErrorCode
+import com.pokit.user.port.out.UserPort
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetails
 import org.springframework.stereotype.Component
@@ -18,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class CustomAuthenticationFilter(
     private val tokenProvider: TokenProvider,
+    private val userPort: UserPort,
 ) : OncePerRequestFilter() {
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val excludePath = arrayOf("/api/v1/auth/signin")
@@ -36,9 +42,7 @@ class CustomAuthenticationFilter(
     ) {
         try {
             val authentication = getAuthentication(request)
-            authentication?.let {
-                SecurityContextHolder.getContext().authentication = it
-            }
+            SecurityContextHolder.getContext().authentication = authentication
         } catch (e: Exception) {
             request.setAttribute("exception", e)
         }
@@ -46,7 +50,7 @@ class CustomAuthenticationFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun getAuthentication(request: HttpServletRequest): Authentication? {
+    private fun getAuthentication(request: HttpServletRequest): Authentication {
         val header = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (!StringUtils.hasText(header)) {
             throw ClientValidationException(AuthErrorCode.TOKEN_REQUIRED)
@@ -54,16 +58,19 @@ class CustomAuthenticationFilter(
 
         val token = header.split(" ")[1]
         val userId = tokenProvider.getUserId(token)
+        val user = (
+            userPort.loadById(userId)
+                ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+        )
 
-        /** TODO
-         * tokenProvider 통해서 유저 정보 가져오기
-         *
-         */
+        val principalUser = PrincipalUser.of(user)
+        val authorities = listOf(SimpleGrantedAuthority(principalUser.role.description))
+
         val authentication =
             UsernamePasswordAuthenticationToken(
+                principalUser,
                 null,
-                null,
-                null,
+                authorities,
             )
         authentication.details = WebAuthenticationDetails(request)
         return authentication

@@ -28,5 +28,3 @@ class UserEntity(
 }
 
 fun UserEntity.toDomain() = User(id = this.id, email = this.email, role = this.role)
-
-fun UserEntity.toPrincipalUser() = null // Security Context에 담을 user
