@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
 data class ApiSignUpRequest(
-    @NotBlank(message = "이메일은 필수값입니다.")
+    @NotBlank(message = "닉네임은 필수값입니다.")
     val nickName: String,
     @Size(min = 1, message = "최소 하나 이상이어야 합니다.")
     val interests: List<String>
