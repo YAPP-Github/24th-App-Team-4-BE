@@ -18,13 +18,9 @@ class UserAdapter(
         return savedUser.toDomain()
     }
 
-    override fun loadByEmail(email: String): User? {
-        val userJpaEntity = userRepository.findByEmail(email)
-        return userJpaEntity?.toDomain()
-    }
+    override fun loadByEmail(email: String) = userRepository.findByEmail(email)
+        ?.run { toDomain() }
 
-    override fun loadById(id: Long): User? {
-        val userEntity = userRepository.findByIdOrNull(id)
-        return userEntity?.toDomain()
-    }
+    override fun loadById(id: Long) = userRepository.findByIdOrNull(id)
+        ?.run { toDomain() }
 }
