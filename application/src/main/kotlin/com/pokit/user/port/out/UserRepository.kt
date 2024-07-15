@@ -6,4 +6,6 @@ interface UserPort {
     fun persist(user: User): User
 
     fun loadByEmail(email: String): User?
+
+    fun register(user: User): User?
 }
