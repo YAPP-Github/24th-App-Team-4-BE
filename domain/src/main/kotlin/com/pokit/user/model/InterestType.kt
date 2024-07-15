@@ -1,8 +1,5 @@
 package com.pokit.user.model
 
-import com.pokit.common.exception.ClientValidationException
-import com.pokit.user.exception.UserErrorCode
-
 enum class InterestType(
     val kor: String,
 ) {

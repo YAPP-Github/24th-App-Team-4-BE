@@ -21,7 +21,10 @@ class AppleTokenParser(
         return objectMapper.readValue(decodedHeader, typeReference)
     }
 
-    fun parseClaims(idToken: String, publicKey: PublicKey): Claims {
+    fun parseClaims(
+        idToken: String,
+        publicKey: PublicKey,
+    ): Claims {
         return Jwts.parser()
             .verifyWith(publicKey)
             .build()
