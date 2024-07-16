@@ -1,6 +1,8 @@
 package com.pokit.user
 
 import com.pokit.auth.config.ErrorOperation
+import com.pokit.auth.model.PrincipalUser
+import com.pokit.auth.model.toDomain
 import com.pokit.user.dto.ApiSignUpRequest
 import com.pokit.user.dto.response.SignUpResponse
 import com.pokit.user.exception.UserErrorCode
@@ -24,9 +26,10 @@ class UserController(
     @Operation(summary = "회원 등록 API")
     @ErrorOperation(UserErrorCode::class)
     fun signUp(
-        @AuthenticationPrincipal user: User,
+        @AuthenticationPrincipal principalUser: PrincipalUser,
         @Valid @RequestBody request: ApiSignUpRequest
     ): ResponseEntity<SignUpResponse> {
+        val user = principalUser.toDomain()
         val signUpRequest = request.toSignUpRequest()
         val response = userUseCase.signUp(user, signUpRequest)
         return ResponseEntity.ok(response)
