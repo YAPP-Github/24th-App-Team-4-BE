@@ -8,4 +8,6 @@ interface UserPort {
     fun loadByEmail(email: String): User?
 
     fun loadById(id: Long): User?
+
+    fun checkByNickname(nickname: String): Boolean
 }

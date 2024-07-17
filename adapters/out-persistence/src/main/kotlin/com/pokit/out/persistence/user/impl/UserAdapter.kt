@@ -23,4 +23,6 @@ class UserAdapter(
 
     override fun loadById(id: Long) = userRepository.findByIdOrNull(id)
         ?.run { toDomain() }
+
+    override fun checkByNickname(nickname: String) = userRepository.existsByNickname(nickname)
 }
