@@ -8,6 +8,7 @@ data class User(
     val id: Long = 0L,
     val email: String,
     val role: Role,
+    var nickname: String = email
 ) {
     init {
         val pattern =
