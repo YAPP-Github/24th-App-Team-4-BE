@@ -3,7 +3,7 @@ name: api deploy
 on:
   push:
     branches:
-      - feat/#8
+      - feature/db-config
       - main
       - develop
 
@@ -35,13 +35,23 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+      - name: Create config file
+        run: |
+          mkdir -p ./adapters/out-persistence/src/main/resources
+          echo "${{ secrets.OUT_PERSISTENCE_YML }}" > ./adapters/out-persistence/src/main/resources/application-out-persistence.yml
+          mkdir -p ./adapters/out-web/src/main/resources
+          echo "${{ secrets.OUT_WEB_GOOGLE }}" | base64 --decode > ./adapters/out-web/src/main/resources/google-services.json
+          echo "${{ secrets.OUT_WEB_YML }}" > ./adapters/out-web/src/main/resources/application-out-web.yml
+          mkdir -p ./application/src/main/resources
+          echo "${{ secrets.APPLICATION_CORE }}" > ./application/src/main/resources/application-core.yml
+
       - name: Build with Gradle
         run: ./gradlew :entry:web:build --no-daemon
 
       - name: Docker build and push
         run: |
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-          docker build -t $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE:latest .
+          docker build -f entry/web/Dockerfile -t $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE:latest .
           docker push $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE:latest
 
       - name: Get Public IP
