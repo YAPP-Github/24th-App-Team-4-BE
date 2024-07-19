@@ -8,8 +8,12 @@ data class User(
     val id: Long = 0L,
     val email: String,
     val role: Role,
-    var nickname: String = email
+    var nickName: String = email
 ) {
+    fun modifyUser(nickName: String) {
+        this.nickName = nickName
+    }
+
     init {
         val pattern =
             Pattern.compile(

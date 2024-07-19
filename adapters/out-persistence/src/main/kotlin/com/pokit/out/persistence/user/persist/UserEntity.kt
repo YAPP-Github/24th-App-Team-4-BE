@@ -26,7 +26,7 @@ class UserEntity(
             UserEntity(
                 email = user.email,
                 role = user.role,
-                nickname = user.nickname
+                nickname = user.nickName
             )
     }
 }
@@ -35,5 +35,9 @@ fun UserEntity.toDomain() = User(
     id = this.id,
     email = this.email,
     role = this.role,
-    nickname = this.nickname
+    nickName = this.nickname
 )
+
+fun UserEntity.registerInfo(user: User) {
+    this.nickname = user.nickName
+}
