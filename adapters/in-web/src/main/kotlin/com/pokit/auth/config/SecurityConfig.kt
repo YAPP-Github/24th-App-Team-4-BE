@@ -17,7 +17,16 @@ class SecurityConfig(
     private val entryPoint: AuthenticationEntryPoint,
 ) {
     companion object {
-        private val WHITE_LIST = arrayOf("/api/v1/auth/**")
+        private val WHITE_LIST = arrayOf(
+            "/api/v1/auth/**",
+            "/swagger-ui/index.html#/",
+            "/swagger",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/api-docs",
+            "/api-docs/**",
+            "/v3/api-docs/**"
+        )
     }
 
     @Bean
