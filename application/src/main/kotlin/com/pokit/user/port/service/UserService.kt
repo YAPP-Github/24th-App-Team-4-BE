@@ -2,6 +2,7 @@ package com.pokit.user.port.service
 
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.user.dto.request.SignUpRequest
+import com.pokit.user.dto.response.CheckDuplicateNicknameResponse
 import com.pokit.user.dto.response.SignUpResponse
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.User
@@ -25,5 +26,11 @@ class UserService(
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
 
         return SignUpResponse(savedUser.id)
+    }
+
+    override fun checkDuplicateNickname(nickname: String)
+        : CheckDuplicateNicknameResponse {
+        val isDuplicate = userPort.checkByNickname(nickname)
+        return CheckDuplicateNicknameResponse(isDuplicate)
     }
 }

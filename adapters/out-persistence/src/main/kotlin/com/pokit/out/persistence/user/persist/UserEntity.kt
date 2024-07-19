@@ -19,19 +19,25 @@ class UserEntity(
     val role: Role,
 
     @Column(name = "nickname")
-    var nickName: String = email,
+    var nickname: String = email
 ) {
     companion object {
         fun of(user: User) =
             UserEntity(
                 email = user.email,
                 role = user.role,
+                nickname = user.nickName
             )
     }
 }
 
-fun UserEntity.toDomain() = User(id = this.id, email = this.email, role = this.role)
+fun UserEntity.toDomain() = User(
+    id = this.id,
+    email = this.email,
+    role = this.role,
+    nickName = this.nickname
+)
 
 fun UserEntity.registerInfo(user: User) {
-    this.nickName = user.nickName
+    this.nickname = user.nickName
 }

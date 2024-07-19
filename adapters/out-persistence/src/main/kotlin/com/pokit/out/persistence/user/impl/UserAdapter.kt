@@ -30,4 +30,6 @@ class UserAdapter(
         userEntity?.registerInfo(user)
         return userEntity?.toDomain()
     }
+
+    override fun checkByNickname(nickname: String) = userRepository.existsByNickname(nickname)
 }
