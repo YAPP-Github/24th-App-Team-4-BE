@@ -1,6 +1,6 @@
 package com.pokit.out.persistence.category.persist
 
-import com.pokit.category.model.OpenType
+import com.pokit.category.model.Category
 import com.pokit.out.persistence.BaseEntity
 import jakarta.persistence.*
 
@@ -19,14 +19,32 @@ class CategoryEntity(
     @Column(name = "name")
     var name: String,
 
-    @Column(name = "memo")
-    var memo: String,
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "open_type")
-    val openType: OpenType,
-
     @OneToOne
     @JoinColumn(name = "image_id")
     val image: CategoryImageEntity,
-) : BaseEntity()
+) : BaseEntity() {
+
+    @Column(name = "id_deleted")
+    var deleted: Boolean = false
+
+    fun delete() {
+        this.deleted = true
+    }
+
+    companion object {
+        fun of(category: Category) =
+            CategoryEntity(
+                id = category.categoryId,
+                userId = category.userId,
+                name = category.categoryName,
+                image = CategoryImageEntity.of(category.categoryImage)
+            )
+    }
+}
+
+fun CategoryEntity.toDomain() = Category(
+    categoryId = this.id,
+    categoryName = this.name,
+    categoryImage = this.image.toDomain(),
+    userId = this.userId,
+)

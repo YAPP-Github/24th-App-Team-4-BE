@@ -12,6 +12,7 @@ dependencies {
 
     // 라이브러리
     implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-tx")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
