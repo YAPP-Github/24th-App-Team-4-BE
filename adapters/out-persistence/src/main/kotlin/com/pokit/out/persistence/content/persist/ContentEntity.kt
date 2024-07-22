@@ -1,5 +1,6 @@
 package com.pokit.out.persistence.content.persist
 
+import com.pokit.content.model.Content
 import com.pokit.content.model.ContentType
 import com.pokit.out.persistence.BaseEntity
 import jakarta.persistence.*
@@ -31,3 +32,12 @@ class ContentEntity(
     @Column(name = "alert_yn")
     val alertYn: String,
 ) : BaseEntity()
+
+fun ContentEntity.toDomain() = Content(
+    categoryId = this.categoryId,
+    type = this.type,
+    data = this.data,
+    title = this.title,
+    memo = this.memo,
+    alertYn = this.alertYn,
+)

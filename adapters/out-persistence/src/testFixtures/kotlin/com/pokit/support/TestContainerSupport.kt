@@ -1,32 +1,25 @@
 package com.pokit.support
 
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.JdbcDatabaseContainer
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.util.TestPropertyValues
+import org.springframework.context.ApplicationContextInitializer
+import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.utility.DockerImageName
 
-abstract class TestContainerSupport {
+class TestContainerSupport : ApplicationContextInitializer<ConfigurableApplicationContext> {
     companion object {
-        private const val MYSQL_IMAGE = "mysql:8.0"
-
-        private const val MYSQL_PORT = 3306
-
-        private val MYSQL: JdbcDatabaseContainer<*> =
-            MySQLContainer<Nothing>(DockerImageName.parse(MYSQL_IMAGE))
-                .withExposedPorts(MYSQL_PORT)
-
-        init {
-            MYSQL.start()
+        val mysqlContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0").apply {
+            withExposedPorts(3306)
+            start()
         }
+    }
 
-        @JvmStatic
-        @DynamicPropertySource
-        fun overrideProps(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.driver-class-name") { MYSQL.driverClassName }
-            registry.add("spring.datasource.url") { MYSQL.jdbcUrl }
-            registry.add("spring.datasource.username") { MYSQL.username }
-            registry.add("spring.datasource.password") { MYSQL.password }
-        }
+    override fun initialize(applicationContext: ConfigurableApplicationContext) {
+        TestPropertyValues.of(
+            "spring.datasource.url=${mysqlContainer.jdbcUrl}",
+            "spring.datasource.username=${mysqlContainer.username}",
+            "spring.datasource.password=${mysqlContainer.password}",
+            "spring.jpa.hibernate.ddl-auto=create"
+        ).applyTo(applicationContext.environment)
     }
 }
