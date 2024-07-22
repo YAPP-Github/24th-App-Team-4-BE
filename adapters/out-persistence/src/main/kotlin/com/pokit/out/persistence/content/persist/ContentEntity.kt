@@ -31,9 +31,29 @@ class ContentEntity(
 
     @Column(name = "alert_yn")
     val alertYn: String,
-) : BaseEntity()
+
+    @Column(name = "is_deleted")
+    var deleted: Boolean = false
+) : BaseEntity() {
+    fun delete() {
+        this.deleted = true
+    }
+
+    companion object {
+        fun of(content: Content) = ContentEntity(
+            id = content.id,
+            categoryId = content.categoryId,
+            type = content.type,
+            data = content.data,
+            title = content.title,
+            memo = content.memo,
+            alertYn = content.alertYn
+        )
+    }
+}
 
 fun ContentEntity.toDomain() = Content(
+    id = this.id,
     categoryId = this.categoryId,
     type = this.type,
     data = this.data,
