@@ -8,12 +8,12 @@ interface ContentRepository : JpaRepository<ContentEntity, Long> {
     @Query(
         """
         select co from ContentEntity co
-        join CategoryEntity ca on co.categoryId = ca.id
-        join UserEntity u on ca.userId = :userId
-        where co.id = :id
+        join CategoryEntity ca on ca.id = co.categoryId
+        join UserEntity u on u.id = ca.userId
+        where co.id = :id and u.id = :userId and co.deleted = false
     """
     )
-    fun findByUserIdAndId(
+    fun findByUserIdAndIdAndDeleted(
         @Param("userId") userId: Long,
         @Param("id") id: Long
     ): ContentEntity?
