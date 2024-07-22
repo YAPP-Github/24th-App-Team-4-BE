@@ -17,14 +17,14 @@ class ContentService(
     private val bookMarkPort: BookmarkPort
 ) : ContentUseCase {
     override fun bookmarkContent(user: User, contentId: Long): BookMarkContentResponse {
-        verifyContent(contentId)
+        verifyContent(user.id, contentId)
         val bookmark = Bookmark(userId = user.id, contentId = contentId)
         val savedBookmark = bookMarkPort.persist(bookmark)
         return BookMarkContentResponse(savedBookmark.contentId)
     }
 
-    private fun verifyContent(contentId: Long): Content {
-        return contentPort.loadById(contentId)
+    private fun verifyContent(userId: Long, contentId: Long): Content {
+        return contentPort.loadByUserIdAndId(userId, contentId)
             ?: throw NotFoundCustomException(ContentErrorCode.NOT_FOUND_CONTENT)
     }
 }
