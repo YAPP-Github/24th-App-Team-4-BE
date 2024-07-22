@@ -24,8 +24,8 @@ class ContentServiceTest : BehaviorSpec({
         val content = ContentFixture.getContent()
         val bookmark = BookmarkFixture.getBookmark(requestContentId, user.id)
 
-        every { contentPort.loadById(requestContentId) } returns content
-        every { contentPort.loadById(invalidContentId) } returns null
+        every { contentPort.loadByUserIdAndId(user.id, requestContentId) } returns content
+        every { contentPort.loadByUserIdAndId(user.id, invalidContentId) } returns null
         every { bookmarkPort.persist(bookmark) } returns bookmark
 
         When("존재하지 않는 컨텐츠면") {
