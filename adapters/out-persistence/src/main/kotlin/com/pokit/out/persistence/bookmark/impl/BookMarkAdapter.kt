@@ -16,4 +16,12 @@ class BookMarkAdapter(
         val savedBookmark = bookMarkRepository.save(bookmarkEntity)
         return savedBookmark.toDomain()
     }
+
+    override fun delete(contentId: Long, userId: Long) {
+        bookMarkRepository.findByContentIdAndUserIdAndDeleted(
+            contentId,
+            userId,
+            false
+        )?.delete()
+    }
 }

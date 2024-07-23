@@ -4,4 +4,6 @@ import com.pokit.bookmark.model.Bookmark
 
 interface BookmarkPort {
     fun persist(bookmark: Bookmark): Bookmark
+
+    fun delete(userId: Long, contentId: Long)
 }

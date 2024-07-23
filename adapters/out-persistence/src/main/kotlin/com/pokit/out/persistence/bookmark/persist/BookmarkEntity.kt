@@ -17,7 +17,14 @@ class BookmarkEntity(
 
     @Column(name = "user_id")
     val userId: Long,
+
+    @Column(name = "deleted")
+    var deleted: Boolean = true
 ) {
+    fun delete() {
+        this.deleted = true
+    }
+
     companion object {
         fun of(bookmark: Bookmark) =
             BookmarkEntity(
