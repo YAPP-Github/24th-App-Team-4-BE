@@ -76,4 +76,15 @@ class ContentController(
         val response = contentUseCase.bookmarkContent(user, contentId = contentId)
         return ResponseEntity.ok(response)
     }
+
+    @PutMapping("/{contentId}/bookmark")
+    @Operation(summary = "즐겨찾기 취소 API")
+    fun cancelBookmark(
+        @AuthenticationPrincipal principalUser: PrincipalUser,
+        @PathVariable("contentId") contentId: Long
+    ): ResponseEntity<Unit> {
+        val user = principalUser.toDomain()
+        return contentUseCase.cancelBookmark(user, contentId)
+            .wrapUnit()
+    }
 }

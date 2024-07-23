@@ -13,4 +13,5 @@ interface ContentUseCase {
     fun update(user: User, contentCommand: ContentCommand, contentId: Long): Content
 
     fun delete(user: User, contentId: Long)
+    fun cancelBookmark(user: User, contentId: Long)
 }

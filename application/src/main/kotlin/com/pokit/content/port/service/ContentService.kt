@@ -56,6 +56,12 @@ class ContentService(
         contentPort.delete(content)
     }
 
+    @Transactional
+    override fun cancelBookmark(user: User, contentId: Long) {
+        verifyContent(user.id, contentId)
+        bookMarkPort.delete(user.id, contentId)
+    }
+
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)
             ?: throw NotFoundCustomException(ContentErrorCode.NOT_FOUND_CONTENT)
