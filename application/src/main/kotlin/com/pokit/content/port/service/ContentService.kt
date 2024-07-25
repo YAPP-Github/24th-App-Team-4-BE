@@ -8,12 +8,19 @@ import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.ContentCommand
 import com.pokit.content.dto.response.BookMarkContentResponse
+import com.pokit.content.dto.response.GetContentResponse
+import com.pokit.content.dto.response.toGetContentResponse
 import com.pokit.content.dto.toDomain
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
 import com.pokit.content.port.out.ContentPort
+import com.pokit.log.model.LogType
+import com.pokit.log.model.UserLog
+import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.model.User
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,7 +29,8 @@ import org.springframework.transaction.annotation.Transactional
 class ContentService(
     private val contentPort: ContentPort,
     private val bookMarkPort: BookmarkPort,
-    private val categoryPort: CategoryPort
+    private val categoryPort: CategoryPort,
+    private val userLogPort: UserLogPort
 ) : ContentUseCase {
 
     @Transactional
@@ -60,6 +68,39 @@ class ContentService(
     override fun cancelBookmark(user: User, contentId: Long) {
         verifyContent(user.id, contentId)
         bookMarkPort.delete(user.id, contentId)
+    }
+
+    override fun getContents(
+        userId: Long,
+        categoryId: Long,
+        pageable: Pageable,
+        isRead: Boolean?,
+        favorites: Boolean?
+    ): Slice<Content> {
+        val contents = contentPort.loadAllByUserIdAndContentId(
+            userId,
+            categoryId,
+            pageable,
+            isRead,
+            favorites
+        )
+
+        return contents
+    }
+
+    @Transactional
+    override fun getContent(userId: Long, contentId: Long): GetContentResponse {
+        val userLog = UserLog(
+            contentId, userId, LogType.READ
+        )
+        userLogPort.loadAndpersist(userLog) // 읽음 처리
+
+        val content = verifyContent(userId, contentId)
+        val bookmark = bookMarkPort.loadByContentIdAndUserId(contentId, userId)
+
+        return bookmark
+            ?.let { content.toGetContentResponse(it) } // 즐겨찾기 true
+            ?: content.toGetContentResponse() // 즐겨찾기 false
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
