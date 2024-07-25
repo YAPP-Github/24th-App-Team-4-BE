@@ -60,4 +60,5 @@ fun ContentEntity.toDomain() = Content(
     title = this.title,
     memo = this.memo,
     alertYn = this.alertYn,
+    createdAt = this.createdAt
 )

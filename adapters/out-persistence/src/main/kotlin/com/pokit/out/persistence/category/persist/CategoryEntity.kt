@@ -20,7 +20,7 @@ class CategoryEntity(
     var name: String,
 
     @OneToOne
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "image_id", foreignKey = ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     val image: CategoryImageEntity,
 ) : BaseEntity() {
 
