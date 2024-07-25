@@ -1,9 +1,9 @@
 package com.pokit.user.port.service
 
+import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.user.dto.request.SignUpRequest
-import com.pokit.user.dto.response.CheckDuplicateNicknameResponse
-import com.pokit.user.dto.response.SignUpResponse
+import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.User
 import com.pokit.user.port.`in`.UserUseCase
@@ -17,7 +17,7 @@ class UserService(
     private val userPort: UserPort
 ) : UserUseCase {
     @Transactional
-    override fun signUp(user: User, request: SignUpRequest): SignUpResponse {
+    override fun signUp(user: User, request: SignUpRequest): User {
         user.modifyUser(
             request.nickName,
         )
@@ -25,12 +25,24 @@ class UserService(
         val savedUser = userPort.register(user)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
 
-        return SignUpResponse(savedUser.id)
+        return savedUser
     }
 
-    override fun checkDuplicateNickname(nickname: String)
-        : CheckDuplicateNicknameResponse {
-        val isDuplicate = userPort.checkByNickname(nickname)
-        return CheckDuplicateNicknameResponse(isDuplicate)
+    override fun checkDuplicateNickname(nickname: String): Boolean {
+        return userPort.checkByNickname(nickname)
+    }
+
+    @Transactional
+    override fun updateNickname(user: User, request: UpdateNicknameRequest): User {
+        val findUser = (userPort.loadById(user.id)
+            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER))
+
+        val isDuplicate = userPort.checkByNickname(request.nickname)
+        if (isDuplicate) {
+            throw ClientValidationException(UserErrorCode.ALREADY_EXISTS_NICKNAME)
+        }
+
+        findUser.modifyUser(request.nickname)
+        return userPort.persist(findUser)
     }
 }
