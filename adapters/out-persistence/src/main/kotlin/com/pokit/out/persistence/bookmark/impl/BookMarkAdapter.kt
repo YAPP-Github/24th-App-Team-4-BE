@@ -24,4 +24,12 @@ class BookMarkAdapter(
             false
         )?.delete()
     }
+
+    override fun loadByContentIdAndUserId(contentId: Long, userId: Long): Bookmark? {
+        return bookMarkRepository.findByContentIdAndUserIdAndDeleted(
+            contentId,
+            userId,
+            false
+        )?.toDomain()
+    }
 }
