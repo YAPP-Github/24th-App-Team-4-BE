@@ -12,4 +12,6 @@ interface UserPort {
     fun register(user: User): User?
 
     fun checkByNickname(nickname: String): Boolean
+
+    fun delete(user: User)
 }

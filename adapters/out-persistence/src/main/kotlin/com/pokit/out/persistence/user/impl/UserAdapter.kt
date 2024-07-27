@@ -22,7 +22,7 @@ class UserAdapter(
     override fun loadByEmail(email: String) = userRepository.findByEmail(email)
         ?.run { toDomain() }
 
-    override fun loadById(id: Long) = userRepository.findByIdOrNull(id)
+    override fun loadById(id: Long) = userRepository.findByIdAndDeleted(id, false)
         ?.run { toDomain() }
 
     override fun register(user: User): User? {
@@ -32,4 +32,8 @@ class UserAdapter(
     }
 
     override fun checkByNickname(nickname: String) = userRepository.existsByNickname(nickname)
+    override fun delete(user: User) {
+        userRepository.findByIdOrNull(user.id)
+            ?.delete()
+    }
 }
