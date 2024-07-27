@@ -11,3 +11,5 @@ class InvalidRequestException(errorCode: ErrorCode) : PokitException(errorCode)
 class NotFoundCustomException(errorCode: ErrorCode) : PokitException(errorCode)
 
 class AlreadyExistsException(errorCode: ErrorCode) : PokitException(errorCode)
+
+class ExternalApiException(errorCode: ErrorCode) : PokitException(errorCode)
