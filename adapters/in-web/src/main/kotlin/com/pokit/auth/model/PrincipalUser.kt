@@ -1,5 +1,6 @@
 package com.pokit.auth.model
 
+import com.pokit.token.model.AuthPlatform
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
 import org.springframework.security.core.GrantedAuthority
@@ -10,6 +11,7 @@ data class PrincipalUser(
     val id: Long,
     val email: String,
     val role: Role,
+    val authPlatform: AuthPlatform
 ) : UserDetails {
     companion object {
         fun of(user: User) =
@@ -17,6 +19,7 @@ data class PrincipalUser(
                 id = user.id,
                 email = user.email,
                 role = user.role,
+                authPlatform = user.authPlatform
             )
     }
 
@@ -33,4 +36,4 @@ data class PrincipalUser(
     }
 }
 
-fun PrincipalUser.toDomain() = User(id = this.id, email = this.email, role = this.role)
+fun PrincipalUser.toDomain() = User(id = this.id, email = this.email, role = this.role, authPlatform = this.authPlatform)
