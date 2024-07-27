@@ -1,6 +1,7 @@
 package com.pokit.user.model
 
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.token.model.AuthPlatform
 import com.pokit.user.exception.UserErrorCode
 import java.util.regex.Pattern
 
@@ -8,7 +9,8 @@ data class User(
     val id: Long = 0L,
     val email: String,
     val role: Role,
-    var nickName: String = email
+    var nickName: String = email,
+    val authPlatform: AuthPlatform
 ) {
     fun modifyUser(nickName: String) {
         this.nickName = nickName
