@@ -11,6 +11,7 @@ import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.AlreadyExistsException
 import com.pokit.common.exception.InvalidRequestException
 import com.pokit.common.exception.NotFoundCustomException
+import com.pokit.content.port.out.ContentPort
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class CategoryService(
     private val categoryPort: CategoryPort,
-    private val categoryImagePort: CategoryImagePort
+    private val categoryImagePort: CategoryImagePort,
+    private val contentPort: ContentPort
 ) : CategoryUseCase {
     companion object {
         private const val MAX_CATEGORY_COUNT = 30
@@ -77,17 +79,21 @@ class CategoryService(
         categoryPort.countByUserId(userId)
 
     override fun getCategories(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<Category> {
-        val categories = categoryPort.loadAllByUserId(userId, pageable)
+        val categoriesSlice = categoryPort.loadAllByUserId(userId, pageable)
 
-        val filteredCategories = if (filterUncategorized) {
-            categories.content.filter { it.categoryName != UNCATEGORIZED.displayName }
-        } else {
-            categories.content
+        val categories = categoriesSlice.content.map { category ->
+            val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
+            category.copy(contentCount = contentCount)
         }
 
-        return SliceImpl(filteredCategories, pageable, categories.hasNext())
-    }
+        val filteredCategories = if (filterUncategorized) {
+            categories.filter { it.categoryName != UNCATEGORIZED.displayName }
+        } else {
+            categories
+        }
 
+        return SliceImpl(filteredCategories, pageable, categoriesSlice.hasNext())
+    }
 
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
