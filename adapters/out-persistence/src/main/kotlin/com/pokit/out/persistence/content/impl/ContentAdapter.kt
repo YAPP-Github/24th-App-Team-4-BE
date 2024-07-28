@@ -9,7 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
-class ContenAdapter(
+class ContentAdapter(
     private val contentRepository: ContentRepository
 ) : ContentPort {
     override fun loadByUserIdAndId(userId: Long, id: Long) = contentRepository.findByUserIdAndIdAndDeleted(userId, id)
@@ -24,4 +24,8 @@ class ContenAdapter(
         contentRepository.findByIdOrNull(content.id)
             ?.delete()
     }
+
+    override fun fetchContentCountByCategoryId(categoryId: Long): Int =
+        contentRepository.countByCategoryId(categoryId)
+
 }
