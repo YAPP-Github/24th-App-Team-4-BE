@@ -11,9 +11,6 @@ import org.springframework.stereotype.Repository
 class UserLogAdapter(
     private val userLogRepository: UserLogRepository
 ) : UserLogPort {
-    override fun loadAndpersist(userLog: UserLog): UserLog {
-        val userLog = userLogRepository.findByContentIdAndUserId(userLog.contentId, userLog.userId)
-            ?: userLogRepository.save(UserLogEntity.of(userLog))
-        return userLog.toDomain()
-    }
+    override fun persist(userLog: UserLog) =
+        userLogRepository.save(UserLogEntity.of(userLog)).toDomain()
 }

@@ -93,7 +93,7 @@ class ContentService(
         val userLog = UserLog(
             contentId, userId, LogType.READ
         )
-        userLogPort.loadAndpersist(userLog) // 읽음 처리
+        userLogPort.persist(userLog) // 읽음 처리
 
         val content = verifyContent(userId, contentId)
         val bookmark = bookMarkPort.loadByContentIdAndUserId(contentId, userId)
