@@ -19,7 +19,7 @@ class BookmarkEntity(
     val userId: Long,
 
     @Column(name = "deleted")
-    var deleted: Boolean = true
+    var deleted: Boolean = false
 ) {
     fun delete() {
         this.deleted = true

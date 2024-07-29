@@ -27,6 +27,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    // QueryDSL
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    kapt("jakarta.annotation:jakarta.annotation-api")
+    kapt("jakarta.persistence:jakarta.persistence-api")
+
     // 테스팅
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.1")
 
@@ -39,4 +45,26 @@ dependencies {
 tasks {
     withType<Jar> { enabled = true }
     withType<BootJar> { enabled = false }
+}
+
+val generated = file("src/main/generated")
+
+tasks.withType<JavaCompile> {
+    options.generatedSourceOutputDirectory.set(generated)
+}
+
+sourceSets {
+    main {
+        kotlin.srcDirs += generated
+    }
+}
+
+tasks.named("clean") {
+    doLast {
+        generated.deleteRecursively()
+    }
+}
+
+kapt {
+    generateStubs = true
 }

@@ -2,8 +2,11 @@ package com.pokit.content.port.`in`
 
 import com.pokit.content.dto.ContentCommand
 import com.pokit.content.dto.response.BookMarkContentResponse
+import com.pokit.content.dto.response.GetContentResponse
 import com.pokit.content.model.Content
 import com.pokit.user.model.User
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 
 interface ContentUseCase {
     fun bookmarkContent(user: User, contentId: Long): BookMarkContentResponse
@@ -14,4 +17,14 @@ interface ContentUseCase {
 
     fun delete(user: User, contentId: Long)
     fun cancelBookmark(user: User, contentId: Long)
+
+    fun getContents(
+        userId: Long,
+        categoryId: Long,
+        pageable: Pageable,
+        isRead: Boolean?,
+        favorites: Boolean?
+    ): Slice<Content>
+
+    fun getContent(userId: Long, contentId: Long): GetContentResponse
 }

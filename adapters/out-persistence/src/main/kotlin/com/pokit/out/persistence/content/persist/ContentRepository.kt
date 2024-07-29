@@ -19,6 +19,8 @@ interface ContentRepository : JpaRepository<ContentEntity, Long> {
         @Param("id") id: Long
     ): ContentEntity?
 
+    fun countByCategoryId(id: Long): Int
+
     @Modifying(clearAutomatically = true)
     @Query("""
         update ContentEntity c set c.deleted = true
