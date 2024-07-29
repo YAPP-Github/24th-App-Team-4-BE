@@ -5,6 +5,7 @@ import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.auth.port.out.AppleApiClient
 import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.content.port.out.ContentPort
 import com.pokit.token.dto.request.RevokeRequest
 import com.pokit.token.dto.request.SignInRequest
 import com.pokit.token.exception.AuthErrorCode
@@ -24,6 +25,7 @@ class AuthService(
     private val appleApiClient: AppleApiClient,
     private val tokenProvider: TokenProvider,
     private val userPort: UserPort,
+    private val contentPort: ContentPort
 ) : AuthUseCase {
     override fun signIn(request: SignInRequest): Token {
         val platformType = AuthPlatform.of(request.authPlatform)
@@ -51,7 +53,7 @@ class AuthService(
             AuthPlatform.GOOGLE -> TODO("구글 탈퇴 구현")
             AuthPlatform.APPLE -> appleApiClient.revoke(request.authorizationCode)
         }
-
+        contentPort.deleteByUserId(user.id)
         userPort.delete(user)
     }
 

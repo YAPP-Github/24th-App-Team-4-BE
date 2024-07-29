@@ -24,4 +24,8 @@ class ContenAdapter(
         contentRepository.findByIdOrNull(content.id)
             ?.delete()
     }
+
+    override fun deleteByUserId(userId: Long) {
+        contentRepository.deleteByUserId(userId)
+    }
 }

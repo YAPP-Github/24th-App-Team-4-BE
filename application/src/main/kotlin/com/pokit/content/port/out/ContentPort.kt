@@ -8,4 +8,6 @@ interface ContentPort {
     fun persist(content: Content): Content
 
     fun delete(content: Content)
+
+    fun deleteByUserId(userId: Long)
 }

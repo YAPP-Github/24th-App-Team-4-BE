@@ -1,6 +1,7 @@
 package com.pokit.out.persistence.content.persist
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
@@ -17,4 +18,12 @@ interface ContentRepository : JpaRepository<ContentEntity, Long> {
         @Param("userId") userId: Long,
         @Param("id") id: Long
     ): ContentEntity?
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        update ContentEntity c set c.deleted = true
+        where c.categoryId in
+        (select ct.id from CategoryEntity ct where ct.userId = :userId)
+    """)
+    fun deleteByUserId(@Param("userId") userId: Long)
 }
