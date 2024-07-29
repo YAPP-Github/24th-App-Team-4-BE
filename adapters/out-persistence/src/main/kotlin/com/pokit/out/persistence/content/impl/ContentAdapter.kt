@@ -83,6 +83,10 @@ class ContentAdapter(
         return SliceImpl(contents, pageable, hasNext)
     }
 
+    override fun deleteByUserId(userId: Long) {
+        contentRepository.deleteByUserId(userId)
+    }
+
     private fun ReadOrNot(
         read: Boolean?,
         query: JPAQuery<ContentEntity>

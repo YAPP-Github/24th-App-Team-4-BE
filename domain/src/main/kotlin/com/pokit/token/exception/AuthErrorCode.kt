@@ -14,4 +14,8 @@ enum class AuthErrorCode(
     TOKEN_REQUIRED("토큰이 비어있습니다.", "A_006"),
     INVALID_PLATFORM("플랫폼 타입이 올바르지 않습니다.", "A_007"),
     INVALID_ID_TOKEN("ID TOKEN 값이 올바르지 않습니다.", "A_008"),
+    INVALID_AUTHORIZATION_CODE("인가코드가 유효하지 않습니다.", "A_009"),
+    FAILED_TO_REVOKE("플랫폼 탈퇴 요청에 실패하였습니다.", "A_010"),
+    APPLE_KEY_FAILED("애플 프라이빗 키 생성에 실패하였습니다.", "A_011"),
+    INCORRECT_PLATFORM("기존 로그인 플랫폼과 일치하지 않습니다.", "A_012"),
 }

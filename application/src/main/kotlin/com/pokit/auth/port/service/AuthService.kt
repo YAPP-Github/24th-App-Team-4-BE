@@ -4,20 +4,28 @@ import com.pokit.auth.port.`in`.AuthUseCase
 import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.auth.port.out.AppleApiClient
 import com.pokit.auth.port.out.GoogleApiClient
+import com.pokit.common.exception.ClientValidationException
+import com.pokit.content.port.out.ContentPort
+import com.pokit.token.dto.request.RevokeRequest
 import com.pokit.token.dto.request.SignInRequest
+import com.pokit.token.exception.AuthErrorCode
 import com.pokit.token.model.AuthPlatform
 import com.pokit.token.model.Token
+import com.pokit.user.dto.UserInfo
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 class AuthService(
     private val googleApiClient: GoogleApiClient,
     private val appleApiClient: AppleApiClient,
     private val tokenProvider: TokenProvider,
     private val userPort: UserPort,
+    private val contentPort: ContentPort
 ) : AuthUseCase {
     override fun signIn(request: SignInRequest): Token {
         val platformType = AuthPlatform.of(request.authPlatform)
@@ -28,16 +36,29 @@ class AuthService(
                 AuthPlatform.APPLE -> appleApiClient.getUserInfo(request.idToken)
             }
 
-        val userEmail = userInfo.email
-        val user = userPort.loadByEmail(userEmail) ?: createUser(userEmail) // 없으면 저장
+        val user = userPort.loadByEmail(userInfo.email) ?: createUser(userInfo) // 없으면 저장
 
         val token = tokenProvider.createToken(user.id)
 
         return token
     }
 
-    private fun createUser(email: String): User {
-        val user = User(email = email, role = Role.USER)
+    @Transactional
+    override fun withDraw(user: User, request: RevokeRequest) {
+        if (user.authPlatform != request.authPlatform) {
+            throw ClientValidationException(AuthErrorCode.INCORRECT_PLATFORM)
+        }
+
+        when (request.authPlatform) {
+            AuthPlatform.GOOGLE -> TODO("구글 탈퇴 구현")
+            AuthPlatform.APPLE -> appleApiClient.revoke(request.authorizationCode)
+        }
+        contentPort.deleteByUserId(user.id)
+        userPort.delete(user)
+    }
+
+    private fun createUser(userInfo: UserInfo): User {
+        val user = User(email = userInfo.email, role = Role.USER, authPlatform = userInfo.authPlatform)
         return userPort.persist(user)
     }
 }

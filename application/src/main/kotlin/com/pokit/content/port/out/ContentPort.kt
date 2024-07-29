@@ -20,4 +20,6 @@ interface ContentPort {
         read: Boolean?,
         favorites: Boolean?
     ): Slice<Content>
+
+    fun deleteByUserId(userId: Long)
 }
