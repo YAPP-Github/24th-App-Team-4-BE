@@ -27,6 +27,7 @@ class AuthService(
     private val userPort: UserPort,
     private val contentPort: ContentPort
 ) : AuthUseCase {
+    @Transactional
     override fun signIn(request: SignInRequest): Token {
         val platformType = AuthPlatform.of(request.authPlatform)
 

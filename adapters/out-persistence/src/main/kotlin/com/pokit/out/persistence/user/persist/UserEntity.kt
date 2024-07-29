@@ -17,12 +17,14 @@ class UserEntity(
     val email: String,
 
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     val role: Role,
 
     @Column(name = "nickname")
     var nickname: String = email,
 
     @Column(name = "auth_platform")
+    @Enumerated(EnumType.STRING)
     val authPlatform: AuthPlatform,
 
     @Column(name = "deleted")
