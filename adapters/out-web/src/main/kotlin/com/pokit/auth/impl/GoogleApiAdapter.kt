@@ -1,19 +1,22 @@
 package com.pokit.auth.impl
 
-import com.google.firebase.auth.FirebaseAuth
+import com.pokit.auth.common.support.GoogleFeignClient
 import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.dto.UserInfo
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
 @Component
 class GoogleApiAdapter(
-    private val firebaseAuth: FirebaseAuth
+    private val googleFeignClient: GoogleFeignClient
 ) : GoogleApiClient {
-    override fun getUserInfo(authorizationCode: String): UserInfo {
-        val decodedToken = verifyIdToken(authorizationCode)
-        return UserInfo(decodedToken.email, AuthPlatform.GOOGLE) // 로그인 한 사용자의 이메일
-    }
+    override fun getUserInfo(idToken: String): UserInfo {
+        val response = googleFeignClient.getUserInfo(idToken)
 
-    private fun verifyIdToken(idToken: String) = firebaseAuth.verifyIdToken(idToken)
+        return UserInfo(
+            email = response.email,
+            authPlatform = AuthPlatform.GOOGLE
+        )
+    }
 }
