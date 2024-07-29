@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-class ContenAdapter(
+class ContentAdapter(
     private val contentRepository: ContentRepository,
     private val queryFactory: JPAQueryFactory
 ) : ContentPort {
@@ -39,6 +39,10 @@ class ContenAdapter(
         contentRepository.findByIdOrNull(content.id)
             ?.delete()
     }
+
+    override fun fetchContentCountByCategoryId(categoryId: Long): Int =
+        contentRepository.countByCategoryId(categoryId)
+
 
     override fun loadAllByUserIdAndContentId(
         userId: Long,

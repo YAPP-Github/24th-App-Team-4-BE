@@ -10,6 +10,9 @@ interface ContentPort {
     fun persist(content: Content): Content
 
     fun delete(content: Content)
+
+    fun fetchContentCountByCategoryId(categoryId: Long): Int
+
     fun loadAllByUserIdAndContentId(
         userId: Long,
         categoryId: Long,

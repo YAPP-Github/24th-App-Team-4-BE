@@ -17,4 +17,6 @@ interface ContentRepository : JpaRepository<ContentEntity, Long> {
         @Param("userId") userId: Long,
         @Param("id") id: Long
     ): ContentEntity?
+
+    fun countByCategoryId(id: Long): Int
 }

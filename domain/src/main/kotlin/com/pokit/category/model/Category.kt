@@ -5,6 +5,7 @@ data class Category(
     val userId: Long,
     var categoryName: String,
     var categoryImage: CategoryImage,
+    var contentCount: Int = 0,
 ) {
     fun update(categoryName: String, categoryImage: CategoryImage) {
         this.categoryName = categoryName

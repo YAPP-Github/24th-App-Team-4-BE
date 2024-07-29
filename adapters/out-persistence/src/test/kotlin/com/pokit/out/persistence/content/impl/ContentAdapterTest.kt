@@ -35,8 +35,8 @@ import org.springframework.test.context.ContextConfiguration
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(initializers = [TestContainerSupport::class])
 @Import(QueryDslConfig::class)
-class ContenAdapterTest(
-    @Autowired private val contentAdapter: ContenAdapter,
+class ContentAdapterTest(
+    @Autowired private val contentAdapter: ContentAdapter,
     @Autowired private val contentRepository: ContentRepository,
     @Autowired private val userRepository: UserRepository,
     @Autowired private val categoryRepository: CategoryRepository,
