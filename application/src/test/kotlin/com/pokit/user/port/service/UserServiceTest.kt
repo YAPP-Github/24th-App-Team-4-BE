@@ -2,6 +2,7 @@ package com.pokit.user.port.service
 
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
+import com.pokit.token.model.AuthPlatform
 import com.pokit.user.UserFixture
 import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.model.User
@@ -19,7 +20,7 @@ class UserServiceTest : BehaviorSpec({
         val user = UserFixture.getUser()
         val invalidUser = UserFixture.getInvalidUser()
         val request = UserFixture.getSignUpRequest()
-        val modifieUser = User(user.id, user.email, user.role, request.nickName)
+        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE)
 
         every { userPort.register(user) } returns modifieUser
         every { userPort.register(invalidUser) } returns null

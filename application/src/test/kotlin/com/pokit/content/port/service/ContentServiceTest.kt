@@ -8,6 +8,7 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.ContentFixture
 import com.pokit.content.dto.toDomain
 import com.pokit.content.port.out.ContentPort
+import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.UserFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,7 +20,8 @@ class ContentServiceTest : BehaviorSpec({
     val contentPort = mockk<ContentPort>()
     val bookmarkPort = mockk<BookmarkPort>()
     val categoryPort = mockk<CategoryPort>()
-    val contentService = ContentService(contentPort, bookmarkPort, categoryPort)
+    val userLogPort = mockk<UserLogPort>()
+    val contentService = ContentService(contentPort, bookmarkPort, categoryPort, userLogPort)
 
     Given("컨텐츠에 대해 즐겨찾기 할 때") {
         val user = UserFixture.getUser()
