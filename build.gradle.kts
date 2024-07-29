@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("jvm") version "1.9.24"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    kotlin("kapt") version "1.9.21"
 }
 
 repositories {
@@ -39,7 +40,7 @@ subprojects {
         // kotest
         testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.1")
         testImplementation("io.kotest:kotest-assertions-core-jvm:5.8.1")
-        
+
         // logging
         implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
     }

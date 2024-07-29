@@ -4,7 +4,9 @@ import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.model.toDomain
 import com.pokit.category.exception.CategoryErrorCode
+import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
+import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
 import com.pokit.content.dto.request.CreateContentRequest
 import com.pokit.content.dto.request.UpdateContentRequest
@@ -13,9 +15,13 @@ import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.ContentResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.exception.ContentErrorCode
+import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -87,4 +93,35 @@ class ContentController(
         return contentUseCase.cancelBookmark(user, contentId)
             .wrapUnit()
     }
+
+    @GetMapping("/{categoryId}")
+    @Operation(summary = "카테고리 내 컨텐츠 목록 조회")
+    fun getContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable("categoryId") contentId: Long,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @RequestParam(required = false) isRead: Boolean?,
+        @RequestParam(required = false) favorites: Boolean?
+    ): ResponseEntity<SliceResponseDto<Content>>? {
+        return contentUseCase.getContents(user.id, contentId, pageable, isRead, favorites)
+            .wrapSlice()
+            .wrapOk()
+    }
+
+    @PostMapping("/{contentId}")
+    @Operation(summary = "컨텐츠 상세조회 API")
+    fun getContent(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable("contentId") contentId: Long
+    ): ResponseEntity<ContentResponse> {
+        return contentUseCase.getContent(user.id, contentId)
+            .toResponse()
+            .wrapOk()
+    }
 }
+
