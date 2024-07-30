@@ -7,6 +7,7 @@ import com.pokit.common.exception.ClientValidationException
 import com.pokit.token.exception.AuthErrorCode
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.dto.UserInfo
+import org.apache.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -33,7 +34,7 @@ class GoogleApiAdapter(
 
         val revokeResponse = googleFeignClient.revoke(tokenResponse.accessToken)
 
-        if (revokeResponse.status() != 200) {
+        if (revokeResponse.status() != HttpStatus.SC_OK) {
             throw ClientValidationException(AuthErrorCode.FAILED_TO_REVOKE)
         }
     }
