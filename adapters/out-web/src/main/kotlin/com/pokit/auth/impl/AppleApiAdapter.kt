@@ -12,6 +12,7 @@ import com.pokit.common.exception.ClientValidationException
 import com.pokit.token.exception.AuthErrorCode
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.dto.UserInfo
+import org.apache.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -64,7 +65,7 @@ class AppleApiAdapter(
             "access_token"
         )
         val response = appleFeignClient.revoke(request)
-        if (response.status() != 200) {
+        if (response.status() != HttpStatus.SC_OK) {
             throw ClientValidationException(AuthErrorCode.FAILED_TO_REVOKE)
         }
     }

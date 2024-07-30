@@ -4,4 +4,6 @@ import com.pokit.user.dto.UserInfo
 
 interface GoogleApiClient {
     fun getUserInfo(idToken: String): UserInfo
+
+    fun revoke(authorizationCode: String)
 }
