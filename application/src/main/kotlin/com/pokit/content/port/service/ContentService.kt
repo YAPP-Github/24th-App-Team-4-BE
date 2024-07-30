@@ -4,13 +4,13 @@ import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.toRemindCategory
 import com.pokit.category.port.out.CategoryPort
+import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.NotFoundCustomException
-import com.pokit.content.dto.ContentCommand
-import com.pokit.content.dto.response.BookMarkContentResponse
-import com.pokit.content.dto.response.GetContentResponse
-import com.pokit.content.dto.response.toGetContentResponse
-import com.pokit.content.dto.toDomain
+import com.pokit.content.dto.request.ContentCommand
+import com.pokit.content.dto.request.toDomain
+import com.pokit.content.dto.response.*
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
@@ -101,6 +101,19 @@ class ContentService(
         return bookmark
             ?.let { content.toGetContentResponse(it) } // 즐겨찾기 true
             ?: content.toGetContentResponse() // 즐겨찾기 false
+    }
+
+    override fun getBookmarkContents(userId: Long): List<RemindContentResult> {
+        val contentIds = bookMarkPort.loadByUserId(userId)
+            .map { it.contentId }
+
+        return contentPort.loadByContentIds(contentIds)
+            .map { content ->
+                val isRead = userLogPort.isContentRead(content.id, userId)
+                val category = categoryPort.loadCategoryOrThrow(content.categoryId, userId)
+                    .toRemindCategory()
+                content.toRemindContentResult(isRead, category)
+            }
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {

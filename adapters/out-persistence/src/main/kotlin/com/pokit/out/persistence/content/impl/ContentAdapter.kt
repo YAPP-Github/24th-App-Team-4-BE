@@ -87,6 +87,10 @@ class ContentAdapter(
         contentRepository.deleteByUserId(userId)
     }
 
+    override fun loadByContentIds(contentIds: List<Long>): List<Content> =
+        contentRepository.findByIdIn(contentIds)
+            .map { it.toDomain() }
+
     private fun ReadOrNot(
         read: Boolean?,
         query: JPAQuery<ContentEntity>

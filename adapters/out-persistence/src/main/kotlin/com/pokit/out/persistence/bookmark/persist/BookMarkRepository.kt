@@ -8,4 +8,6 @@ interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
         userId: Long,
         deleted: Boolean
     ): BookmarkEntity?
+
+    fun findTop3ByUserIdOrderByCreatedAtDesc(userId: Long): List<BookmarkEntity>
 }

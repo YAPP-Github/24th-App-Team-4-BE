@@ -22,4 +22,6 @@ interface ContentPort {
     ): Slice<Content>
 
     fun deleteByUserId(userId: Long)
+
+    fun loadByContentIds(contentIds: List<Long>): List<Content>
 }

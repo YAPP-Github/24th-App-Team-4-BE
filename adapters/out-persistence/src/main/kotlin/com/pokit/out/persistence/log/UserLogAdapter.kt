@@ -1,5 +1,6 @@
 package com.pokit.out.persistence.log
 
+import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
 import com.pokit.out.persistence.log.persist.UserLogEntity
@@ -13,4 +14,8 @@ class UserLogAdapter(
 ) : UserLogPort {
     override fun persist(userLog: UserLog) =
         userLogRepository.save(UserLogEntity.of(userLog)).toDomain()
+
+    override fun isContentRead(contentId: Long, userId: Long): Boolean =
+        userLogRepository.existsByContentIdAndUserIdAndType(contentId, userId, LogType.READ)
+
 }

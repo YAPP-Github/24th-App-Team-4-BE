@@ -12,3 +12,13 @@ data class Category(
         this.categoryImage = categoryImage
     }
 }
+
+data class RemindCategory(
+    val categoryId: Long,
+    val categoryName: String,
+)
+
+fun Category.toRemindCategory() = RemindCategory(
+    categoryId = this.categoryId,
+    categoryName = this.categoryName,
+)

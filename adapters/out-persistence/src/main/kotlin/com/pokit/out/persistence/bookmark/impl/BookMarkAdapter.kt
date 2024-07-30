@@ -32,4 +32,9 @@ class BookMarkAdapter(
             false
         )?.toDomain()
     }
+
+    override fun loadByUserId(userId: Long): List<Bookmark> =
+        bookMarkRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)
+            .map { it.toDomain() }
+
 }

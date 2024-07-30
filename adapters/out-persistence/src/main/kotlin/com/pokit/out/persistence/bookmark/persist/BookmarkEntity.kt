@@ -1,6 +1,7 @@
 package com.pokit.out.persistence.bookmark.persist
 
 import com.pokit.bookmark.model.Bookmark
+import com.pokit.out.persistence.BaseEntity
 import jakarta.persistence.*
 
 // 콕 엔티티
@@ -20,7 +21,7 @@ class BookmarkEntity(
 
     @Column(name = "deleted")
     var deleted: Boolean = false
-) {
+): BaseEntity() {
     fun delete() {
         this.deleted = true
     }

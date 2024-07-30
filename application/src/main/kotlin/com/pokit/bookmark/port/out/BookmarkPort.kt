@@ -8,4 +8,6 @@ interface BookmarkPort {
     fun delete(userId: Long, contentId: Long)
 
     fun loadByContentIdAndUserId(contentId: Long, userId: Long): Bookmark?
+
+    fun loadByUserId(userId: Long): List<Bookmark>
 }

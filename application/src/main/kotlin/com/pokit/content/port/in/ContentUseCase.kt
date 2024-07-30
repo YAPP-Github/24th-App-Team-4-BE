@@ -1,8 +1,9 @@
 package com.pokit.content.port.`in`
 
-import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.GetContentResponse
+import com.pokit.content.dto.response.RemindContentResult
 import com.pokit.content.model.Content
 import com.pokit.user.model.User
 import org.springframework.data.domain.Pageable
@@ -16,6 +17,7 @@ interface ContentUseCase {
     fun update(user: User, contentCommand: ContentCommand, contentId: Long): Content
 
     fun delete(user: User, contentId: Long)
+
     fun cancelBookmark(user: User, contentId: Long)
 
     fun getContents(
@@ -27,4 +29,6 @@ interface ContentUseCase {
     ): Slice<Content>
 
     fun getContent(userId: Long, contentId: Long): GetContentResponse
+
+    fun getBookmarkContents(userId: Long): List<RemindContentResult>
 }
