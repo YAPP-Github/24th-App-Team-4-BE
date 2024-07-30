@@ -5,6 +5,7 @@ import com.pokit.auth.port.`in`.TokenProvider
 import com.pokit.auth.port.out.AppleApiClient
 import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.content.port.out.ContentPort
 import com.pokit.user.UserFixture
 import com.pokit.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow
@@ -20,7 +21,8 @@ class AuthServiceTest : BehaviorSpec({
     val tokenProvider = mockk<TokenProvider>()
     val userPort = mockk<UserPort>()
     val appleApiClient = mockk<AppleApiClient>()
-    val authService = AuthService(googleApiClient, appleApiClient, tokenProvider, userPort)
+    val contentPort = mockk<ContentPort>()
+    val authService = AuthService(googleApiClient, appleApiClient, tokenProvider, userPort, contentPort)
 
     Given("사용자가 로그인할 때") {
         val request = AuthFixture.getGoogleSigniInRequest()
