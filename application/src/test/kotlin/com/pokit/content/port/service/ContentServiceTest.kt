@@ -7,7 +7,10 @@ import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.ContentFixture
 import com.pokit.content.dto.toDomain
+import com.pokit.content.model.Content
 import com.pokit.content.port.out.ContentPort
+import com.pokit.log.model.LogType
+import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.UserFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,7 +22,8 @@ class ContentServiceTest : BehaviorSpec({
     val contentPort = mockk<ContentPort>()
     val bookmarkPort = mockk<BookmarkPort>()
     val categoryPort = mockk<CategoryPort>()
-    val contentService = ContentService(contentPort, bookmarkPort, categoryPort)
+    val userLogPort = mockk<UserLogPort>()
+    val contentService = ContentService(contentPort, bookmarkPort, categoryPort, userLogPort)
 
     Given("컨텐츠에 대해 즐겨찾기 할 때") {
         val user = UserFixture.getUser()
@@ -58,12 +62,14 @@ class ContentServiceTest : BehaviorSpec({
         val user = UserFixture.getUser()
         val category = CategoryFixture.getCategory(user.id)
 
+        val userLog = UserFixture.getUserLog(LogType.SEARCH, "검색어")
+
         every {
             categoryPort.loadByIdAndUserId(command.categoryId, user.id)
         } returns category
 
         every {
-            contentPort.persist(command.toDomain())
+            contentPort.persist(any(Content::class))
         } returns command.toDomain()
 
         every {
@@ -77,6 +83,10 @@ class ContentServiceTest : BehaviorSpec({
         every {
             categoryPort.loadByIdAndUserId(invalidCommand.categoryId, user.id)
         } returns null
+
+        every {
+            userLogPort.loadByUserIdAndType(user.id, LogType.SEARCH)
+        } returns mutableListOf(userLog)
 
         When("저장 요청이 들어오면") {
             val content = contentService.create(user, command)
@@ -112,6 +122,14 @@ class ContentServiceTest : BehaviorSpec({
                 shouldThrow<NotFoundCustomException> {
                     contentService.update(user, command, invalidContentId)
                 }
+            }
+        }
+
+        When("최근 검색어 목록을 조회하면") {
+            val words = contentService.getRecentWord(user.id)
+            Then("로그 타입이 SEARCH인 유저 로그들이 조회된다.") {
+                words.isNotEmpty()
+                words[0] shouldBe userLog.searchKeyword
             }
         }
     }

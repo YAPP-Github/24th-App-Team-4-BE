@@ -91,7 +91,10 @@ class ContentService(
     @Transactional
     override fun getContent(userId: Long, contentId: Long): GetContentResponse {
         val userLog = UserLog(
-            contentId, userId, LogType.READ
+            contentId = contentId,
+            userId = userId,
+            type = LogType.READ,
+            searchKeyword = null
         )
         userLogPort.persist(userLog) // 읽음 처리
 
@@ -101,6 +104,13 @@ class ContentService(
         return bookmark
             ?.let { content.toGetContentResponse(it) } // 즐겨찾기 true
             ?: content.toGetContentResponse() // 즐겨찾기 false
+    }
+
+    override fun getRecentWord(userId: Long): List<String?> {
+        val userLogs = userLogPort.loadByUserIdAndType(userId, LogType.SEARCH)
+        return userLogs
+            .map { it.searchKeyword }
+            .toList()
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {

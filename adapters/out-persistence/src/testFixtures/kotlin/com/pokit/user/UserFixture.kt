@@ -1,5 +1,7 @@
 package com.pokit.user
 
+import com.pokit.log.model.LogType
+import com.pokit.log.model.UserLog
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.dto.UserInfo
 import com.pokit.user.dto.request.SignUpRequest
@@ -16,5 +18,12 @@ class UserFixture {
         fun getInvalidUser() = User(2L, "dls@naver.com", Role.USER, authPlatform = AuthPlatform.GOOGLE)
 
         fun getSignUpRequest() = SignUpRequest("인주니", listOf(InterestType.SPORTS))
+
+        fun getUserLog(type: LogType, keyword: String) = UserLog(
+            contentId = 1L,
+            userId = 1L,
+            type = type,
+            searchKeyword = keyword
+        )
     }
 }
