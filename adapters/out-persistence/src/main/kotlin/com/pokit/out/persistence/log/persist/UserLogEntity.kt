@@ -14,19 +14,23 @@ class UserLogEntity(
     val id: Long = 0L,
 
     @Column(name = "content_id")
-    val contentId: Long,
+    val contentId: Long?,
 
     @Column(name = "user_id")
     val userId: Long,
 
     @Enumerated(EnumType.STRING)
     val type: LogType,
+
+    @Column(name = "search_keyword")
+    val searchKeyword: String?
 ) : BaseEntity() {
     companion object {
         fun of(userLog: UserLog) = UserLogEntity(
             contentId = userLog.contentId,
-            userId = userLog.contentId,
-            type = userLog.type
+            userId = userLog.userId,
+            type = userLog.type,
+            searchKeyword = userLog.searchKeyword
         )
     }
 }
@@ -34,5 +38,6 @@ class UserLogEntity(
 internal fun UserLogEntity.toDomain() = UserLog(
     contentId = this.contentId,
     userId = this.userId,
-    type = this.type
+    type = this.type,
+    searchKeyword = this.searchKeyword
 )
