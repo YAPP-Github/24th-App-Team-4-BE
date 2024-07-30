@@ -13,6 +13,7 @@ import com.pokit.content.dto.request.UpdateContentRequest
 import com.pokit.content.dto.request.toDto
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.ContentResponse
+import com.pokit.content.dto.response.RecentSearchResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
@@ -120,6 +121,16 @@ class ContentController(
         @PathVariable("contentId") contentId: Long
     ): ResponseEntity<ContentResponse> {
         return contentUseCase.getContent(user.id, contentId)
+            .toResponse()
+            .wrapOk()
+    }
+
+    @GetMapping("/recent")
+    @Operation(summary = "최근 검색어 목록 조회 API")
+    fun getRecentSearchWord(
+        @AuthenticationPrincipal user: PrincipalUser
+    ): ResponseEntity<RecentSearchResponse> {
+        return contentUseCase.getRecentWord(user.id)
             .toResponse()
             .wrapOk()
     }

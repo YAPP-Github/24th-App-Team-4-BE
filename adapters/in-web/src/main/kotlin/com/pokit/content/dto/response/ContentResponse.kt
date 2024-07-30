@@ -15,6 +15,14 @@ data class ContentResponse(
     val favorites: Boolean = false
 )
 
+data class RecentSearchResponse(
+    val keywords: List<String?>
+)
+
+fun List<String?>.toResponse() = RecentSearchResponse(
+    keywords = this
+)
+
 fun Content.toResponse() = ContentResponse(
     contentId = this.id,
     categoryId = this.categoryId,
