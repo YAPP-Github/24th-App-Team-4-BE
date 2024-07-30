@@ -51,7 +51,7 @@ class AuthService(
         }
 
         when (request.authPlatform) {
-            AuthPlatform.GOOGLE -> TODO("구글 탈퇴 구현")
+            AuthPlatform.GOOGLE -> googleApiClient.revoke(request.authorizationCode)
             AuthPlatform.APPLE -> appleApiClient.revoke(request.authorizationCode)
         }
         contentPort.deleteByUserId(user.id)
