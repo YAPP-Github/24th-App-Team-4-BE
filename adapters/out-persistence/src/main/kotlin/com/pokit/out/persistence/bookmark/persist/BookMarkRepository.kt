@@ -10,4 +10,6 @@ interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
     ): BookmarkEntity?
 
     fun findTop3ByUserIdOrderByCreatedAtDesc(userId: Long): List<BookmarkEntity>
+
+    fun existsByContentIdAndUserIdAndDeleted(contentId: Long, userId: Long, deleted: Boolean): Boolean
 }
