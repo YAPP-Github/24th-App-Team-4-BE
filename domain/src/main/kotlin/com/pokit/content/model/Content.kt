@@ -1,6 +1,6 @@
 package com.pokit.content.model
 
-import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.request.ContentCommand
 import java.time.LocalDateTime
 
 data class Content(
