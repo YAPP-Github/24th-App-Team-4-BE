@@ -2,7 +2,7 @@ package com.pokit.content
 
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
-import com.pokit.content.dto.response.RemindContentsResponse
+import com.pokit.content.dto.response.RemindContentResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
@@ -21,7 +21,7 @@ class RemindController(
     @Operation(summary = "즐겨찾기 링크 모음 조회 API")
     fun getBookmarkContents(
         @AuthenticationPrincipal user: PrincipalUser
-    ): ResponseEntity<List<RemindContentsResponse>> =
+    ): ResponseEntity<List<RemindContentResponse>> =
         contentUseCase.getBookmarkContents(user.id)
             .map { it.toResponse() }
             .wrapOk()

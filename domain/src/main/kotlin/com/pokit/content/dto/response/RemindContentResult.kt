@@ -10,7 +10,7 @@ data class RemindContentResult(
     val title: String,
     val data: String,
     val createdAt: LocalDateTime,
-//    val domain: String,
+    val domain: String = "domain", //TODO 머지 후 추가
     val isRead: Boolean,
 )
 
