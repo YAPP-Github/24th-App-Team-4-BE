@@ -13,11 +13,11 @@ data class Content(
     var alertYn: String,
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
-    fun modify(contetCommand: ContentCommand) {
-        this.categoryId = contetCommand.categoryId
-        this.data = contetCommand.data
-        this.title = contetCommand.title
-        this.memo = contetCommand.memo
-        this.alertYn = contetCommand.alertYn
+    fun modify(contentCommand: ContentCommand) {
+        this.categoryId = contentCommand.categoryId
+        this.data = contentCommand.data
+        this.title = contentCommand.title
+        this.memo = contentCommand.memo
+        this.alertYn = contentCommand.alertYn
     }
 }

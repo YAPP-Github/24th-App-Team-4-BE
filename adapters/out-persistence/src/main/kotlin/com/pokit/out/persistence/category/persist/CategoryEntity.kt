@@ -24,7 +24,7 @@ class CategoryEntity(
     val image: CategoryImageEntity,
 ) : BaseEntity() {
 
-    @Column(name = "id_deleted")
+    @Column(name = "is_deleted")
     var deleted: Boolean = false
 
     fun delete() {
