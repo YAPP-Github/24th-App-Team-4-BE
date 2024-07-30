@@ -27,5 +27,5 @@ interface ContentUseCase {
     ): Slice<Content>
 
     fun getContent(userId: Long, contentId: Long): GetContentResponse
-    fun getRecentWord(userId: Long): List<String?>
+    fun getRecentWord(userId: Long): List<String>
 }

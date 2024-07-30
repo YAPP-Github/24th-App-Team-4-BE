@@ -106,10 +106,11 @@ class ContentService(
             ?: content.toGetContentResponse() // 즐겨찾기 false
     }
 
-    override fun getRecentWord(userId: Long): List<String?> {
+    override fun getRecentWord(userId: Long): List<String> {
         val userLogs = userLogPort.loadByUserIdAndType(userId, LogType.SEARCH)
         return userLogs
-            .map { it.searchKeyword }
+            .filter { true }
+            .map { it.searchKeyword!! }
             .toList()
     }
 
