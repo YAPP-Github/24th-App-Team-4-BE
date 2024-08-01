@@ -7,6 +7,8 @@ import com.pokit.category.model.Category
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.GetContentResponse
 import com.pokit.content.dto.response.toGetContentResponse
@@ -72,17 +74,13 @@ class ContentService(
 
     override fun getContents(
         userId: Long,
-        categoryId: Long,
+        condition: ContentSearchCondition,
         pageable: Pageable,
-        isRead: Boolean?,
-        favorites: Boolean?
-    ): Slice<Content> {
+    ): Slice<ContentsResponse> {
         val contents = contentPort.loadAllByUserIdAndContentId(
             userId,
-            categoryId,
+            condition,
             pageable,
-            isRead,
-            favorites
         )
 
         return contents
