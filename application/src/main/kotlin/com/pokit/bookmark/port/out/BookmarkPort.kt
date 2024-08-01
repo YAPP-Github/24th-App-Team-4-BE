@@ -9,5 +9,7 @@ interface BookmarkPort {
 
     fun loadByContentIdAndUserId(contentId: Long, userId: Long): Bookmark?
 
+    fun isBookmarked(contentId: Long, userId: Long): Boolean
+
     fun loadByUserId(userId: Long): List<Bookmark>
 }

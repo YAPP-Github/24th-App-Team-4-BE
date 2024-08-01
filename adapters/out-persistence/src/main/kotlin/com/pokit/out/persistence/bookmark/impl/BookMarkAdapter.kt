@@ -33,6 +33,9 @@ class BookMarkAdapter(
         )?.toDomain()
     }
 
+    override fun isBookmarked(contentId: Long, userId: Long): Boolean =
+        bookMarkRepository.existsByContentIdAndUserIdAndDeleted(contentId, userId, false)
+
     override fun loadByUserId(userId: Long): List<Bookmark> =
         bookMarkRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)
             .map { it.toDomain() }
