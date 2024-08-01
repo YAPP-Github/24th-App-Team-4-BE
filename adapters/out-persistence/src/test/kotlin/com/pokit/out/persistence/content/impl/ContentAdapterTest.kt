@@ -2,6 +2,7 @@ package com.pokit.out.persistence.content.impl
 
 import com.pokit.bookmark.BookmarkFixture
 import com.pokit.category.CategoryFixture
+import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import com.pokit.content.ContentFixture
 import com.pokit.log.model.LogType
@@ -12,6 +13,7 @@ import com.pokit.out.persistence.category.persist.*
 import com.pokit.out.persistence.config.QueryDslConfig
 import com.pokit.out.persistence.content.persist.ContentEntity
 import com.pokit.out.persistence.content.persist.ContentRepository
+import com.pokit.out.persistence.content.persist.QContentEntity.*
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.UserLogEntity
 import com.pokit.out.persistence.log.persist.UserLogRepository
@@ -70,6 +72,8 @@ class ContentAdapterTest(
         val userLog = UserLog(savedContent2.id, savedUser.id, LogType.READ)
         userLogRepository.save(UserLogEntity.of(userLog))
 
+        val condition = ContentFixture.getCondition(savedCategory.id)
+
         val pageRequest = PageRequest.of(0, 10, Sort.by("createdAt").descending())
 
         When("유저 아이디와 컨텐츠 아이디로 조회 시") {
@@ -91,20 +95,20 @@ class ContentAdapterTest(
             }
         }
 
-        When("특정 카테고리 내의 컨텐츠 목록을 조회할 때") {
+        When("컨텐츠 목록을 조회할 때") {
             When("즐겨찾기한 컨텐츠만 조회하면") {
                 val result = contentAdapter.loadAllByUserIdAndContentId(
-                    savedUser.id, savedCategory.id, pageRequest, null, true
+                    savedUser.id, condition.copy(favorites = true), pageRequest
                 )
                 Then("두개의 컨텐츠 중 즐겨찾기 한 하나의 컨텐츠만 조회된다.") {
                     result.content.size shouldBe 1
                     val favoriteContent = result.content[0]
-                    favoriteContent.id shouldBe savedContent2.id
+                    favoriteContent.contentId shouldBe savedContent2.id
                 }
             }
             When("필터링 조건이 아무것도 없다면") {
                 val result = contentAdapter.loadAllByUserIdAndContentId(
-                    savedUser.id, savedCategory.id, pageRequest, null, null
+                    savedUser.id, condition, pageRequest
                 )
                 Then("목록이 전체 조회된다.") {
                     result.content.size shouldBe 2
@@ -112,13 +116,69 @@ class ContentAdapterTest(
             }
             When("안 읽은 컨텐츠를 조회하면") {
                 val result = contentAdapter.loadAllByUserIdAndContentId(
-                    savedUser.id, savedCategory.id, pageRequest, false, null
+                    savedUser.id, condition.copy(isRead = false), pageRequest
                 )
                 Then("안 읽은 컨텐츠 하나만 조회된다 (savedContent2)") {
                     result.content.size shouldBe 1
-                    result.content[0].id shouldBe savedContent.id
+                    result.content[0].contentId shouldBe savedContent.id
                 }
             }
+
+            When("유저 로그가 없다면") {
+                userLogRepository.deleteAll()
+                val result = contentAdapter.loadAllByUserIdAndContentId(
+                    savedUser.id, condition, pageRequest
+                )
+                Then("모든 컨텐츠들은 안읽음 상태이다.") {
+                    result.content.size shouldBe 2
+                    result.content.map {
+                        it.isRead shouldBe false
+                    }
+                }
+            }
+            val userLog = UserLog(savedContent2.id, savedUser.id, LogType.READ)
+            userLogRepository.save(UserLogEntity.of(userLog))
+
+            When("유저로그가 있는 컨텐츠를 조회하면") {
+
+                val result = contentAdapter.loadAllByUserIdAndContentId(
+                    savedUser.id, condition, pageRequest
+                )
+                Then("컨텐츠는 읽음 상태로 조회된다.") {
+                    val readContent = result.content
+                        .findLast { it.isRead } // 읽음 상태인 컨텐츠 조회
+                    readContent!!.contentId shouldBe userLog.contentId
+                }
+            }
+
+            val anotherCategory = Category(
+                userId = savedUser.id,
+                categoryName = "다른 카테고리",
+                categoryImage = savedImage.toDomain()
+            )
+            categoryRepository.save(CategoryEntity.of(anotherCategory))
+
+            When("카테고리명 하나로 필터링할 때") {
+                val result = contentAdapter.loadAllByUserIdAndContentId(
+                    savedUser.id, condition.copy(categoryIds = mutableListOf(category.categoryId)), pageRequest
+                )
+                Then("해당 카테고리의 컨텐츠들이 조회된다.") {
+                    result.content.size shouldBe 2
+                }
+            }
+
+            When("카테고리명 두개로 필터링할 때") {
+                val result = contentAdapter.loadAllByUserIdAndContentId(
+                    savedUser.id,
+                    condition.copy(categoryIds = mutableListOf(category.categoryId, anotherCategory.categoryId)),
+                    pageRequest
+                )
+                Then("둘 중 하나라도 만족하면 조회된다.") {
+                    result.content.size shouldBe 3
+                }
+            }
+
+
         }
     }
 })

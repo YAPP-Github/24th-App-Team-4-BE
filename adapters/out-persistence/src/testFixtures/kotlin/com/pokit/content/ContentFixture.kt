@@ -1,6 +1,7 @@
 package com.pokit.content
 
 import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
 import com.pokit.content.model.ContentType
 
@@ -47,6 +48,15 @@ class ContentFixture {
             categoryId = categoryId,
             memo = "네이버우어",
             alertYn = "YES"
+        )
+
+        fun getCondition(categoryId: Long) = ContentSearchCondition(
+            categoryId = categoryId,
+            isRead = null,
+            favorites = null,
+            startDate = null,
+            endDate = null,
+            categoryIds = null
         )
     }
 }

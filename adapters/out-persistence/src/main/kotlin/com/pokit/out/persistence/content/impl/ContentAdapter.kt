@@ -1,5 +1,7 @@
 package com.pokit.out.persistence.content.impl
 
+import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
@@ -11,6 +13,8 @@ import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
 import com.pokit.out.persistence.user.persist.QUserEntity.userEntity
+import com.querydsl.core.Tuple
+import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.DateTimePath
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -20,7 +24,9 @@ import org.springframework.data.domain.SliceImpl
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Repository
 class ContentAdapter(
@@ -46,27 +52,29 @@ class ContentAdapter(
 
     override fun loadAllByUserIdAndContentId(
         userId: Long,
-        categoryId: Long,
+        condition: ContentSearchCondition,
         pageable: Pageable,
-        read: Boolean?,
-        favorites: Boolean?
-    ): Slice<Content> {
+    ): Slice<ContentsResponse> {
         var hasNext = false
         val order = pageable.sort.getOrderFor("createdAt")
 
-        val query = queryFactory.select(contentEntity)
+        val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
             .from(contentEntity)
+            .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .join(userEntity).on(userEntity.id.eq(categoryEntity.userId))
 
-        FavoriteOrNot(favorites, query) // 북마크 조인 여부
-        ReadOrNot(read, query) // 읽음 로그 조인 여부
+        FavoriteOrNot(condition.favorites, query) // 북마크 조인 여부
 
         query.where(
             userEntity.id.eq(userId),
-            categoryEntity.id.eq(categoryId),
-            contentEntity.deleted.isFalse
+            condition.categoryId?.let { categoryEntity.id.eq(it) },
+            isUnread(condition.isRead),
+            contentEntity.deleted.isFalse,
+            dateBetween(condition.startDate, condition.endDate),
+            categoryIn(condition.categoryIds)
         )
+            .groupBy(contentEntity)
             .orderBy(getSort(contentEntity.createdAt, order!!))
             .limit(pageable.pageSize + 1L)
 
@@ -78,38 +86,62 @@ class ContentAdapter(
             contentEntityList.removeAt(contentEntityList.size - 1)
         }
 
-        val contents = contentEntityList.map { it.toDomain() }
+        val contents = contentEntityList.map {
+            ContentsResponse.of(
+                it[contentEntity]!!.toDomain(),
+                it[categoryEntity.name]!!,
+                it[userLogEntity.count()]!!
+            )
+        }
 
         return SliceImpl(contents, pageable, hasNext)
+    }
+
+    private fun isUnread(read: Boolean?): Predicate? {
+        return read?.let {
+            userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ))
+        }
+    }
+
+
+    private fun categoryIn(categoryIds: List<Long>?): Predicate? {
+        if (categoryIds.isNullOrEmpty()) {
+            return null
+        }
+
+        return contentEntity.categoryId.`in`(categoryIds)
+    }
+
+    private fun dateBetween(startDate: LocalDate?, endDate: LocalDate?): Predicate? {
+        if (startDate == null || endDate == null) {
+            return null
+        }
+
+        val startDateTime = startDate.atStartOfDay()
+        val endDateTime = endDate.atTime(LocalTime.MAX)
+
+        val isAfter = contentEntity.createdAt.after(startDateTime)
+        val isBefore = contentEntity.createdAt.before(endDateTime)
+
+        return isAfter.and(isBefore)
     }
 
     override fun deleteByUserId(userId: Long) {
         contentRepository.deleteByUserId(userId)
     }
 
-    private fun ReadOrNot(
-        read: Boolean?,
-        query: JPAQuery<ContentEntity>
-    ): JPAQuery<ContentEntity>? {
-        return read
-            ?.let {
-                query
-                    .leftJoin(userLogEntity)
-                    .on(userLogEntity.contentId.eq(contentEntity.id))
-                    .where(userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ)))
-            }
-    }
-
     private fun FavoriteOrNot(
         favorites: Boolean?,
-        query: JPAQuery<ContentEntity>
-    ): JPAQuery<ContentEntity>? {
+        query: JPAQuery<Tuple>
+    ): JPAQuery<Tuple>? {
         return favorites
             ?.let {
                 query
                     .join(bookmarkEntity)
-                    .on(bookmarkEntity.contentId.eq(contentEntity.id)
-                            .and(bookmarkEntity.deleted.isFalse))
+                    .on(
+                        bookmarkEntity.contentId.eq(contentEntity.id)
+                            .and(bookmarkEntity.deleted.isFalse)
+                    )
             }
     }
 
