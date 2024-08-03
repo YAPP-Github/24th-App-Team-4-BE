@@ -21,6 +21,7 @@ import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.model.User
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
+import org.springframework.data.domain.SliceImpl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -103,17 +104,21 @@ class ContentService(
             ?: content.toGetContentResponse() // 즐겨찾기 false
     }
 
-    override fun getBookmarkContents(userId: Long): List<RemindContentResult> {
-        val contentIds = bookMarkPort.loadByUserId(userId)
-            .map { it.contentId }
+    override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
+        val bookMarks = bookMarkPort.loadByUserId(userId, pageable)
+        val contentIds = bookMarks.content.map { it.contentId }
+        val contentsById = contentPort.loadByContentIds(contentIds).associateBy { it.id }
 
-        return contentPort.loadByContentIds(contentIds)
-            .map { content ->
-                val isRead = userLogPort.isContentRead(content.id, userId)
-                val category = categoryPort.loadCategoryOrThrow(content.categoryId, userId)
-                    .toRemindCategory()
-                content.toRemindContentResult(isRead, category)
+        val remindContents = contentIds.map { contentId ->
+            val content = contentsById[contentId]
+            content?.let {
+                val isRead = userLogPort.isContentRead(it.id, userId)
+                val category = categoryPort.loadCategoryOrThrow(it.categoryId, userId).toRemindCategory()
+                it.toRemindContentResult(isRead, category)
             }
+        }
+
+        return SliceImpl(remindContents, pageable, bookMarks.hasNext())
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {

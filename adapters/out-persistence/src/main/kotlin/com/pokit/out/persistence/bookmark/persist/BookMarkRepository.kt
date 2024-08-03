@@ -1,5 +1,7 @@
 package com.pokit.out.persistence.bookmark.persist
 
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
@@ -9,5 +11,5 @@ interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
         deleted: Boolean
     ): BookmarkEntity?
 
-    fun findTop3ByUserIdOrderByCreatedAtDesc(userId: Long): List<BookmarkEntity>
+    fun findByUserIdAndDeleted(userId: Long, deleted: Boolean, pageable: Pageable): Slice<BookmarkEntity>
 }
