@@ -12,4 +12,6 @@ interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
     ): BookmarkEntity?
 
     fun findByUserIdAndDeleted(userId: Long, deleted: Boolean, pageable: Pageable): Slice<BookmarkEntity>
+
+    fun existsByContentIdAndUserIdAndDeleted(contentId: Long, userId: Long, deleted: Boolean): Boolean
 }

@@ -97,11 +97,9 @@ class ContentService(
         userLogPort.persist(userLog) // 읽음 처리
 
         val content = verifyContent(userId, contentId)
-        val bookmark = bookMarkPort.loadByContentIdAndUserId(contentId, userId)
+        val bookmarkStatus = bookMarkPort.isBookmarked(contentId, userId)
 
-        return bookmark
-            ?.let { content.toGetContentResponse(it) } // 즐겨찾기 true
-            ?: content.toGetContentResponse() // 즐겨찾기 false
+        return content.toGetContentResponse(bookmarkStatus)
     }
 
     override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {

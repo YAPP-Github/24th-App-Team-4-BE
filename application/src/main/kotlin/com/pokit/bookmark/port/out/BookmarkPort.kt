@@ -12,4 +12,6 @@ interface BookmarkPort {
     fun loadByContentIdAndUserId(contentId: Long, userId: Long): Bookmark?
 
     fun loadByUserId(userId: Long, pageable: Pageable): Slice<Bookmark>
+
+    fun isBookmarked(contentId: Long, userId: Long): Boolean
 }
