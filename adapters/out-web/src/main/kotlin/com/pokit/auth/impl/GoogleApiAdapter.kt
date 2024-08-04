@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component
 @Component
 class GoogleApiAdapter(
     private val googleFeignClient: GoogleFeignClient,
-    private val googleProperty: GoogleProperty
 ) : GoogleApiClient {
     override fun getUserInfo(idToken: String): UserInfo {
         val response = googleFeignClient.getUserInfo(idToken)
@@ -24,15 +23,8 @@ class GoogleApiAdapter(
         )
     }
 
-    override fun revoke(authorizationCode: String) {
-        val tokenResponse = googleFeignClient.getToken(
-            authorizationCode,
-            googleProperty.clientId,
-            googleProperty.clientSecret,
-            "authorization_code"
-        ) ?: throw ClientValidationException(AuthErrorCode.INVALID_AUTHORIZATION_CODE)
-
-        val revokeResponse = googleFeignClient.revoke(tokenResponse.accessToken)
+    override fun revoke(refreshToken: String) {
+        val revokeResponse = googleFeignClient.revoke(refreshToken)
 
         if (revokeResponse.status() != HttpStatus.SC_OK) {
             throw ClientValidationException(AuthErrorCode.FAILED_TO_REVOKE)
