@@ -1,5 +1,7 @@
 package com.pokit.content.port.out
 
+import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -15,11 +17,9 @@ interface ContentPort {
 
     fun loadAllByUserIdAndContentId(
         userId: Long,
-        categoryId: Long,
+        condition: ContentSearchCondition,
         pageable: Pageable,
-        read: Boolean?,
-        favorites: Boolean?
-    ): Slice<Content>
+    ): Slice<ContentsResponse>
 
     fun deleteByUserId(userId: Long)
 

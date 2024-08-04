@@ -11,6 +11,11 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.toDomain
 import com.pokit.content.dto.response.*
+import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.request.ContentSearchCondition
+import com.pokit.content.dto.response.BookMarkContentResponse
+import com.pokit.content.dto.response.GetContentResponse
+import com.pokit.content.dto.response.toGetContentResponse
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
@@ -73,17 +78,13 @@ class ContentService(
 
     override fun getContents(
         userId: Long,
-        categoryId: Long,
+        condition: ContentSearchCondition,
         pageable: Pageable,
-        isRead: Boolean?,
-        favorites: Boolean?
-    ): Slice<Content> {
+    ): Slice<ContentsResponse> {
         val contents = contentPort.loadAllByUserIdAndContentId(
             userId,
-            categoryId,
+            condition,
             pageable,
-            isRead,
-            favorites
         )
 
         return contents

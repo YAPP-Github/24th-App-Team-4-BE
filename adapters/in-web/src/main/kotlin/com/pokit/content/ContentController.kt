@@ -8,6 +8,8 @@ import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
+import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.request.ContentSearchParams
 import com.pokit.content.dto.request.CreateContentRequest
 import com.pokit.content.dto.request.UpdateContentRequest
 import com.pokit.content.dto.request.toDto
@@ -15,7 +17,6 @@ import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.ContentResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.exception.ContentErrorCode
-import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -98,17 +99,20 @@ class ContentController(
     @Operation(summary = "카테고리 내 컨텐츠 목록 조회")
     fun getContents(
         @AuthenticationPrincipal user: PrincipalUser,
-        @PathVariable("categoryId") contentId: Long,
+        @PathVariable("categoryId") categoryId: Long,
         @PageableDefault(
             page = 0,
             size = 10,
             sort = ["createdAt"],
             direction = Sort.Direction.DESC
         ) pageable: Pageable,
-        @RequestParam(required = false) isRead: Boolean?,
-        @RequestParam(required = false) favorites: Boolean?
-    ): ResponseEntity<SliceResponseDto<Content>>? {
-        return contentUseCase.getContents(user.id, contentId, pageable, isRead, favorites)
+        condition: ContentSearchParams,
+    ): ResponseEntity<SliceResponseDto<ContentsResponse>> {
+        return contentUseCase.getContents(
+            user.id,
+            condition.copy(categoryId = categoryId).toDto(),
+            pageable
+        )
             .wrapSlice()
             .wrapOk()
     }
@@ -121,6 +125,27 @@ class ContentController(
     ): ResponseEntity<ContentResponse> {
         return contentUseCase.getContent(user.id, contentId)
             .toResponse()
+            .wrapOk()
+    }
+
+    @GetMapping
+    @Operation(summary = "컨텐츠 검색 API")
+    fun searchContent(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        condition: ContentSearchParams,
+    ): ResponseEntity<SliceResponseDto<ContentsResponse>> {
+        return contentUseCase.getContents(
+            user.id,
+            condition.toDto(),
+            pageable
+        )
+            .wrapSlice()
             .wrapOk()
     }
 }
