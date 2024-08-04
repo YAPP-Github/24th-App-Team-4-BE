@@ -1,9 +1,9 @@
-package com.pokit.content.dto
+package com.pokit.content.dto.response
 
 import com.pokit.content.model.Content
-import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 
-data class ContentsResponse(
+data class ContentsResult(
     val contentId: Long,
     val categoryId: Long,
     val categoryName: String,
@@ -12,14 +12,13 @@ data class ContentsResponse(
     val title: String,
     val memo: String,
     val alertYn: String,
-    val createdAt: String,
-    val isRead: Boolean
+    val createdAt: LocalDateTime,
+    val isRead: Boolean,
+    val thumbNail: String = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/category-image/-3+1.png" // TODO 추가 예정
 ) {
     companion object {
-        fun of(content: Content, categoryName: String, isRead: Long): ContentsResponse {
-            val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-
-            return ContentsResponse(
+        fun of(content: Content, categoryName: String, isRead: Long): ContentsResult {
+            return ContentsResult(
                 contentId = content.id,
                 categoryId = content.categoryId,
                 categoryName = categoryName,
@@ -28,7 +27,7 @@ data class ContentsResponse(
                 title = content.title,
                 memo = content.memo,
                 alertYn = content.alertYn,
-                createdAt = content.createdAt.format(formatter),
+                createdAt = content.createdAt,
                 isRead = isRead > 0
             )
         }
