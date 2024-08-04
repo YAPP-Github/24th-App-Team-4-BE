@@ -23,6 +23,19 @@ fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): Re
         title = this.title,
         createdAt = this.createdAt,
         isRead = isRead,
-        domain = this.domain
+        domain = this.domain,
+    )
+}
+
+fun ContentsResult.toRemindContentResult(): RemindContentResult {
+    return RemindContentResult(
+        contentId = this.contentId,
+        category = RemindCategory(this.categoryId, this.categoryName),
+        data = this.data,
+        title = this.title,
+        createdAt = this.createdAt,
+        domain = this.domain,
+        isRead = this.isRead,
+        thumbNail = this.thumbNail
     )
 }

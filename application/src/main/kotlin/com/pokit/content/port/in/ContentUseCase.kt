@@ -1,7 +1,7 @@
 package com.pokit.content.port.`in`
 
 import com.pokit.content.dto.request.ContentCommand
-import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.GetContentResponse
@@ -26,9 +26,11 @@ interface ContentUseCase {
         userId: Long,
         condition: ContentSearchCondition,
         pageable: Pageable,
-    ): Slice<ContentsResponse>
+    ): Slice<ContentsResult>
 
     fun getContent(userId: Long, contentId: Long): GetContentResponse
 
     fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult>
+
+    fun getUnreadContents(userId: Long, pageable: Pageable): Slice<RemindContentResult>
 }
