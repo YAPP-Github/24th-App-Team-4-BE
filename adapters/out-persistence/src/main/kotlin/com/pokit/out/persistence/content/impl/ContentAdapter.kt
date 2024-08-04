@@ -35,6 +35,9 @@ class ContentAdapter(
     override fun loadByUserIdAndId(userId: Long, id: Long) = contentRepository.findByUserIdAndIdAndDeleted(userId, id)
         ?.run { toDomain() }
 
+    override fun countByUserId(userId: Long): Int =
+        contentRepository.countByUserId(userId)
+
     override fun persist(content: Content): Content {
         val contentEntity = ContentEntity.of(content)
         return contentRepository.save(contentEntity).toDomain()

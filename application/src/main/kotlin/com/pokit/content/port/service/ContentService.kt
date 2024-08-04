@@ -4,6 +4,7 @@ import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.RemindCategory
 import com.pokit.category.model.toRemindCategory
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.category.port.service.loadCategoryOrThrow
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 @Transactional(readOnly = true)
@@ -38,6 +40,9 @@ class ContentService(
     private val categoryPort: CategoryPort,
     private val userLogPort: UserLogPort
 ) : ContentUseCase {
+    companion object {
+        private const val MIN_CONTENT_COUNT = 3
+    }
 
     @Transactional
     override fun bookmarkContent(user: User, contentId: Long): BookMarkContentResponse {
@@ -134,6 +139,46 @@ class ContentService(
         val remindContents = unreadContents.content.map { it.toRemindContentResult() }
 
         return SliceImpl(remindContents, pageable, unreadContents.hasNext())
+    }
+
+    override fun getTodayContents(userId: Long): List<RemindContentResult> {
+//        if (contentPort.countByUserId(userId) < MIN_CONTENT_COUNT) {
+//            return emptyList()
+//        }
+
+        //TODO 알고리즘 구현
+        return listOf(
+            RemindContentResult(
+                1L,
+                RemindCategory(1L, "category"),
+                "title",
+                "url",
+                LocalDateTime.now(),
+                "domain",
+                false,
+                "thumbNail"
+            ),
+            RemindContentResult(
+                2L,
+                RemindCategory(1L, "category"),
+                "양궁 올림픽 덜덜",
+                "https://www.youtube.com/watch?v=s9L9yRL_I0s",
+                LocalDateTime.now(),
+                "youtu.be",
+                true,
+                "thumbNail"
+            ),
+            RemindContentResult(
+                3L,
+                RemindCategory(1L, "category"),
+                "요리 맛있겠땅",
+                "https://www.youtube.com/shorts/aLZEwkm4tGU",
+                LocalDateTime.now(),
+                "youtu.be",
+                true,
+                "thumbNail"
+            ),
+        )
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
