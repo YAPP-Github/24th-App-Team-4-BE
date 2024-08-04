@@ -9,6 +9,8 @@ import org.springframework.data.domain.Slice
 interface ContentPort {
     fun loadByUserIdAndId(userId: Long, id: Long): Content?
 
+    fun countByUserId(userId: Long): Int
+
     fun persist(content: Content): Content
 
     fun delete(content: Content)

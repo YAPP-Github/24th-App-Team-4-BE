@@ -30,4 +30,14 @@ interface ContentRepository : JpaRepository<ContentEntity, Long> {
     fun deleteByUserId(@Param("userId") userId: Long)
 
     fun findByIdIn(ids: List<Long>): List<ContentEntity>
+
+    @Query(
+        """
+        select count(co) from ContentEntity co
+        join CategoryEntity ca on ca.id = co.categoryId
+        join UserEntity u on u.id = ca.userId
+        where u.id = :userId and co.deleted = false
+    """
+    )
+    fun countByUserId(userId: Long): Int
 }

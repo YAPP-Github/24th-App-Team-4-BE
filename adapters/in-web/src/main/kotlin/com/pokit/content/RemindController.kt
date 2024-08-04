@@ -53,4 +53,14 @@ class RemindController(
             .map { it.toResponse() }
             .wrapSlice()
             .wrapOk()
+
+    @GetMapping("/today")
+    @Operation(summary = "오늘의 리마인드 조회 API")
+    fun getUnreadContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+    ): ResponseEntity<List<RemindContentResponse>> =
+        contentUseCase.getTodayContents(user.id)
+            .map { it.toResponse() }
+            .wrapOk()
+
 }
