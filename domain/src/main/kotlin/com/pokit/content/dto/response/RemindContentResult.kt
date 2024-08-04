@@ -10,10 +10,10 @@ data class RemindContentResult(
     val title: String,
     val data: String,
     val createdAt: LocalDateTime,
-    val domain: String = "domain", //TODO 머지 후 추가
+    val domain: String,
     val isRead: Boolean,
+    val thumbNail: String = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/category-image/-3+1.png", //TODO 추후 추가
 )
-
 
 fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): RemindContentResult {
     return RemindContentResult(
@@ -23,5 +23,6 @@ fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): Re
         title = this.title,
         createdAt = this.createdAt,
         isRead = isRead,
+        domain = this.domain
     )
 }
