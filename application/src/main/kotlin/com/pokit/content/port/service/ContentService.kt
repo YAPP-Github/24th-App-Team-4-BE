@@ -50,9 +50,9 @@ class ContentService(
     @Transactional
     override fun create(user: User, contentCommand: ContentCommand): Content {
         verifyCategory(contentCommand.categoryId, user.id)
-        return contentPort.persist(
-            contentCommand.toDomain()
-        )
+        val content = contentCommand.toDomain()
+        content.parseDomain()
+        return contentPort.persist(content)
     }
 
     @Transactional
