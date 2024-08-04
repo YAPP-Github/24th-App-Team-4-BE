@@ -11,6 +11,7 @@ data class RemindContentResponse(
     val createdAt: String,
     val domain: String,
     val isRead: Boolean,
+    val thumbNail: String,
 )
 
 fun RemindContentResult.toResponse(): RemindContentResponse {
@@ -23,6 +24,7 @@ fun RemindContentResult.toResponse(): RemindContentResponse {
         title = this.title,
         createdAt = this.createdAt.format(formatter),
         domain = this.domain,
-        isRead = this.isRead
+        isRead = this.isRead,
+        thumbNail = this.thumbNail
     )
 }
