@@ -150,17 +150,23 @@ class ContentAdapterTest(
                     readContent!!.contentId shouldBe userLog.contentId
                 }
             }
+            val anotherImage = CategoryImage(2, "www.s3.com")
+            val savedAnotherImage = categoryImageRepository.save(CategoryImageEntity.of(anotherImage))
 
             val anotherCategory = Category(
                 userId = savedUser.id,
                 categoryName = "다른 카테고리",
-                categoryImage = savedImage.toDomain()
+                categoryImage = savedAnotherImage.toDomain()
             )
-            categoryRepository.save(CategoryEntity.of(anotherCategory))
+            val savedAnotherCategory = categoryRepository.save(CategoryEntity.of(anotherCategory))
+
+            val content3 = ContentFixture.getContent(savedAnotherCategory.id)
+            contentRepository.save(ContentEntity.of(content3))
+
 
             When("카테고리명 하나로 필터링할 때") {
                 val result = contentAdapter.loadAllByUserIdAndContentId(
-                    savedUser.id, condition.copy(categoryIds = mutableListOf(category.categoryId)), pageRequest
+                    savedUser.id, condition.copy(categoryId = null, categoryIds = mutableListOf(savedCategory.id)), pageRequest
                 )
                 Then("해당 카테고리의 컨텐츠들이 조회된다.") {
                     result.content.size shouldBe 2
@@ -170,7 +176,7 @@ class ContentAdapterTest(
             When("카테고리명 두개로 필터링할 때") {
                 val result = contentAdapter.loadAllByUserIdAndContentId(
                     savedUser.id,
-                    condition.copy(categoryIds = mutableListOf(category.categoryId, anotherCategory.categoryId)),
+                    condition.copy(categoryId = null, categoryIds = mutableListOf(savedCategory.id, savedAnotherCategory.id)),
                     pageRequest
                 )
                 Then("둘 중 하나라도 만족하면 조회된다.") {
