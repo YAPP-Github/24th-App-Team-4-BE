@@ -1,6 +1,5 @@
 package com.pokit.content.dto.request
 
-import com.pokit.content.dto.ContentCommand
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 

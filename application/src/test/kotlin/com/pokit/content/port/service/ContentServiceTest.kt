@@ -6,7 +6,7 @@ import com.pokit.category.CategoryFixture
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.ContentFixture
-import com.pokit.content.dto.toDomain
+import com.pokit.content.dto.request.toDomain
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.UserFixture

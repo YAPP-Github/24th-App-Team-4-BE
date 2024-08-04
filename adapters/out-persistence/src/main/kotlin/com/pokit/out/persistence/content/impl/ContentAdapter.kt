@@ -72,7 +72,6 @@ class ContentAdapter(
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds)
         )
-            .groupBy(contentEntity)
             .orderBy(getSort(contentEntity.createdAt, order!!))
             .limit(pageable.pageSize + 1L)
 
@@ -94,6 +93,10 @@ class ContentAdapter(
 
         return SliceImpl(contents, pageable, hasNext)
     }
+
+    override fun loadByContentIds(contentIds: List<Long>): List<Content> =
+        contentRepository.findByIdIn(contentIds)
+            .map { it.toDomain() }
 
     private fun isUnread(read: Boolean?): Predicate? {
         return read?.let {

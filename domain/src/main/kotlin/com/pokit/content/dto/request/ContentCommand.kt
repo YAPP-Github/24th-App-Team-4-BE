@@ -1,4 +1,4 @@
-package com.pokit.content.dto
+package com.pokit.content.dto.request
 
 import com.pokit.content.model.Content
 

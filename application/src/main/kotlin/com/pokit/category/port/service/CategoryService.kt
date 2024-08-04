@@ -57,8 +57,7 @@ class CategoryService(
 
     @Transactional
     override fun update(categoryCommand: CategoryCommand, userId: Long, categoryId: Long): Category {
-        val category = categoryPort.loadByIdAndUserId(categoryId, userId)
-            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+        val category = categoryPort.loadCategoryOrThrow(categoryId, userId)
 
         val categoryImage = categoryImagePort.loadById(categoryCommand.categoryImageId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE)
@@ -98,4 +97,9 @@ class CategoryService(
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
 
+}
+
+fun CategoryPort.loadCategoryOrThrow(categoryId: Long, userId: Long): Category {
+    return loadByIdAndUserId(categoryId, userId)
+        ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
 }

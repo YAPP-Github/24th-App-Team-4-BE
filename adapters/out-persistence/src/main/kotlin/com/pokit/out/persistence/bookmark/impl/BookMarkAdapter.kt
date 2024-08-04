@@ -5,6 +5,8 @@ import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.out.persistence.bookmark.persist.BookMarkRepository
 import com.pokit.out.persistence.bookmark.persist.BookmarkEntity
 import com.pokit.out.persistence.bookmark.persist.toDomain
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -32,4 +34,12 @@ class BookMarkAdapter(
             false
         )?.toDomain()
     }
+
+    override fun isBookmarked(contentId: Long, userId: Long): Boolean =
+        bookMarkRepository.existsByContentIdAndUserIdAndDeleted(contentId, userId, false)
+
+    override fun loadByUserId(userId: Long, pageable: Pageable): Slice<Bookmark> =
+        bookMarkRepository.findByUserIdAndDeleted(userId, false, pageable)
+            .map { it.toDomain() }
+
 }

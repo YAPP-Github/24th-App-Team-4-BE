@@ -1,6 +1,6 @@
 package com.pokit.content.model
 
-import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.request.ContentCommand
 
 import java.net.URI
 import java.time.LocalDateTime
@@ -16,12 +16,12 @@ data class Content(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var domain: String = data
 ) {
-    fun modify(contetCommand: ContentCommand) {
-        this.categoryId = contetCommand.categoryId
-        this.data = contetCommand.data
-        this.title = contetCommand.title
-        this.memo = contetCommand.memo
-        this.alertYn = contetCommand.alertYn
+    fun modify(contentCommand: ContentCommand) {
+        this.categoryId = contentCommand.categoryId
+        this.data = contentCommand.data
+        this.title = contentCommand.title
+        this.memo = contentCommand.memo
+        this.alertYn = contentCommand.alertYn
     }
 
     fun parseDomain() {

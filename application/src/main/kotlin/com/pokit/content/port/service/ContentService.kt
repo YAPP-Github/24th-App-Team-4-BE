@@ -4,15 +4,18 @@ import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.toRemindCategory
 import com.pokit.category.port.out.CategoryPort
+import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.NotFoundCustomException
-import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.request.ContentCommand
+import com.pokit.content.dto.request.toDomain
+import com.pokit.content.dto.response.*
 import com.pokit.content.dto.ContentsResponse
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.GetContentResponse
 import com.pokit.content.dto.response.toGetContentResponse
-import com.pokit.content.dto.toDomain
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
@@ -23,6 +26,7 @@ import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.model.User
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
+import org.springframework.data.domain.SliceImpl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -46,9 +50,9 @@ class ContentService(
     @Transactional
     override fun create(user: User, contentCommand: ContentCommand): Content {
         verifyCategory(contentCommand.categoryId, user.id)
-        val content = contentCommand.toDomain()
-        content.parseDomain()
-        return contentPort.persist(content)
+        return contentPort.persist(
+            contentCommand.toDomain()
+        )
     }
 
     @Transactional
@@ -94,11 +98,26 @@ class ContentService(
         userLogPort.persist(userLog) // 읽음 처리
 
         val content = verifyContent(userId, contentId)
-        val bookmark = bookMarkPort.loadByContentIdAndUserId(contentId, userId)
+        val bookmarkStatus = bookMarkPort.isBookmarked(contentId, userId)
 
-        return bookmark
-            ?.let { content.toGetContentResponse(it) } // 즐겨찾기 true
-            ?: content.toGetContentResponse() // 즐겨찾기 false
+        return content.toGetContentResponse(bookmarkStatus)
+    }
+
+    override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
+        val bookMarks = bookMarkPort.loadByUserId(userId, pageable)
+        val contentIds = bookMarks.content.map { it.contentId }
+        val contentsById = contentPort.loadByContentIds(contentIds).associateBy { it.id }
+
+        val remindContents = contentIds.map { contentId ->
+            val content = contentsById[contentId]
+            content?.let {
+                val isRead = userLogPort.isContentRead(it.id, userId)
+                val category = categoryPort.loadCategoryOrThrow(it.categoryId, userId).toRemindCategory()
+                it.toRemindContentResult(isRead, category)
+            }
+        }
+
+        return SliceImpl(remindContents, pageable, bookMarks.hasNext())
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {

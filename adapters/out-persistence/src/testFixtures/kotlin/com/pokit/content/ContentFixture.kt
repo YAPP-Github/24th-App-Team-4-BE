@@ -1,6 +1,6 @@
 package com.pokit.content
 
-import com.pokit.content.dto.ContentCommand
+import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
 import com.pokit.content.model.ContentType

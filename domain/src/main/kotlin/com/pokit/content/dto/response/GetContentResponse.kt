@@ -28,6 +28,19 @@ fun Content.toGetContentResponse(bookmark: Bookmark): GetContentResponse {
     )
 }
 
+fun Content.toGetContentResponse(favorites: Boolean): GetContentResponse {
+    return GetContentResponse(
+        contentId = this.id,
+        categoryId = this.categoryId,
+        data = this.data,
+        title = this.title,
+        memo = this.memo,
+        alertYn = this.alertYn,
+        createdAt = this.createdAt,
+        favorites = favorites
+    )
+}
+
 fun Content.toGetContentResponse(): GetContentResponse {
     return GetContentResponse(
         contentId = this.id,

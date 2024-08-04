@@ -28,4 +28,6 @@ interface ContentRepository : JpaRepository<ContentEntity, Long> {
         (select ct.id from CategoryEntity ct where ct.userId = :userId)
     """)
     fun deleteByUserId(@Param("userId") userId: Long)
+
+    fun findByIdIn(ids: List<Long>): List<ContentEntity>
 }
