@@ -11,7 +11,7 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.toDomain
 import com.pokit.content.dto.response.*
-import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.GetContentResponse
@@ -80,7 +80,7 @@ class ContentService(
         userId: Long,
         condition: ContentSearchCondition,
         pageable: Pageable,
-    ): Slice<ContentsResponse> {
+    ): Slice<ContentsResult> {
         val contents = contentPort.loadAllByUserIdAndContentId(
             userId,
             condition,
@@ -118,6 +118,22 @@ class ContentService(
         }
 
         return SliceImpl(remindContents, pageable, bookMarks.hasNext())
+    }
+
+    override fun getUnreadContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
+        val contentSearchCondition = ContentSearchCondition(
+            isRead = false,
+            categoryId = null,
+            favorites = null,
+            startDate = null,
+            endDate = null,
+            categoryIds = null
+        )
+
+        val unreadContents = contentPort.loadAllByUserIdAndContentId(userId, contentSearchCondition, pageable)
+        val remindContents = unreadContents.content.map { it.toRemindContentResult() }
+
+        return SliceImpl(remindContents, pageable, unreadContents.hasNext())
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {

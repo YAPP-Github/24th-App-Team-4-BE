@@ -1,6 +1,6 @@
 package com.pokit.out.persistence.content.impl
 
-import com.pokit.content.dto.ContentsResponse
+import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
 import com.pokit.content.port.out.ContentPort
@@ -53,7 +53,7 @@ class ContentAdapter(
         userId: Long,
         condition: ContentSearchCondition,
         pageable: Pageable,
-    ): Slice<ContentsResponse> {
+    ): Slice<ContentsResult> {
         var hasNext = false
         val order = pageable.sort.getOrderFor("createdAt")
 
@@ -72,6 +72,7 @@ class ContentAdapter(
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds)
         )
+            .groupBy(contentEntity)
             .orderBy(getSort(contentEntity.createdAt, order!!))
             .limit(pageable.pageSize + 1L)
 
@@ -84,7 +85,7 @@ class ContentAdapter(
         }
 
         val contents = contentEntityList.map {
-            ContentsResponse.of(
+            ContentsResult.of(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
                 it[userLogEntity.count()]!!

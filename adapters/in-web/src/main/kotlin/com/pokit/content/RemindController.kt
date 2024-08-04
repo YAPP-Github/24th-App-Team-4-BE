@@ -37,4 +37,20 @@ class RemindController(
             .map { it.toResponse() }
             .wrapSlice()
             .wrapOk()
+
+    @GetMapping("/unread")
+    @Operation(summary = "읽지 않음 컨텐츠 조회 API")
+    fun getUnreadContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+    ): ResponseEntity<SliceResponseDto<RemindContentResponse>> =
+        contentUseCase.getUnreadContents(user.id, pageable)
+            .map { it.toResponse() }
+            .wrapSlice()
+            .wrapOk()
 }
