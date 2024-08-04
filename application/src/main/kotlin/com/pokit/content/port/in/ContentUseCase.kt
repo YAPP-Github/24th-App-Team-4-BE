@@ -31,4 +31,6 @@ interface ContentUseCase {
     fun getContent(userId: Long, contentId: Long): GetContentResponse
 
     fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult>
+
+    fun getUnreadContents(userId: Long, pageable: Pageable): Slice<RemindContentResult>
 }
