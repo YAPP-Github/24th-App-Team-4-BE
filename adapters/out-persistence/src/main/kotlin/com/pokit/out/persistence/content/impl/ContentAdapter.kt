@@ -12,7 +12,6 @@ import com.pokit.out.persistence.content.persist.ContentRepository
 import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
-import com.pokit.out.persistence.user.persist.QUserEntity.userEntity
 import com.querydsl.core.Tuple
 import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.DateTimePath
@@ -62,12 +61,11 @@ class ContentAdapter(
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .join(userEntity).on(userEntity.id.eq(categoryEntity.userId))
 
         FavoriteOrNot(condition.favorites, query) // 북마크 조인 여부
 
         query.where(
-            userEntity.id.eq(userId),
+            categoryEntity.userId.eq(userId),
             condition.categoryId?.let { categoryEntity.id.eq(it) },
             isUnread(condition.isRead),
             contentEntity.deleted.isFalse,
