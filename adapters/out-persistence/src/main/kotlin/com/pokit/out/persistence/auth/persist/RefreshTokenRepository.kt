@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface RefreshTokenRepository : JpaRepository<RefreshTokenEntity, Long> {
     fun findByUserId(userId: Long): RefreshTokenEntity?
+
+    fun deleteByUserId(userId: Long)
 }
