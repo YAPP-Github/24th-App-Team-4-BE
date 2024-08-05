@@ -1,11 +1,11 @@
 package com.pokit.content.dto.response
 
+import com.pokit.category.model.RemindCategory
 import java.time.format.DateTimeFormatter
 
 data class ContentsResponse(
     val contentId: Long,
-    val categoryId: Long,
-    val categoryName: String,
+    val category: RemindCategory,
     val data: String,
     val domain: String,
     val title: String,
@@ -21,8 +21,7 @@ fun ContentsResult.toResponse(): ContentsResponse {
 
     return ContentsResponse(
         contentId = this.contentId,
-        categoryId = this.categoryId,
-        categoryName = this.categoryName,
+        category = this.category,
         data = this.data,
         domain = this.domain,
         title = this.title,
