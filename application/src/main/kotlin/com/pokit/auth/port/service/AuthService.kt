@@ -12,6 +12,7 @@ import com.pokit.token.exception.AuthErrorCode
 import com.pokit.token.model.AuthPlatform
 import com.pokit.token.model.Token
 import com.pokit.user.dto.UserInfo
+import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
@@ -59,7 +60,10 @@ class AuthService(
     }
 
     override fun reissue(refreshToken: String): String {
-        return tokenProvider.reissueToken(refreshToken)
+        val userId = tokenProvider.getUserId(refreshToken)
+        userPort.loadById(userId)
+            ?: throw ClientValidationException(UserErrorCode.NOT_FOUND_USER)
+        return tokenProvider.reissueToken(userId, refreshToken)
     }
 
     private fun createUser(userInfo: UserInfo): User {
