@@ -20,6 +20,7 @@ class SecurityConfig(
         private val WHITE_LIST = arrayOf(
             "/api/v1/auth/signin",
             "/api/v1/auth/reissue",
+            "/api/v1/user/interests",
             "/swagger-ui/index.html#/",
             "/swagger",
             "/swagger-ui.html",

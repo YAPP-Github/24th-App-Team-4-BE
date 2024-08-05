@@ -8,9 +8,11 @@ import com.pokit.user.dto.request.ApiSignUpRequest
 import com.pokit.user.dto.request.ApiUpdateNicknameRequest
 import com.pokit.user.dto.request.toDto
 import com.pokit.user.dto.response.CheckDuplicateNicknameResponse
+import com.pokit.user.dto.response.InterestTypeResponse
 import com.pokit.user.dto.response.UserResponse
 import com.pokit.user.dto.response.toResponse
 import com.pokit.user.exception.UserErrorCode
+import com.pokit.user.model.InterestType
 import com.pokit.user.port.`in`.UserUseCase
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -59,4 +61,11 @@ class UserController(
             .toResponse()
             .wrapOk()
     }
+
+    @GetMapping("/interests")
+    @Operation(summary = "관심사 목록 조회 API")
+    fun getInterests(): ResponseEntity<List<InterestTypeResponse>> =
+        InterestType.values()
+            .map { InterestTypeResponse(it.name, it.kor) }
+            .wrapOk()
 }
