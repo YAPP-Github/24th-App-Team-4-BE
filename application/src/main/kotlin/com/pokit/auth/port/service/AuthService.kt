@@ -51,8 +51,8 @@ class AuthService(
         }
 
         when (request.authPlatform) {
-            AuthPlatform.GOOGLE -> googleApiClient.revoke(request.authorizationCode)
-            AuthPlatform.APPLE -> appleApiClient.revoke(request.authorizationCode)
+            AuthPlatform.GOOGLE -> googleApiClient.revoke(request.refreshToken)
+            AuthPlatform.APPLE -> appleApiClient.revoke(request.refreshToken)
         }
         contentPort.deleteByUserId(user.id)
         userPort.delete(user)

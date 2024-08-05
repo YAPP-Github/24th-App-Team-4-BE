@@ -1,7 +1,6 @@
 package com.pokit.auth.impl
 
 import com.pokit.auth.common.dto.AppleRevokeRequest
-import com.pokit.auth.common.dto.AppleTokenResponse
 import com.pokit.auth.common.property.AppleProperty
 import com.pokit.auth.common.support.AppleFeignClient
 import com.pokit.auth.common.support.AppleKeyGenerator
@@ -30,15 +29,12 @@ class AppleApiAdapter(
         return UserInfo(email = email, authPlatform = AuthPlatform.APPLE)
     }
 
-    override fun revoke(authorizationCode: String) {
+    override fun revoke(refreshToken: String) {
         val clientSecret = appleSecretGenerator.createClientSecret()
-        val tokenResponse = getAuthToken(authorizationCode, clientSecret)
-            ?: throw ClientValidationException(AuthErrorCode.INVALID_AUTHORIZATION_CODE)
 
-        revokeAuth(tokenResponse.accessToken, clientSecret)
+        revokeAuth(refreshToken, clientSecret)
     }
 
-    // 애플에게 공개 키 요청 후 공개키로 idToken 내 고객 정보 추출
     private fun decodeAndVerifyIdToken(idToken: String): Map<String, Any> {
         val publicKeys = appleFeignClient.getApplePublicKeys()
 
@@ -48,21 +44,12 @@ class AppleApiAdapter(
         return claims
     }
 
-    private fun getAuthToken(authorizationCode: String, clientSecret: String): AppleTokenResponse? {
-        return appleFeignClient.getToken(
-            appleProperty.clientId,
-            clientSecret,
-            authorizationCode,
-            "authorization_code"
-        )
-    }
-
-    private fun revokeAuth(accessToken: String, clientSecret: String) {
+    private fun revokeAuth(refreshToken: String, clientSecret: String) {
         val request = AppleRevokeRequest(
             appleProperty.clientId,
             clientSecret,
-            accessToken,
-            "access_token"
+            refreshToken,
+            "refresh_token"
         )
         val response = appleFeignClient.revoke(request)
         if (response.status() != HttpStatus.SC_OK) {
