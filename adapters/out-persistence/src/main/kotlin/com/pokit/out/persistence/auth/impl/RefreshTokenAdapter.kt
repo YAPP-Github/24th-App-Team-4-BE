@@ -25,4 +25,8 @@ class RefreshTokenAdapter(
     override fun deleteById(id: Long) {
         refreshTokenRepository.deleteById(id)
     }
+
+    override fun deleteByUserId(userId: Long) {
+        refreshTokenRepository.deleteByUserId(userId)
+    }
 }

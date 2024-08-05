@@ -28,6 +28,7 @@ class CustomAuthenticationFilter(
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val excludePath = arrayOf(
             "/api/v1/auth/signin",
+            "/api/v1/auth/reissue",
             "/api/v1/user/interests",
             "/swagger-ui/index.html#/",
             "/swagger", "/swagger-ui.html",
