@@ -9,4 +9,6 @@ interface AuthUseCase {
     fun signIn(request: SignInRequest): Token
 
     fun withDraw(user: User, request: RevokeRequest)
+
+    fun reissue(refreshToken: String): String
 }

@@ -8,4 +8,6 @@ interface RefreshTokenPort {
     fun loadByUserId(userId: Long): RefreshToken?
 
     fun deleteById(id: Long)
+
+    fun deleteByUserId(userId: Long)
 }

@@ -19,6 +19,7 @@ class SecurityConfig(
     companion object {
         private val WHITE_LIST = arrayOf(
             "/api/v1/auth/signin",
+            "/api/v1/auth/reissue",
             "/api/v1/user/interests",
             "/swagger-ui/index.html#/",
             "/swagger",
@@ -26,7 +27,7 @@ class SecurityConfig(
             "/swagger-ui/**",
             "/api-docs",
             "/api-docs/**",
-            "/v3/api-docs/**",
+            "/v3/api-docs/**"
         )
     }
 

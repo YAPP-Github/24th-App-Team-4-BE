@@ -5,7 +5,7 @@ import com.pokit.token.model.Token
 interface TokenProvider {
     fun createToken(userId: Long): Token
 
-    fun reissueToken(refreshToken: String): String
+    fun reissueToken(userId: Long, refreshToken: String): String
 
     fun deleteRefreshToken(refreshTokenId: Long)
 

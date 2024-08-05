@@ -22,15 +22,21 @@ class JwtTokenProvider(
     override fun createToken(userId: Long): Token {
         val accessToken = generateToken(userId, jwtProperty.accessExpiryTime)
         val refreshToken = generateToken(userId, jwtProperty.refreshExpiryTime)
+
+        refreshTokenPort.deleteByUserId(userId)
         refreshTokenPort.persist(RefreshToken(userId, refreshToken))
 
         return Token(accessToken, refreshToken)
     }
 
-    override fun reissueToken(refreshToken: String): String {
-        val userId = getUserId(refreshToken)
-        refreshTokenPort.loadByUserId(userId)
+    override fun reissueToken(userId: Long, refreshToken: String): String {
+        val findRefreshToken = refreshTokenPort.loadByUserId(userId)
             ?: throw ClientValidationException(AuthErrorCode.NOT_FOUND_TOKEN)
+
+        if (findRefreshToken.token != refreshToken) {
+            throw ClientValidationException(AuthErrorCode.INVALID_TOKEN)
+        }
+
         return generateToken(userId, jwtProperty.accessExpiryTime)
     }
 
