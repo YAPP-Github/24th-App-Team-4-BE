@@ -25,7 +25,7 @@ class AuthService(
     private val appleApiClient: AppleApiClient,
     private val tokenProvider: TokenProvider,
     private val userPort: UserPort,
-    private val contentPort: ContentPort
+    private val contentPort: ContentPort,
 ) : AuthUseCase {
     @Transactional
     override fun signIn(request: SignInRequest): Token {
@@ -56,6 +56,10 @@ class AuthService(
         }
         contentPort.deleteByUserId(user.id)
         userPort.delete(user)
+    }
+
+    override fun reissue(refreshToken: String): String {
+        return tokenProvider.reissueToken(refreshToken)
     }
 
     private fun createUser(userInfo: UserInfo): User {
