@@ -94,6 +94,9 @@ class CategoryService(
         return SliceImpl(filteredCategories, pageable, categoriesSlice.hasNext())
     }
 
+    override fun getCategory(userId: Long, categoryId: Long): Category =
+        categoryPort.loadCategoryOrThrow(categoryId, userId)
+
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
 
