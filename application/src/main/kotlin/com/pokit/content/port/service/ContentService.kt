@@ -95,6 +95,10 @@ class ContentService(
         return contents
     }
 
+    override fun getContentsByCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult> =
+        contentPort.loadByUserIdAndCategoryName(userId, categoryName, pageable)
+
+
     @Transactional
     override fun getContent(userId: Long, contentId: Long): GetContentResponse {
         val userLog = UserLog(

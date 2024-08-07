@@ -28,6 +28,8 @@ interface ContentUseCase {
         pageable: Pageable,
     ): Slice<ContentsResult>
 
+    fun getContentsByCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult>
+
     fun getContent(userId: Long, contentId: Long): GetContentResponse
 
     fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult>

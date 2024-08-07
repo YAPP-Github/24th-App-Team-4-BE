@@ -32,6 +32,9 @@ class ContentEntity(
     @Column(name = "alert_yn")
     val alertYn: String,
 
+    @Column(name = "domain")
+    val domain: String,
+
     @Column(name = "is_deleted")
     var deleted: Boolean = false
 ) : BaseEntity() {
@@ -47,7 +50,8 @@ class ContentEntity(
             data = content.data,
             title = content.title,
             memo = content.memo,
-            alertYn = content.alertYn
+            alertYn = content.alertYn,
+            domain = content.domain
         )
     }
 }
@@ -60,5 +64,6 @@ fun ContentEntity.toDomain() = Content(
     title = this.title,
     memo = this.memo,
     alertYn = this.alertYn,
+    domain = this.domain,
     createdAt = this.createdAt
 )

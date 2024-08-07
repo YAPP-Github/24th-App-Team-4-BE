@@ -23,6 +23,12 @@ interface ContentPort {
         pageable: Pageable,
     ): Slice<ContentsResult>
 
+    fun loadByUserIdAndCategoryName(
+        userId: Long,
+        categoryName: String,
+        pageable: Pageable,
+    ): Slice<ContentsResult>
+
     fun deleteByUserId(userId: Long)
 
     fun loadByContentIds(contentIds: List<Long>): List<Content>

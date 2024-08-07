@@ -1,5 +1,6 @@
 package com.pokit.out.persistence.content.impl
 
+import com.pokit.category.model.CategoryStatus
 import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
@@ -13,6 +14,7 @@ import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
 import com.querydsl.core.Tuple
+import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.DateTimePath
 import com.querydsl.jpa.impl.JPAQuery
@@ -57,7 +59,6 @@ class ContentAdapter(
         condition: ContentSearchCondition,
         pageable: Pageable,
     ): Slice<ContentsResult> {
-        var hasNext = false
         val order = pageable.sort.getOrderFor("createdAt")
 
         val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
@@ -81,11 +82,7 @@ class ContentAdapter(
 
 
         val contentEntityList = query.fetch()
-
-        if (contentEntityList.size > pageable.pageSize) {
-            hasNext = true
-            contentEntityList.removeAt(contentEntityList.size - 1)
-        }
+        val hasNext = getHasNext(contentEntityList, pageable)
 
         val contents = contentEntityList.map {
             ContentsResult.of(
@@ -98,16 +95,56 @@ class ContentAdapter(
         return SliceImpl(contents, pageable, hasNext)
     }
 
+    override fun loadByUserIdAndCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult> {
+        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
+            .from(contentEntity)
+            .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
+            .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .where(
+                categoryEntity.userId.eq(userId),
+                categoryEntity.name.eq(categoryName),
+                contentEntity.deleted.isFalse,
+            )
+            .offset(pageable.offset)
+            .groupBy(contentEntity)
+            .limit((pageable.pageSize + 1).toLong())
+            .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
+            .fetch()
+
+        val hasNext = getHasNext(contents, pageable)
+
+        val contentResults = contents.map {
+            ContentsResult.of(
+                it[contentEntity]!!.toDomain(),
+                CategoryStatus.resolveDisplayName(it[categoryEntity.name]!!),
+                it[userLogEntity.count()]!!
+            )
+        }
+
+        return SliceImpl(contentResults, pageable, hasNext)
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
+
+    private fun getHasNext(
+        contentEntityList: MutableList<Tuple>,
+        pageable: Pageable,
+    ): Boolean {
+        var hasNext = false
+        if (contentEntityList.size > pageable.pageSize) {
+            hasNext = true
+            contentEntityList.removeAt(contentEntityList.size - 1)
+        }
+        return hasNext
+    }
 
     private fun isUnread(read: Boolean?): Predicate? {
         return read?.let {
             userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ))
         }
     }
-
 
     private fun categoryIn(categoryIds: List<Long>?): Predicate? {
         if (categoryIds.isNullOrEmpty()) {
@@ -154,4 +191,15 @@ class ContentAdapter(
         if (order.isDescending) property.desc()
         else property.asc()
 
+    private fun getSortOrder(property: DateTimePath<LocalDateTime>, sortField: String, pageable: Pageable): OrderSpecifier<*> {
+        val order = pageable.sort.getOrderFor(sortField)
+            ?.direction
+            ?: Sort.Direction.ASC
+
+        return if (order.isAscending) {
+            property.asc()
+        } else {
+            property.desc()
+        }
+    }
 }
