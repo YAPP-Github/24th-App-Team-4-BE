@@ -76,6 +76,7 @@ class ContentAdapter(
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds)
         )
+            .offset(pageable.offset)
             .groupBy(contentEntity)
             .orderBy(getSort(contentEntity.createdAt, order!!))
             .limit(pageable.pageSize + 1L)
