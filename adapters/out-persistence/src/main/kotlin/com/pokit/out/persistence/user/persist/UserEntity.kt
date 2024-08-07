@@ -40,6 +40,7 @@ class UserEntity(
     companion object {
         fun of(user: User) =
             UserEntity(
+                id = user.id,
                 email = user.email,
                 role = user.role,
                 nickname = user.nickName,
