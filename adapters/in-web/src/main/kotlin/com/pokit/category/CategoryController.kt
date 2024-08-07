@@ -56,6 +56,16 @@ class CategoryController(
             .wrapSlice()
             .wrapOk()
 
+    @Operation(summary = "포킷 상세 조회 API")
+    @GetMapping("/{categoryId}")
+    fun getCategory(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable categoryId: Long,
+    ): ResponseEntity<CategoryResponse> =
+        categoryUseCase.getCategory(user.id, categoryId)
+            .toResponse()
+            .wrapOk()
+
     @Operation(summary = "포킷 수정 API")
     @ErrorOperation(CategoryErrorCode::class)
     @PatchMapping("/{categoryId}")

@@ -13,4 +13,5 @@ interface CategoryUseCase {
     fun getTotalCount(userId: Long): Int
     fun getAllCategoryImages(): List<CategoryImage>
     fun getCategories(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<Category>
+    fun getCategory(userId: Long, categoryId: Long): Category
 }
