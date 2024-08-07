@@ -10,10 +10,12 @@ data class User(
     val email: String,
     val role: Role,
     var nickName: String = email,
-    val authPlatform: AuthPlatform
+    val authPlatform: AuthPlatform,
+    var registered: Boolean = false
 ) {
     fun modifyUser(nickName: String) {
         this.nickName = nickName
+        this.registered = true
     }
 
     init {
