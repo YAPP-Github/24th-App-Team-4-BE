@@ -18,12 +18,15 @@ class UserService(
 ) : UserUseCase {
     @Transactional
     override fun signUp(user: User, request: SignUpRequest): User {
-        user.modifyUser(
-            request.nickName,
-        )
-
-        val savedUser = userPort.register(user)
+        val findUser = userPort.loadById(user.id)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+
+        if(findUser.registered) {
+            throw ClientValidationException(UserErrorCode.ALREADY_REGISTERED)
+        }
+
+        findUser.modifyUser(request.nickName,)
+        val savedUser = userPort.persist(findUser)
 
         return savedUser
     }
