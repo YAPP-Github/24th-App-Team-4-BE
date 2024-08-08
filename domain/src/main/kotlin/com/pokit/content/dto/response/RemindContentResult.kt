@@ -30,7 +30,7 @@ fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): Re
 fun ContentsResult.toRemindContentResult(): RemindContentResult {
     return RemindContentResult(
         contentId = this.contentId,
-        category = RemindCategory(this.categoryId, this.categoryName),
+        category = this.category,
         data = this.data,
         title = this.title,
         createdAt = this.createdAt,
