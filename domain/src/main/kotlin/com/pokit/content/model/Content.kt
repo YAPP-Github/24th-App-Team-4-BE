@@ -43,7 +43,7 @@ data class ContentInfo(
     val contentThumbNail: String
 )
 
-fun Content.toContentInfo() = ContentInfo(
-    contentId = this.id,
-    contentThumbNail = this.thumbNail
+data class CategoryInfo(
+    val categoryId: Long,
+    val categoryName: String
 )

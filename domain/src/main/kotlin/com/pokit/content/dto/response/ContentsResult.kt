@@ -1,12 +1,12 @@
 package com.pokit.content.dto.response
 
-import com.pokit.category.model.RemindCategory
 import com.pokit.content.model.Content
+import com.pokit.content.model.CategoryInfo
 import java.time.LocalDateTime
 
 data class ContentsResult(
     val contentId: Long,
-    val category: RemindCategory,
+    val category: CategoryInfo,
     val data: String,
     val domain: String,
     val title: String,
@@ -20,7 +20,7 @@ data class ContentsResult(
         fun of(content: Content, categoryName: String, isRead: Long): ContentsResult {
             return ContentsResult(
                 contentId = content.id,
-                category = RemindCategory(content.categoryId, categoryName),
+                category = CategoryInfo(content.categoryId, categoryName),
                 data = content.data,
                 domain = content.domain,
                 title = content.title,
