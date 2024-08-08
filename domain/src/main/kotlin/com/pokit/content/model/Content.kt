@@ -14,7 +14,8 @@ data class Content(
     var memo: String,
     var alertYn: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    var domain: String = data
+    var domain: String = data,
+    val thumbNail: String = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/category-image/-3+1.png"
 ) {
     fun modify(contentCommand: ContentCommand) {
         this.categoryId = contentCommand.categoryId
@@ -36,3 +37,13 @@ data class Content(
         }
     }
 }
+
+data class ContentInfo(
+    val contentId: Long,
+    val contentThumbNail: String
+)
+
+data class CategoryInfo(
+    val categoryId: Long,
+    val categoryName: String
+)

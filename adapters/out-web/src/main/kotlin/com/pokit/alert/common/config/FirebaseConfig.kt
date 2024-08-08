@@ -1,4 +1,4 @@
-package com.pokit.auth.common.config
+package com.pokit.alert.common.config
 
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
@@ -15,10 +15,9 @@ class FirebaseConfig {
         val resource = ClassPathResource("google-services.json")
         val serviceAccount = resource.inputStream
 
-        val options =
-            FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build()
+        val options = FirebaseOptions.builder()
+            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+            .build()
 
         return FirebaseApp.initializeApp(options)
     }

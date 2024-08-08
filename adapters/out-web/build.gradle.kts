@@ -20,6 +20,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
     implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
+    implementation("com.google.firebase:firebase-admin:8.1.0")
 
 }
 

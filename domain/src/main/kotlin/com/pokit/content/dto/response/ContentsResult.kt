@@ -2,6 +2,7 @@ package com.pokit.content.dto.response
 
 import com.pokit.category.model.RemindCategory
 import com.pokit.content.model.Content
+import com.pokit.content.model.CategoryInfo
 import java.time.LocalDateTime
 
 data class ContentsResult(
