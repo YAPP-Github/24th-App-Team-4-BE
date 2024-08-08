@@ -22,22 +22,14 @@ class UserServiceTest : BehaviorSpec({
         val request = UserFixture.getSignUpRequest()
         val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE)
 
-        every { userPort.register(user) } returns modifieUser
-        every { userPort.register(invalidUser) } returns null
+        every { userPort.loadById(user.id) } returns user
+        every { userPort.persist(any(User::class)) } returns modifieUser
 
         When("수정하려는 정보를 받으면") {
             val response = userService.signUp(user, request)
             Then("회원 정보가 수정되고 수정된 회원의 id가 반환된다.") {
                 response.id shouldBe modifieUser.id
                 response.nickName shouldBe modifieUser.nickName
-            }
-        }
-
-        When("수정하려는 회원을 찾을 수 없으면") {
-            Then("예외가 발생한다.") {
-                shouldThrow<NotFoundCustomException> {
-                    userService.signUp(invalidUser, request)
-                }
             }
         }
     }

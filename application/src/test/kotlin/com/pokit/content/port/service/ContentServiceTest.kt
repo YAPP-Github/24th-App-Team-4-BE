@@ -7,6 +7,7 @@ import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.ContentFixture
 import com.pokit.content.dto.request.toDomain
+import com.pokit.content.model.Content
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.UserFixture
@@ -55,6 +56,9 @@ class ContentServiceTest : BehaviorSpec({
         val content = ContentFixture.getContent()
 
         val command = ContentFixture.getContentCommand(1L)
+        val createContent = command.toDomain()
+        createContent.parseDomain()
+
         val invalidCommand = ContentFixture.getContentCommand(2L)
 
         val user = UserFixture.getUser()
@@ -65,12 +69,12 @@ class ContentServiceTest : BehaviorSpec({
         } returns category
 
         every {
-            contentPort.persist(command.toDomain())
-        } returns command.toDomain()
+            contentPort.persist(any(Content::class))
+        } returns createContent
 
         every {
-            contentPort.loadByUserIdAndId(user.id, content.id)
-        } returns content
+            contentPort.loadByUserIdAndId(user.id, createContent.id)
+        } returns createContent
 
         every {
             contentPort.loadByUserIdAndId(user.id, invalidContentId)

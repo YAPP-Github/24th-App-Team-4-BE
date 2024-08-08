@@ -42,7 +42,7 @@ class AuthService(
 
         val token = tokenProvider.createToken(user.id)
 
-        return token
+        return token.copy(isRegistered = user.registered)
     }
 
     @Transactional

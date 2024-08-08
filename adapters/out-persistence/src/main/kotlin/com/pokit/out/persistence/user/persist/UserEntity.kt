@@ -28,7 +28,10 @@ class UserEntity(
     val authPlatform: AuthPlatform,
 
     @Column(name = "deleted")
-    var deleted: Boolean = false
+    var deleted: Boolean = false,
+
+    @Column(name = "is_registered")
+    var registered: Boolean
 ) {
     fun delete() {
         this.deleted = true
@@ -37,10 +40,12 @@ class UserEntity(
     companion object {
         fun of(user: User) =
             UserEntity(
+                id = user.id,
                 email = user.email,
                 role = user.role,
                 nickname = user.nickName,
-                authPlatform = user.authPlatform
+                authPlatform = user.authPlatform,
+                registered = user.registered
             )
     }
 }
@@ -50,9 +55,6 @@ fun UserEntity.toDomain() = User(
     email = this.email,
     role = this.role,
     nickName = this.nickname,
-    authPlatform = this.authPlatform
+    authPlatform = this.authPlatform,
+    registered = this.registered
 )
-
-fun UserEntity.registerInfo(user: User) {
-    this.nickname = user.nickName
-}
