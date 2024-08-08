@@ -10,7 +10,7 @@ class ContentFixture {
         fun getContent() = Content(
             categoryId = 1L,
             type = ContentType.LINK,
-            data = "blahblah.com",
+            data = "https://github.com/YAPP-Github/24th-App-Team-4-BE/pull/73",
             title = "어떤 제목",
             memo = "이러한 내용 요약",
             alertYn = "YES"
@@ -35,7 +35,7 @@ class ContentFixture {
         )
 
         fun getContentCommand(categoryId: Long) = ContentCommand(
-            data = "www.naver.com",
+            data = "https://github.com/YAPP-Github/24th-App-Team-4-BE/pull/73",
             title = "네이버",
             categoryId = categoryId,
             memo = "네이버우어",

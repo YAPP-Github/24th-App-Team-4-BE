@@ -9,8 +9,6 @@ interface UserPort {
 
     fun loadById(id: Long): User?
 
-    fun register(user: User): User?
-
     fun checkByNickname(nickname: String): Boolean
 
     fun delete(user: User)

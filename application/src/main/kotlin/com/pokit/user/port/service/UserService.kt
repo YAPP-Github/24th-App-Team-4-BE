@@ -1,5 +1,10 @@
 package com.pokit.user.port.service
 
+import com.pokit.category.exception.CategoryErrorCode
+import com.pokit.category.model.Category
+import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
+import com.pokit.category.port.out.CategoryImagePort
+import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.user.dto.request.SignUpRequest
@@ -14,16 +19,35 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class UserService(
-    private val userPort: UserPort
+    private val userPort: UserPort,
+    private val categoryPort: CategoryPort,
+    private val categoryImagePort: CategoryImagePort
 ) : UserUseCase {
+    companion object {
+        private const val UNCATEGORIZED_IMAGE_ID = 1
+    }
+
     @Transactional
     override fun signUp(user: User, request: SignUpRequest): User {
-        user.modifyUser(
-            request.nickName,
-        )
-
-        val savedUser = userPort.register(user)
+        val findUser = userPort.loadById(user.id)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+
+        if (findUser.registered) {
+            throw ClientValidationException(UserErrorCode.ALREADY_REGISTERED)
+        }
+
+        findUser.register(request.nickName)
+        val savedUser = userPort.persist(findUser)
+
+        val image = (categoryImagePort.loadById(UNCATEGORIZED_IMAGE_ID)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_UNCATEGORIZED_IMAGE))
+
+        val category = Category(
+            userId = savedUser.id,
+            categoryName = UNCATEGORIZED.displayName,
+            categoryImage = image
+        )
+        categoryPort.persist(category)
 
         return savedUser
     }
@@ -42,7 +66,7 @@ class UserService(
             throw ClientValidationException(UserErrorCode.ALREADY_EXISTS_NICKNAME)
         }
 
-        findUser.modifyUser(request.nickname)
+        findUser.modifyNickname(request.nickname)
         return userPort.persist(findUser)
     }
 }

@@ -16,7 +16,7 @@ class AppleTokenParser(
     private val typeReference = object : TypeReference<Map<String, String>>() {}
 
     fun parseHeader(idToken: String): Map<String, String> {
-        val header = idToken.split("\\.")[0]
+        val header = idToken.split(".")[0]
         val decodedHeader = String(Base64.getDecoder().decode(header), StandardCharsets.UTF_8)
         return objectMapper.readValue(decodedHeader, typeReference)
     }

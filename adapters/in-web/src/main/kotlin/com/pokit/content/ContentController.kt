@@ -4,6 +4,7 @@ import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.model.toDomain
 import com.pokit.category.exception.CategoryErrorCode
+import com.pokit.category.model.CategoryStatus
 import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
@@ -108,6 +109,27 @@ class ContentController(
         return contentUseCase.getContents(
             user.id,
             condition.copy(categoryId = categoryId).toDto(),
+            pageable
+        )
+            .map { it.toResponse() }
+            .wrapSlice()
+            .wrapOk()
+    }
+
+    @GetMapping("/uncategorized")
+    @Operation(summary = "미분류 카테고리 컨텐츠 조회")
+    fun getUncategorizedContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+    ): ResponseEntity<SliceResponseDto<ContentsResponse>> {
+        return contentUseCase.getContentsByCategoryName(
+            user.id,
+            CategoryStatus.UNCATEGORIZED.name,
             pageable
         )
             .map { it.toResponse() }
