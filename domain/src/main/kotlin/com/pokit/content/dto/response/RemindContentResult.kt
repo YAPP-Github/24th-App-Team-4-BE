@@ -2,6 +2,7 @@ package com.pokit.content.dto.response
 
 import com.pokit.category.model.RemindCategory
 import com.pokit.content.model.Content
+import com.pokit.content.model.ContentDefault
 import java.time.LocalDateTime
 
 data class RemindContentResult(
@@ -16,8 +17,6 @@ data class RemindContentResult(
 )
 
 fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): RemindContentResult {
-    val defaultThumbNail = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/logo/pokit.png"
-
     return RemindContentResult(
         contentId = this.id,
         category = category,
@@ -26,7 +25,7 @@ fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): Re
         createdAt = this.createdAt,
         isRead = isRead,
         domain = this.domain,
-        thumbNail = this.thumbNail ?: defaultThumbNail
+        thumbNail = this.thumbNail ?: ContentDefault.THUMB_NAIL
     )
 }
 

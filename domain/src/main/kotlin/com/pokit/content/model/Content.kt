@@ -48,3 +48,7 @@ data class CategoryInfo(
     val categoryId: Long,
     val categoryName: String
 )
+
+object ContentDefault {
+    const val THUMB_NAIL = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/logo/pokit.png"
+}

@@ -2,6 +2,7 @@ package com.pokit.content.dto.response
 
 import com.pokit.category.model.RemindCategory
 import com.pokit.content.model.Content
+import com.pokit.content.model.ContentDefault
 import java.time.LocalDateTime
 
 data class ContentsResult(
@@ -17,7 +18,6 @@ data class ContentsResult(
     val thumbNail: String
 ) {
     companion object {
-        private const val defaultThumbNail = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/logo/pokit.png"
         fun of(content: Content, categoryName: String, isRead: Long): ContentsResult {
             return ContentsResult(
                 contentId = content.id,
@@ -29,7 +29,7 @@ data class ContentsResult(
                 alertYn = content.alertYn,
                 createdAt = content.createdAt,
                 isRead = isRead > 0,
-                thumbNail = content.thumbNail ?: defaultThumbNail
+                thumbNail = content.thumbNail ?: ContentDefault.THUMB_NAIL
             )
         }
     }
