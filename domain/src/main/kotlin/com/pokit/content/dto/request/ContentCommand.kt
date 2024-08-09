@@ -7,7 +7,8 @@ data class ContentCommand(
     val title: String,
     val categoryId: Long,
     val memo: String,
-    val alertYn: String
+    val alertYn: String,
+    val thumbNail: String?
 )
 
 fun ContentCommand.toDomain() = Content(
@@ -15,5 +16,6 @@ fun ContentCommand.toDomain() = Content(
     data = this.data,
     title = this.title,
     memo = this.memo,
-    alertYn = this.alertYn
+    alertYn = this.alertYn,
+    thumbNail = this.thumbNail
 )

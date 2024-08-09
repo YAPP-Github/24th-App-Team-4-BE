@@ -15,7 +15,7 @@ data class Content(
     var alertYn: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var domain: String = data,
-    val thumbNail: String = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/category-image/-3+1.png"
+    var thumbNail: String?
 ) {
     fun modify(contentCommand: ContentCommand) {
         this.categoryId = contentCommand.categoryId
@@ -23,6 +23,7 @@ data class Content(
         this.title = contentCommand.title
         this.memo = contentCommand.memo
         this.alertYn = contentCommand.alertYn
+        this.thumbNail = contentCommand.thumbNail
     }
 
     fun parseDomain() {
@@ -47,3 +48,7 @@ data class CategoryInfo(
     val categoryId: Long,
     val categoryName: String
 )
+
+object ContentDefault {
+    const val THUMB_NAIL = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/logo/pokit.png"
+}
