@@ -17,7 +17,8 @@ data class CreateContentRequest(
     val categoryId: Int,
     @field:Size(max = 100, message = "최대 100자까지만 입력 가능합니다.")
     val memo: String,
-    val alertYn: String
+    val alertYn: String,
+    val thumbNail: String?
 )
 
 internal fun CreateContentRequest.toDto() = ContentCommand(
@@ -25,5 +26,6 @@ internal fun CreateContentRequest.toDto() = ContentCommand(
     title = this.title,
     categoryId = this.categoryId.toLong(),
     memo = this.memo,
-    alertYn = this.alertYn
+    alertYn = this.alertYn,
+    thumbNail = this.thumbNail
 )

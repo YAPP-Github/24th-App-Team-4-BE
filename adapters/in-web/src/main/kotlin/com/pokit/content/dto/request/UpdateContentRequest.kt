@@ -12,7 +12,8 @@ data class UpdateContentRequest(
     val categoryId: Long,
     @field:Size(max = 100, message = "최대 100자까지만 입력 가능합니다.")
     val memo: String,
-    val alertYn: String
+    val alertYn: String,
+    val thumbNail: String?
 )
 
 internal fun UpdateContentRequest.toDto() = ContentCommand(
@@ -20,5 +21,6 @@ internal fun UpdateContentRequest.toDto() = ContentCommand(
     title = this.title,
     categoryId = this.categoryId,
     memo = this.memo,
-    alertYn = this.alertYn
+    alertYn = this.alertYn,
+    thumbNail = this.thumbNail
 )
