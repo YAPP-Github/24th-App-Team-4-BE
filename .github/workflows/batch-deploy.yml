@@ -44,8 +44,6 @@ jobs:
           echo "${{ secrets.OUT_WEB_YML }}" > ./adapters/out-web/src/main/resources/application-out-web.yml
           mkdir -p ./application/src/main/resources
           echo "${{ secrets.APPLICATION_CORE }}" > ./application/src/main/resources/application-core.yml
-          mkdir -p ./entry/batch/src/main/resources
-          echo "${{ secrets.ENTRY_BATCH }}" > ./entry/batch/src/main/resources/application-entry-batch.yml
 
       - name: Build with Gradle
         run: ./gradlew :entry:batch:build --no-daemon
@@ -90,4 +88,4 @@ jobs:
 
       - name: Remove IP FROM security group
         run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.publicip.outputs.ip  }}/32
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_BATCH_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.publicip.outputs.ip  }}/32
