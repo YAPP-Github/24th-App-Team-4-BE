@@ -129,7 +129,7 @@ class ContentController(
     ): ResponseEntity<SliceResponseDto<ContentsResponse>> {
         return contentUseCase.getContentsByCategoryName(
             user.id,
-            CategoryStatus.UNCATEGORIZED.name,
+            CategoryStatus.UNCATEGORIZED.displayName,
             pageable
         )
             .map { it.toResponse() }

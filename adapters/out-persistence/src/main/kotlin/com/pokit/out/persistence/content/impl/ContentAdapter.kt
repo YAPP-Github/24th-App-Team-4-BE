@@ -117,7 +117,7 @@ class ContentAdapter(
         val contentResults = contents.map {
             ContentsResult.of(
                 it[contentEntity]!!.toDomain(),
-                CategoryStatus.resolveDisplayName(it[categoryEntity.name]!!),
+                it[categoryEntity.name]!!,
                 it[userLogEntity.count()]!!
             )
         }
