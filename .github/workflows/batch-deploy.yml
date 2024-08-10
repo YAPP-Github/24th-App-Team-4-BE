@@ -53,7 +53,7 @@ jobs:
       - name: Docker build and push
         run: |
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-          docker build -f entry/batch/Dockerfile -t $DOCKERHUB_USERNAME/DOCKERHUB_BATCH_IMAGE:latest .
+          docker build -f entry/batch/Dockerfile -t $DOCKERHUB_USERNAME/$DOCKERHUB_BATCH_IMAGE:latest .
           docker push $DOCKERHUB_USERNAME/DOCKERHUB_BATCH_IMAGE:latest
 
       - name: Get Public IP
