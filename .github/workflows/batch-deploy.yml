@@ -1,0 +1,93 @@
+name: batch deploy
+
+on:
+  push:
+    branches:
+      - feature/#58
+      - main
+      - develop
+    paths:
+      - 'adapters/in-batch/**'
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  DOCKERHUB_BATCH_IMAGE: ${{ secrets.DOCKERHUB_BATCH_IMAGE }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        kotlin-version: [ "1.9.23" ]
+        java-version: [ "17" ]
+
+    steps:
+      - name: Check Out The Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Kotlin
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          kotlin-version: ${{ matrix.kotlin-version }}
+          distribution: 'corretto'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Create config file
+        run: |
+          mkdir -p ./adapters/out-persistence/src/main/resources
+          echo "${{ secrets.OUT_PERSISTENCE_YML }}" > ./adapters/out-persistence/src/main/resources/application-out-persistence.yml
+          mkdir -p ./adapters/out-web/src/main/resources
+          echo "${{ secrets.OUT_WEB_GOOGLE }}" | base64 --decode > ./adapters/out-web/src/main/resources/google-services.json
+          echo "${{ secrets.OUT_WEB_YML }}" > ./adapters/out-web/src/main/resources/application-out-web.yml
+          mkdir -p ./application/src/main/resources
+          echo "${{ secrets.APPLICATION_CORE }}" > ./application/src/main/resources/application-core.yml
+
+      - name: Build with Gradle
+        run: ./gradlew :entry:batch:build --no-daemon
+
+      - name: Docker build and push
+        run: |
+          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+          docker build -f entry/batch/Dockerfile -t $DOCKERHUB_USERNAME/$DOCKERHUB_BATCH_IMAGE:latest .
+          docker push $DOCKERHUB_USERNAME/$DOCKERHUB_BATCH_IMAGE:latest
+
+      - name: Get Public IP
+        id: publicip
+        run: |
+          response=$(curl -s canhazip.com)
+          echo "ip='$response'" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_BATCH_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_BATCH_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Add GitHub IP to AWS
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_BATCH_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.publicip.outputs.ip  }}/32
+
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.BATCH_HOST }}
+          username: ${{ secrets.BATCH_USERNAME }}
+          key: ${{ secrets.BATCH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd pokit-batch
+
+            sudo docker-compose pull
+            sudo docker-compose down
+            sudo docker-compose up --force-recreate --remove-orphans -d
+            sudo docker image prune -f
+
+      - name: Remove IP FROM security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_BATCH_SG_ID }} --protocol tcp --port ${{ secrets.PORT }} --cidr ${{ steps.publicip.outputs.ip  }}/32
