@@ -62,7 +62,8 @@ class ContentFixture {
             favorites = null,
             startDate = null,
             endDate = null,
-            categoryIds = null
+            categoryIds = null,
+            searchWord = null
         )
     }
 }

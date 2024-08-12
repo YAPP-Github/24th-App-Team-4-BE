@@ -1,7 +1,8 @@
 package com.pokit.user.port.service
 
+import com.pokit.category.port.out.CategoryImagePort
+import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.ClientValidationException
-import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.UserFixture
 import com.pokit.user.dto.request.UpdateNicknameRequest
@@ -15,7 +16,9 @@ import io.mockk.mockk
 
 class UserServiceTest : BehaviorSpec({
     val userPort = mockk<UserPort>()
-    val userService = UserService(userPort)
+    val categoryPort = mockk<CategoryPort>()
+    val categoryImagePort = mockk<CategoryImagePort>()
+    val userService = UserService(userPort, categoryPort, categoryImagePort)
     Given("회원을 등록할 때") {
         val user = UserFixture.getUser()
         val invalidUser = UserFixture.getInvalidUser()
