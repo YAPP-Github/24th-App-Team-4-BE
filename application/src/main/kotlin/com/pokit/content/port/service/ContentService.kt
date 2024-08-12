@@ -113,20 +113,10 @@ class ContentService(
     }
 
     override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
-        val bookMarks = bookMarkPort.loadByUserId(userId, pageable)
-        val contentIds = bookMarks.content.map { it.contentId }
-        val contentsById = contentPort.loadByContentIds(contentIds).associateBy { it.id }
+        val bookMarks = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
+            .map { it.toRemindContentResult() }
 
-        val remindContents = contentIds.map { contentId ->
-            val content = contentsById[contentId]
-            content?.let {
-                val isRead = userLogPort.isContentRead(it.id, userId)
-                val category = categoryPort.loadCategoryOrThrow(it.categoryId, userId).toRemindCategory()
-                it.toRemindContentResult(isRead, category)
-            }
-        }
-
-        return SliceImpl(remindContents, pageable, bookMarks.hasNext())
+        return SliceImpl(bookMarks.content, pageable, bookMarks.hasNext())
     }
 
     override fun getUnreadContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {

@@ -32,4 +32,6 @@ interface ContentPort {
     fun deleteByUserId(userId: Long)
 
     fun loadByContentIds(contentIds: List<Long>): List<Content>
+
+    fun loadBookmarkedContentsByUserId(userId: Long, pageable: Pageable): Slice<ContentsResult>
 }
