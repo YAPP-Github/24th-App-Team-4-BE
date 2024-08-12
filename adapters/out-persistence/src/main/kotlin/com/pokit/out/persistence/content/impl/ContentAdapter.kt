@@ -1,7 +1,7 @@
 package com.pokit.out.persistence.content.impl
 
-import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
+import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.model.Content
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
@@ -73,7 +73,8 @@ class ContentAdapter(
             isUnread(condition.isRead),
             contentEntity.deleted.isFalse,
             dateBetween(condition.startDate, condition.endDate),
-            categoryIn(condition.categoryIds)
+            categoryIn(condition.categoryIds),
+            containsWord(condition.searchWord)
         )
             .offset(pageable.offset)
             .groupBy(contentEntity)
@@ -229,6 +230,13 @@ class ContentAdapter(
             property.asc()
         } else {
             property.desc()
+        }
+    }
+
+    private fun containsWord(searchWord: String?): Predicate? {
+        return searchWord?.let {
+            contentEntity.title.contains(searchWord)
+                .or(contentEntity.memo.contains(searchWord))
         }
     }
 }
