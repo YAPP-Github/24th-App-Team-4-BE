@@ -1,6 +1,5 @@
 package com.pokit.out.persistence.content.impl
 
-import com.pokit.category.model.CategoryStatus
 import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.model.Content
@@ -104,6 +103,35 @@ class ContentAdapter(
             .where(
                 categoryEntity.userId.eq(userId),
                 categoryEntity.name.eq(categoryName),
+                contentEntity.deleted.isFalse,
+            )
+            .offset(pageable.offset)
+            .groupBy(contentEntity)
+            .limit((pageable.pageSize + 1).toLong())
+            .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
+            .fetch()
+
+        val hasNext = getHasNext(contents, pageable)
+
+        val contentResults = contents.map {
+            ContentsResult.of(
+                it[contentEntity]!!.toDomain(),
+                it[categoryEntity.name]!!,
+                it[userLogEntity.count()]!!
+            )
+        }
+
+        return SliceImpl(contentResults, pageable, hasNext)
+    }
+
+    override fun loadBookmarkedContentsByUserId(userId: Long, pageable: Pageable): Slice<ContentsResult> {
+        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
+            .from(contentEntity)
+            .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
+            .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .join(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
+            .where(
+                categoryEntity.userId.eq(userId),
                 contentEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
