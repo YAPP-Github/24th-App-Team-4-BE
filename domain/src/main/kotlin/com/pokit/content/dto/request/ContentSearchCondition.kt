@@ -8,5 +8,6 @@ data class ContentSearchCondition(
     val favorites: Boolean?,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
-    val categoryIds: List<Long>?
+    val categoryIds: List<Long>?,
+    val searchWord: String?
 )

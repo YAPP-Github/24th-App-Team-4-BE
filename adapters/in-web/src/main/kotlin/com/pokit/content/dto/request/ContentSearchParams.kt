@@ -11,7 +11,8 @@ data class ContentSearchParams(
     val startDate: LocalDate?,
     @DateTimeFormat(pattern = "yyyy.MM.dd")
     val endDate: LocalDate?,
-    val categoryIds: List<Long>?
+    val categoryIds: List<Long>?,
+    val searchWord: String?
 )
 
 internal fun ContentSearchParams.toDto() = ContentSearchCondition(
@@ -20,5 +21,6 @@ internal fun ContentSearchParams.toDto() = ContentSearchCondition(
     favorites = this.favorites,
     startDate = this.startDate,
     endDate = this.endDate,
-    categoryIds = this.categoryIds
+    categoryIds = this.categoryIds,
+    searchWord = this.searchWord
 )

@@ -160,7 +160,7 @@ class ContentAdapterTest(
             )
             val savedAnotherCategory = categoryRepository.save(CategoryEntity.of(anotherCategory))
 
-            val content3 = ContentFixture.getContent(savedAnotherCategory.id)
+            val content3 = ContentFixture.getContent(savedAnotherCategory.id).copy(title = "제목3의 컨텐츠")
             contentRepository.save(ContentEntity.of(content3))
 
 
@@ -181,6 +181,17 @@ class ContentAdapterTest(
                 )
                 Then("둘 중 하나라도 만족하면 조회된다.") {
                     result.content.size shouldBe 3
+                }
+            }
+            When("키워드로 검색할 떄") {
+                val result = contentAdapter.loadAllByUserIdAndContentId(
+                    savedUser.id,
+                    condition.copy(categoryId = null, searchWord = content3.title),
+                    pageRequest
+                )
+                Then("해당 키워드를 제목이나 메모에 포함하는 컨텐츠들이 조회된다.") {
+                    result.content.size shouldBe 1
+                    result.content[0].title shouldBe content3.title
                 }
             }
 
