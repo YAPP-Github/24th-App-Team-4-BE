@@ -38,7 +38,7 @@ class AuthService(
                 AuthPlatform.APPLE -> appleApiClient.getUserInfo(request.idToken)
             }
 
-        val user = userPort.loadByEmail(userInfo.email) ?: createUser(userInfo) // 없으면 저장
+        val user = userPort.loadByEmailAndAuthPlatform(userInfo.email, platformType) ?: createUser(userInfo) // 없으면 저장
 
         val token = tokenProvider.createToken(user.id)
 

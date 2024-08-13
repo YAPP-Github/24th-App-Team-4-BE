@@ -1,5 +1,7 @@
 package com.pokit.user.port.service
 
+import com.pokit.category.CategoryFixture
+import com.pokit.category.model.CategoryImage
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.ClientValidationException
@@ -24,9 +26,13 @@ class UserServiceTest : BehaviorSpec({
         val invalidUser = UserFixture.getInvalidUser()
         val request = UserFixture.getSignUpRequest()
         val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE)
+        val image = CategoryImage(1, "https://www.image.com")
+        val unCategorized = CategoryFixture.getUnCategorized(user.id, image)
 
         every { userPort.loadById(user.id) } returns user
         every { userPort.persist(any(User::class)) } returns modifieUser
+        every { categoryImagePort.loadById(1) } returns image
+        every { categoryPort.persist(unCategorized) } returns unCategorized
 
         When("수정하려는 정보를 받으면") {
             val response = userService.signUp(user, request)
