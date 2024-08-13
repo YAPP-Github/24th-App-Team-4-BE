@@ -18,7 +18,7 @@ class UserAdapter(
         return savedUser.toDomain()
     }
 
-    override fun loadByEmail(email: String) = userRepository.findByEmail(email)
+    override fun loadByEmail(email: String) = userRepository.findByEmailAndDeleted(email, false)
         ?.run { toDomain() }
 
     override fun loadById(id: Long) = userRepository.findByIdAndDeleted(id, false)
