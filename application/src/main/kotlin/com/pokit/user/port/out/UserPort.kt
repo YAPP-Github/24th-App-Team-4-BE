@@ -1,11 +1,12 @@
 package com.pokit.user.port.out
 
+import com.pokit.token.model.AuthPlatform
 import com.pokit.user.model.User
 
 interface UserPort {
     fun persist(user: User): User
 
-    fun loadByEmail(email: String): User?
+    fun loadByEmailAndAuthPlatform(email: String, authPlatform: AuthPlatform): User?
 
     fun loadById(id: Long): User?
 
