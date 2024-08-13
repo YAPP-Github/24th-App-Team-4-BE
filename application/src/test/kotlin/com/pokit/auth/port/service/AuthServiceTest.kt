@@ -6,6 +6,7 @@ import com.pokit.auth.port.out.AppleApiClient
 import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.content.port.out.ContentPort
+import com.pokit.token.model.AuthPlatform
 import com.pokit.user.UserFixture
 import com.pokit.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow
@@ -33,7 +34,9 @@ class AuthServiceTest : BehaviorSpec({
         val reissueResult = "accessToken"
 
         every { googleApiClient.getUserInfo(request.idToken) } returns userInfo
-        every { userPort.loadByEmail(userInfo.email) } returns user
+        every {
+            userPort.loadByEmailAndAuthPlatform(userInfo.email, AuthPlatform.of(request.authPlatform))
+        } returns user
         every { userPort.loadById(user.id) } returns user
         every { tokenProvider.createToken(user.id) } returns token
         every { tokenProvider.getUserId("refresh") } returns user.id
