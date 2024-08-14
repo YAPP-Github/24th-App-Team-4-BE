@@ -58,8 +58,6 @@ class ContentAdapter(
         condition: ContentSearchCondition,
         pageable: Pageable,
     ): Slice<ContentsResult> {
-        val order = pageable.sort.getOrderFor("createdAt")
-
         val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
@@ -78,7 +76,7 @@ class ContentAdapter(
         )
             .offset(pageable.offset)
             .groupBy(contentEntity)
-            .orderBy(getSort(contentEntity.createdAt, order!!))
+            .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
             .limit(pageable.pageSize + 1L)
 
 
