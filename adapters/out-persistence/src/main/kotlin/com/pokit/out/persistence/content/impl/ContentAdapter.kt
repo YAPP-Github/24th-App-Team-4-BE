@@ -50,7 +50,7 @@ class ContentAdapter(
     }
 
     override fun fetchContentCountByCategoryId(categoryId: Long): Int =
-        contentRepository.countByCategoryId(categoryId)
+        contentRepository.countByCategoryIdAndDeleted(categoryId, false)
 
 
     override fun loadAllByUserIdAndContentId(
