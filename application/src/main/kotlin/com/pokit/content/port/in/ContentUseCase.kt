@@ -4,7 +4,7 @@ import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.BookMarkContentResponse
-import com.pokit.content.dto.response.GetContentResponse
+import com.pokit.content.dto.response.GetContentResult
 import com.pokit.content.dto.response.RemindContentResult
 import com.pokit.content.model.Content
 import com.pokit.user.model.User
@@ -30,7 +30,7 @@ interface ContentUseCase {
 
     fun getContentsByCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult>
 
-    fun getContent(userId: Long, contentId: Long): GetContentResponse
+    fun getContent(userId: Long, contentId: Long): GetContentResult
 
     fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult>
 
