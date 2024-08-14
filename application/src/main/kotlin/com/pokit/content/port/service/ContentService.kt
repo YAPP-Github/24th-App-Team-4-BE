@@ -94,16 +94,17 @@ class ContentService(
 
 
     @Transactional
-    override fun getContent(userId: Long, contentId: Long): GetContentResponse {
+    override fun getContent(userId: Long, contentId: Long): GetContentResult {
         val userLog = UserLog(
             contentId, userId, LogType.READ
         )
         userLogPort.persist(userLog) // 읽음 처리
 
         val content = verifyContent(userId, contentId)
+        val category = verifyCategory(content.categoryId, userId)
         val bookmarkStatus = bookMarkPort.isBookmarked(contentId, userId)
 
-        return content.toGetContentResponse(bookmarkStatus)
+        return content.toGetContentResponse(bookmarkStatus, category)
     }
 
     override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
