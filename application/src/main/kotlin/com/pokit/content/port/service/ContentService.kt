@@ -104,7 +104,7 @@ class ContentService(
         val category = verifyCategory(content.categoryId, userId)
         val bookmarkStatus = bookMarkPort.isBookmarked(contentId, userId)
 
-        return content.toGetContentResponse(bookmarkStatus, category)
+        return content.toGetContentResult(bookmarkStatus, category)
     }
 
     override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
