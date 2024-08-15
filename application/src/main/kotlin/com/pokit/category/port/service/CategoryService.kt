@@ -1,6 +1,8 @@
 package com.pokit.category.port.service
 
+import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
+import com.pokit.category.dto.toCategoriesRespoonse
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
@@ -77,12 +79,13 @@ class CategoryService(
     override fun getTotalCount(userId: Long): Int =
         categoryPort.countByUserId(userId)
 
-    override fun getCategories(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<Category> {
+    override fun getCategories(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse> {
         val categoriesSlice = categoryPort.loadAllByUserId(userId, pageable)
 
         val categories = categoriesSlice.content.map { category ->
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
             category.copy(contentCount = contentCount)
+            category.toCategoriesRespoonse()
         }
 
         val filteredCategories = if (filterUncategorized) {
