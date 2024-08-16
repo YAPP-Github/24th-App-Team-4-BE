@@ -5,7 +5,7 @@ import com.pokit.content.model.CategoryInfo
 import com.pokit.content.model.Content
 import java.time.LocalDateTime
 
-data class GetContentResult(
+data class ContentResult(
     val contentId: Long,
     val category: CategoryInfo,
     val data: String,
@@ -16,8 +16,8 @@ data class GetContentResult(
     val favorites: Boolean = false
 )
 
-fun Content.toGetContentResult(favorites: Boolean, category: Category): GetContentResult {
-    return GetContentResult(
+fun Content.toGetContentResult(favorites: Boolean, category: Category): ContentResult {
+    return ContentResult(
         contentId = this.id,
         category = CategoryInfo(category.categoryId, category.categoryName),
         data = this.data,
