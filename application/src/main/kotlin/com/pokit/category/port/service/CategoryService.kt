@@ -85,6 +85,7 @@ class CategoryService(
         val categories = categoriesSlice.content.map { category ->
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
             category.copy(contentCount = contentCount)
+        }.map { category ->
             category.toCategoriesRespoonse()
         }
 
