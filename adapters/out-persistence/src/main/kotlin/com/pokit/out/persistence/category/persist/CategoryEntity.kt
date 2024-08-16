@@ -47,4 +47,5 @@ fun CategoryEntity.toDomain() = Category(
     categoryName = this.name,
     categoryImage = this.image.toDomain(),
     userId = this.userId,
+    createdAt = this.createdAt
 )

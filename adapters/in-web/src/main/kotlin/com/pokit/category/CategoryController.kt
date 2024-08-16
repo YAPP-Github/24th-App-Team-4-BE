@@ -2,13 +2,13 @@ package com.pokit.category
 
 import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
+import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.request.CreateCategoryRequest
 import com.pokit.category.dto.request.toDto
 import com.pokit.category.dto.response.CategoryCountResponse
 import com.pokit.category.dto.response.CategoryResponse
 import com.pokit.category.dto.response.toResponse
 import com.pokit.category.exception.CategoryErrorCode
-import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.dto.SliceResponseDto
@@ -51,7 +51,7 @@ class CategoryController(
             direction = Sort.Direction.DESC
         ) pageable: Pageable,
         @RequestParam(defaultValue = "true") filterUncategorized: Boolean
-    ): ResponseEntity<SliceResponseDto<Category>> =
+    ): ResponseEntity<SliceResponseDto<CategoriesResponse>> =
         categoryUseCase.getCategories(user.id, pageable, filterUncategorized)
             .wrapSlice()
             .wrapOk()

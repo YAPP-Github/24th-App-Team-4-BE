@@ -16,7 +16,7 @@ data class GetContentResult(
     val favorites: Boolean = false
 )
 
-fun Content.toGetContentResponse(favorites: Boolean, category: Category): GetContentResult {
+fun Content.toGetContentResult(favorites: Boolean, category: Category): GetContentResult {
     return GetContentResult(
         contentId = this.id,
         category = CategoryInfo(category.categoryId, category.categoryName),
