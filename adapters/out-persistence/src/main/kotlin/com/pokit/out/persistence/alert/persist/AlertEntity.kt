@@ -1,7 +1,6 @@
 package com.pokit.out.persistence.alert.persist
 
 import com.pokit.alert.model.Alert
-import com.pokit.content.model.ContentInfo
 import com.pokit.out.persistence.BaseEntity
 import jakarta.persistence.*
 
@@ -25,20 +24,20 @@ class AlertEntity(
     @Column(name = "title")
     val title: String,
 
-    @Column(name = "body")
-    val body: String,
-
     @Column(name = "is_deleted")
-    val deleted: Boolean = false
-
+    var deleted: Boolean = false
 ) : BaseEntity() {
+
+    fun delete() {
+        this.deleted = true
+    }
+
     companion object {
         fun of(alert: Alert) = AlertEntity(
             userId = alert.userId,
-            contentId = alert.content.contentId,
-            contentThumbNail = alert.content.contentThumbNail,
+            contentId = alert.contentId,
+            contentThumbNail = alert.contentThumbNail,
             title = alert.title,
-            body = alert.body,
         )
     }
 }
@@ -46,7 +45,8 @@ class AlertEntity(
 fun AlertEntity.toDomain() = Alert(
     id = this.id,
     userId = this.userId,
-    content = ContentInfo(this.contentId, this.contentThumbNail),
+    contentId = this.contentId,
+    contentThumbNail = this.contentThumbNail,
     title = this.title,
-    body = this.body,
+    createdAt = this.createdAt
 )
