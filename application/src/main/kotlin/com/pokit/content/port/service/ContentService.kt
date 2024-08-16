@@ -6,6 +6,7 @@ import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
 import com.pokit.category.model.RemindCategory
 import com.pokit.category.port.out.CategoryPort
+import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
@@ -47,20 +48,21 @@ class ContentService(
     }
 
     @Transactional
-    override fun create(user: User, contentCommand: ContentCommand): Content {
-        verifyCategory(contentCommand.categoryId, user.id)
+    override fun create(user: User, contentCommand: ContentCommand): ContentResult {
+        val category = categoryPort.loadCategoryOrThrow(contentCommand.categoryId, user.id)
         val content = contentCommand.toDomain()
         content.parseDomain()
         return contentPort.persist(content)
+            .toGetContentResult(false, category)
     }
 
     @Transactional
-    override fun update(user: User, contentCommand: ContentCommand, contentId: Long): Content {
+    override fun update(user: User, contentCommand: ContentCommand, contentId: Long): ContentResult {
+        val category = categoryPort.loadCategoryOrThrow(contentCommand.categoryId, user.id)
         val content = verifyContent(user.id, contentId)
-        verifyCategory(contentCommand.categoryId, user.id)
-
         content.modify(contentCommand)
         return contentPort.persist(content)
+            .toGetContentResult(bookMarkPort.isBookmarked(contentId, user.id), category)
     }
 
     @Transactional
@@ -94,7 +96,7 @@ class ContentService(
 
 
     @Transactional
-    override fun getContent(userId: Long, contentId: Long): GetContentResult {
+    override fun getContent(userId: Long, contentId: Long): ContentResult {
         val userLog = UserLog(
             contentId, userId, LogType.READ
         )

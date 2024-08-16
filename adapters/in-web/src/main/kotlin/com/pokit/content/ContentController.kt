@@ -142,7 +142,7 @@ class ContentController(
     fun getContent(
         @AuthenticationPrincipal user: PrincipalUser,
         @PathVariable("contentId") contentId: Long
-    ): ResponseEntity<GetContentResponse> {
+    ): ResponseEntity<ContentResponse> {
         return contentUseCase.getContent(user.id, contentId)
             .toResponse()
             .wrapOk()
