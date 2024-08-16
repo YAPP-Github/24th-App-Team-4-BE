@@ -3,12 +3,12 @@ package com.pokit.alert.model
 import java.time.LocalDateTime
 
 data class Alert(
-    val id: Long,
+    val id: Long = 0L,
     val userId: Long,
     val contentId: Long,
     val contentThumbNail: String,
     val title: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime = LocalDateTime.now()
 )
 
 object AlertDefault {
