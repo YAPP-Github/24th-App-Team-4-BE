@@ -155,7 +155,7 @@ class ContentAdapter(
     }
 
     override fun loadByCategoryIdAndOpenType(categoryId: Long, opentype: OpenType, pageable: Pageable): Slice<SharedContentResult> {
-        val contents = queryFactory.select(contentEntity, categoryEntity.name)
+        val contents = queryFactory.select(contentEntity)
             .from(contentEntity)
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .where(
@@ -172,7 +172,7 @@ class ContentAdapter(
 
         val contentResults = contents.map {
             SharedContentResult.of(
-                it[contentEntity]!!.toDomain(),
+                it.toDomain(),
             )
         }
 
@@ -183,14 +183,14 @@ class ContentAdapter(
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
 
-    private fun getHasNext(
-        contentEntityList: MutableList<Tuple>,
+    private fun <T> getHasNext(
+        items: MutableList<T>,
         pageable: Pageable,
     ): Boolean {
         var hasNext = false
-        if (contentEntityList.size > pageable.pageSize) {
+        if (items.size > pageable.pageSize) {
             hasNext = true
-            contentEntityList.removeAt(contentEntityList.size - 1)
+            items.removeAt(items.size - 1)
         }
         return hasNext
     }
