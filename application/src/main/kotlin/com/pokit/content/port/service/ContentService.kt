@@ -5,6 +5,7 @@ import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
 import com.pokit.category.model.RemindCategory
+import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.NotFoundCustomException
@@ -91,9 +92,11 @@ class ContentService(
         return contents
     }
 
+    override fun getSharedContents(categoryId: Long, pageable: Pageable): Slice<SharedContentResult> =
+        contentPort.loadByCategoryIdAndOpenType(categoryId, OpenType.PUBLIC, pageable)
+
     override fun getContentsByCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult> =
         contentPort.loadByUserIdAndCategoryName(userId, categoryName, pageable)
-
 
     @Transactional
     override fun getContent(userId: Long, contentId: Long): ContentResult {

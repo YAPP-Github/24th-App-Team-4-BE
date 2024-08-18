@@ -3,6 +3,7 @@ package com.pokit.user.port.service
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
+import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.ClientValidationException
@@ -45,7 +46,8 @@ class UserService(
         val category = Category(
             userId = savedUser.id,
             categoryName = UNCATEGORIZED.displayName,
-            categoryImage = image
+            categoryImage = image,
+            openType = OpenType.PRIVATE,
         )
         categoryPort.persist(category)
 

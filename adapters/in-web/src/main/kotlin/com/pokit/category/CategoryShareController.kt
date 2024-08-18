@@ -1,0 +1,51 @@
+package com.pokit.category
+
+import com.pokit.auth.model.PrincipalUser
+import com.pokit.category.dto.response.SharedContentsResponse
+import com.pokit.category.port.`in`.CategoryUseCase
+import com.pokit.common.wrapper.ResponseWrapper.wrapOk
+import com.pokit.content.port.`in`.ContentUseCase
+import io.swagger.v3.oas.annotations.Operation
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping("/api/v1/category/share")
+class CategoryShareController(
+    private val categoryUseCase: CategoryUseCase,
+    private val contentUseCase: ContentUseCase,
+) {
+    @Operation(summary = "포킷 공유 후 callback API")
+    @PostMapping("/callback")
+    fun completeShare(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @RequestParam("categoryId") categoryId: Long,
+    ): ResponseEntity<Unit> {
+        return categoryUseCase.completeShare(categoryId, user.id)
+            .wrapOk()
+    }
+
+    @Operation(summary = "포킷 공유 시 포킷 내 컨텐츠 미리보기 API")
+    @GetMapping("/{categoryId}")
+    fun getSharedContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable categoryId: Long,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+    ): ResponseEntity<SharedContentsResponse> {
+        val category = categoryUseCase.getSharedCategory(categoryId, user.id)
+        val content = contentUseCase.getSharedContents(categoryId, pageable)
+        return SharedContentsResponse
+            .from(content, category)
+            .wrapOk()
+    }
+
+}

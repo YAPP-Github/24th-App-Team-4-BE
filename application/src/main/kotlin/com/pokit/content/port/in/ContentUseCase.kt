@@ -1,11 +1,8 @@
 package com.pokit.content.port.`in`
 
 import com.pokit.content.dto.request.ContentCommand
-import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
-import com.pokit.content.dto.response.BookMarkContentResponse
-import com.pokit.content.dto.response.ContentResult
-import com.pokit.content.dto.response.RemindContentResult
+import com.pokit.content.dto.response.*
 import com.pokit.user.model.User
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -26,6 +23,11 @@ interface ContentUseCase {
         condition: ContentSearchCondition,
         pageable: Pageable,
     ): Slice<ContentsResult>
+
+    fun getSharedContents(
+        categoryId: Long,
+        pageable: Pageable,
+    ): Slice<SharedContentResult>
 
     fun getContentsByCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult>
 

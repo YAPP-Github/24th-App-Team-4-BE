@@ -15,4 +15,6 @@ interface CategoryUseCase {
     fun getAllCategoryImages(): List<CategoryImage>
     fun getCategories(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse>
     fun getCategory(userId: Long, categoryId: Long): Category
+    fun getSharedCategory(categoryId: Long, userId: Long): Category
+    fun completeShare(categoryId: Long, userId: Long)
 }

@@ -1,7 +1,9 @@
 package com.pokit.out.persistence.content.impl
 
+import com.pokit.category.model.OpenType
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.ContentsResult
+import com.pokit.content.dto.response.SharedContentResult
 import com.pokit.content.model.Content
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
@@ -152,18 +154,43 @@ class ContentAdapter(
         return SliceImpl(contentResults, pageable, hasNext)
     }
 
+    override fun loadByCategoryIdAndOpenType(categoryId: Long, opentype: OpenType, pageable: Pageable): Slice<SharedContentResult> {
+        val contents = queryFactory.select(contentEntity)
+            .from(contentEntity)
+            .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .where(
+                categoryEntity.id.eq(categoryId),
+                categoryEntity.openType.eq(opentype),
+                contentEntity.deleted.isFalse,
+            )
+            .offset(pageable.offset)
+            .limit((pageable.pageSize + 1).toLong())
+            .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
+            .fetch()
+
+        val hasNext = getHasNext(contents, pageable)
+
+        val contentResults = contents.map {
+            SharedContentResult.of(
+                it.toDomain(),
+            )
+        }
+
+        return SliceImpl(contentResults, pageable, hasNext)
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
 
-    private fun getHasNext(
-        contentEntityList: MutableList<Tuple>,
+    private fun <T> getHasNext(
+        items: MutableList<T>,
         pageable: Pageable,
     ): Boolean {
         var hasNext = false
-        if (contentEntityList.size > pageable.pageSize) {
+        if (items.size > pageable.pageSize) {
             hasNext = true
-            contentEntityList.removeAt(contentEntityList.size - 1)
+            items.removeAt(items.size - 1)
         }
         return hasNext
     }
@@ -214,10 +241,6 @@ class ContentAdapter(
                     )
             }
     }
-
-    private fun getSort(property: DateTimePath<LocalDateTime>, order: Sort.Order) =
-        if (order.isDescending) property.desc()
-        else property.asc()
 
     private fun getSortOrder(property: DateTimePath<LocalDateTime>, sortField: String, pageable: Pageable): OrderSpecifier<*> {
         val order = pageable.sort.getOrderFor(sortField)
