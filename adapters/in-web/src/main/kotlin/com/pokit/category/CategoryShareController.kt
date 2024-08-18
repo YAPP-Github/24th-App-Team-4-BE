@@ -4,7 +4,6 @@ import com.pokit.auth.model.PrincipalUser
 import com.pokit.category.dto.response.SharedContentsResponse
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
-import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.Pageable
@@ -45,7 +44,7 @@ class CategoryShareController(
         val category = categoryUseCase.getSharedCategory(categoryId, user.id)
         val content = contentUseCase.getSharedContents(categoryId, pageable)
         return SharedContentsResponse
-            .from(content.wrapSlice(), category)
+            .from(content, category)
             .wrapOk()
     }
 
