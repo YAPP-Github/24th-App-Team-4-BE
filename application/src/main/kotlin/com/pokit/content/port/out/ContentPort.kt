@@ -42,4 +42,6 @@ interface ContentPort {
         opentype: OpenType,
         pageable: Pageable
     ): Slice<SharedContentResult>
+
+    fun duplicateContent(originCategoryId: Long, targetCategoryId: Long)
 }

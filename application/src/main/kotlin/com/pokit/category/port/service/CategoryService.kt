@@ -8,6 +8,7 @@ import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
+import com.pokit.category.model.duplicate
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
@@ -124,6 +125,27 @@ class CategoryService(
             .completeShare()
 
         categoryPort.persist(category)
+    }
+
+    @Transactional
+    override fun duplicateCategory(originCategoryId: Long, categoryName: String, userId: Long) {
+        val originCategory = categoryPort.loadByIdAndOpenType(originCategoryId, OpenType.PUBLIC)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+
+        if (originCategory.userId == userId) {
+            throw InvalidRequestException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY)
+        }
+
+        if (categoryPort.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
+            throw InvalidRequestException(CategoryErrorCode.SHARE_MAX_CATEGORY_LIMIT_EXCEEDED)
+        }
+
+        if (categoryPort.existsByNameAndUserId(originCategory.categoryName, userId)) {
+            throw AlreadyExistsException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY_NAME)
+        }
+
+        val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId))
+        contentPort.duplicateContent(originCategoryId, newCategory.categoryId)
     }
 
     override fun getAllCategoryImages(): List<CategoryImage> =

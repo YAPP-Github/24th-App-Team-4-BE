@@ -1,6 +1,7 @@
 package com.pokit.category
 
 import com.pokit.auth.model.PrincipalUser
+import com.pokit.category.dto.request.DuplicateCategoryRequest
 import com.pokit.category.dto.response.SharedContentsResponse
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
@@ -47,5 +48,14 @@ class CategoryShareController(
             .from(content, category)
             .wrapOk()
     }
+
+    @Operation(summary = "포킷 복제 API")
+    @PostMapping
+    fun duplicateCategory(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @RequestBody request: DuplicateCategoryRequest,
+    ): ResponseEntity<Unit> =
+        categoryUseCase.duplicateCategory(request.originCategoryId, request.categoryName, user.id)
+            .wrapOk()
 
 }

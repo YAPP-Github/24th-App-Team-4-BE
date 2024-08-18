@@ -31,3 +31,11 @@ fun Category.toRemindCategory() = RemindCategory(
     categoryId = this.categoryId,
     categoryName = this.categoryName,
 )
+
+fun Category.duplicate(newCategoryName: String, userId: Long): Category {
+    return this.copy(
+        categoryId = 0L,
+        userId = userId,
+        categoryName = newCategoryName
+    )
+}
