@@ -7,6 +7,7 @@ import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
+import com.pokit.category.model.OpenType
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
@@ -53,6 +54,7 @@ class CategoryService(
                 categoryName = command.categoryName,
                 categoryImage = categoryImage,
                 userId = userId,
+                openType = OpenType.PRIVATE,
             )
         )
     }
@@ -101,6 +103,29 @@ class CategoryService(
     override fun getCategory(userId: Long, categoryId: Long): Category =
         categoryPort.loadCategoryOrThrow(categoryId, userId)
 
+    override fun getSharedCategory(categoryId: Long, userId: Long): Category {
+        val category = categoryPort.loadByIdAndOpenType(categoryId, OpenType.PUBLIC)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+
+        if (category.userId == userId) {
+            throw InvalidRequestException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY)
+        }
+
+        category.apply {
+            contentCount = contentPort.fetchContentCountByCategoryId(categoryId)
+        }
+
+        return category
+    }
+
+    @Transactional
+    override fun completeShare(categoryId: Long, userId: Long) {
+        val category = categoryPort.loadCategoryOrThrow(categoryId, userId)
+            .completeShare()
+
+        categoryPort.persist(category)
+    }
+
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
 
@@ -110,3 +135,7 @@ fun CategoryPort.loadCategoryOrThrow(categoryId: Long, userId: Long): Category {
     return loadByIdAndUserId(categoryId, userId)
         ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
 }
+
+fun CategoryPort.loadByIdOrThrow(categoryId: Long) =
+    loadById(categoryId)
+        ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)

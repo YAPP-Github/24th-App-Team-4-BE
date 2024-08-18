@@ -1,6 +1,7 @@
 package com.pokit.out.persistence.category.impl
 
 import com.pokit.category.model.Category
+import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.out.persistence.category.persist.CategoryEntity
 import com.pokit.out.persistence.category.persist.CategoryRepository
@@ -21,6 +22,9 @@ class CategoryAdapter(
     override fun loadByIdAndUserId(id: Long, userId: Long): Category? =
         categoryRepository.findByIdAndUserIdAndDeleted(id, userId, false)?.toDomain()
 
+    override fun loadById(id: Long): Category? =
+        categoryRepository.findByIdOrNull(id)?.toDomain()
+
     override fun existsByNameAndUserId(name: String, userId: Long): Boolean =
         categoryRepository.existsByNameAndUserIdAndDeleted(name, userId, false)
 
@@ -36,4 +40,8 @@ class CategoryAdapter(
 
     override fun countByUserId(userId: Long): Int =
         categoryRepository.countByUserIdAndDeleted(userId, false)
+
+    override fun loadByIdAndOpenType(id: Long, openType: OpenType): Category? =
+        categoryRepository.findByIdAndOpenTypeAndDeleted(id, openType, false)?.toDomain()
+
 }

@@ -8,11 +8,17 @@ data class Category(
     var categoryName: String,
     var categoryImage: CategoryImage,
     var contentCount: Int = 0,
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    var openType: OpenType,
 ) {
     fun update(categoryName: String, categoryImage: CategoryImage) {
         this.categoryName = categoryName
         this.categoryImage = categoryImage
+    }
+
+    fun completeShare(): Category {
+        this.openType = OpenType.PUBLIC
+        return this
     }
 }
 
