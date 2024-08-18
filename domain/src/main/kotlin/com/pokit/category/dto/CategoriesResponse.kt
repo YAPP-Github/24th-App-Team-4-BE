@@ -13,7 +13,7 @@ data class CategoriesResponse(
     val createdAt: String
 )
 
-fun Category.toCategoriesRespoonse(): CategoriesResponse {
+fun Category.toCategoriesResponse(): CategoriesResponse {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     return CategoriesResponse(

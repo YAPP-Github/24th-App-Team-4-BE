@@ -2,7 +2,7 @@ package com.pokit.category.port.service
 
 import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
-import com.pokit.category.dto.toCategoriesRespoonse
+import com.pokit.category.dto.toCategoriesResponse
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
@@ -88,7 +88,7 @@ class CategoryService(
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
             category.copy(contentCount = contentCount)
         }.map { category ->
-            category.toCategoriesRespoonse()
+            category.toCategoriesResponse()
         }
 
         val filteredCategories = if (filterUncategorized) {
