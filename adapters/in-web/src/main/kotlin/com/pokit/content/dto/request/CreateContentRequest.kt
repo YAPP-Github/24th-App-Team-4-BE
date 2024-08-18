@@ -12,7 +12,7 @@ data class CreateContentRequest(
     )
     val data: String,
     @field:NotBlank(message = "제목은 필수값입니다.")
-    @field:Size(min = 1, max = 20, message = "최대 20자까지만 입력 가능합니다.")
+    @field:Size(min = 1, max =1000, message = "최대 1000자까지만 입력 가능합니다.")
     val title: String,
     val categoryId: Int,
     @field:Size(max = 100, message = "최대 100자까지만 입력 가능합니다.")
