@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface ContentRepository : JpaRepository<ContentEntity, Long> {
+interface ContentRepository : JpaRepository<ContentEntity, Long>, ContentJdbcRepository {
     @Query(
         """
         select co from ContentEntity co

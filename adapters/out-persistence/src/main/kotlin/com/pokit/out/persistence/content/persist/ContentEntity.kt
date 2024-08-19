@@ -57,6 +57,18 @@ class ContentEntity(
             domain = content.domain,
             thumbNail = content.thumbNail
         )
+
+        fun from(content: Content, categoryId: Long) = ContentEntity(
+            id = content.id,
+            categoryId = categoryId,
+            type = content.type,
+            data = content.data,
+            title = content.title,
+            memo = content.memo,
+            alertYn = "NO",
+            domain = content.domain,
+            thumbNail = content.thumbNail
+        )
     }
 }
 

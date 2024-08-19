@@ -179,9 +179,37 @@ class ContentAdapter(
         return SliceImpl(contentResults, pageable, hasNext)
     }
 
+    override fun duplicateContent(originCategoryId: Long, targetCategoryId: Long) {
+        val contents = loadByCategoryIdAndOpenType(originCategoryId, OpenType.PUBLIC)
+
+        val targetContentEntities = contents.map {
+            ContentEntity.from(it, targetCategoryId)
+        }
+
+        contentRepository.bulkInsert(targetContentEntities)
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
+
+    private fun loadByCategoryIdAndOpenType(categoryId: Long, opentype: OpenType): List<Content> {
+        val contentEntities = queryFactory.select(contentEntity)
+            .from(contentEntity)
+            .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .where(
+                categoryEntity.id.eq(categoryId),
+                categoryEntity.openType.eq(opentype),
+                contentEntity.deleted.isFalse,
+            )
+            .fetch()
+
+        val contents = contentEntities.map {
+            it.toDomain()
+        }
+
+        return contents
+    }
 
     private fun <T> getHasNext(
         items: MutableList<T>,
