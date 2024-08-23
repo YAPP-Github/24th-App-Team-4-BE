@@ -140,7 +140,7 @@ class CategoryService(
             throw InvalidRequestException(CategoryErrorCode.SHARE_MAX_CATEGORY_LIMIT_EXCEEDED)
         }
 
-        if (categoryPort.existsByNameAndUserId(originCategory.categoryName, userId)) {
+        if (categoryPort.existsByNameAndUserId(categoryName, userId)) {
             throw AlreadyExistsException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY_NAME)
         }
 
