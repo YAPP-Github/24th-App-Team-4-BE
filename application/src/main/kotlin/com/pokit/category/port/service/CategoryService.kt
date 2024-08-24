@@ -142,11 +142,11 @@ class CategoryService(
         }
 
         if (categoryPort.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
-            throw InvalidRequestException(CategoryErrorCode.SHARE_MAX_CATEGORY_LIMIT_EXCEEDED)
+            throw InvalidRequestException(CategoryErrorCode.MAX_CATEGORY_LIMIT_EXCEEDED)
         }
 
         if (categoryPort.existsByNameAndUserId(categoryName, userId)) {
-            throw AlreadyExistsException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY_NAME)
+            throw AlreadyExistsException(CategoryErrorCode.ALREADY_EXISTS_CATEGORY)
         }
         val categoryImage = (categoryImagePort.loadById(categoryImageId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
