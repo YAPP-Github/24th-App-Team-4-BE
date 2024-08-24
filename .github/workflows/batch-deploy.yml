@@ -3,12 +3,10 @@ name: batch deploy
 on:
   push:
     branches:
-      - feature/#58
       - main
       - develop
-      - feature/daily-remind
-#    paths:
-#      - 'adapters/in-batch/**'
+    paths:
+      - 'adapters/in-batch/**'
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
