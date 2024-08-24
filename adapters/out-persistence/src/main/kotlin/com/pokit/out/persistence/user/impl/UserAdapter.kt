@@ -31,4 +31,9 @@ class UserAdapter(
         userRepository.findByIdOrNull(user.id)
             ?.delete()
     }
+
+    override fun loadAllIds(): List<Long> =
+        userRepository.findByDeleted(false)
+            .map { it.id }
+
 }

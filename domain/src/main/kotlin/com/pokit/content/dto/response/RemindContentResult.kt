@@ -12,9 +12,24 @@ data class RemindContentResult(
     val data: String,
     val createdAt: LocalDateTime,
     val domain: String,
-    val isRead: Boolean,
+    val isRead: Boolean?,
     val thumbNail: String
-)
+) {
+    companion object {
+        fun of(content: Content, categoryName: String): RemindContentResult {
+            return RemindContentResult(
+                contentId = content.id,
+                category = RemindCategory(content.categoryId, categoryName),
+                data = content.data,
+                domain = content.domain,
+                title = content.title,
+                createdAt = content.createdAt,
+                isRead = null,
+                thumbNail = content.thumbNail ?: ContentDefault.THUMB_NAIL
+            )
+        }
+    }
+}
 
 fun Content.toRemindContentResult(isRead: Boolean, category: RemindCategory): RemindContentResult {
     return RemindContentResult(

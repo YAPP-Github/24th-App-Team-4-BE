@@ -1,6 +1,7 @@
 package com.pokit.user.port.service
 
 import com.pokit.category.CategoryFixture
+import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
@@ -33,6 +34,7 @@ class UserServiceTest : BehaviorSpec({
         every { userPort.persist(any(User::class)) } returns modifieUser
         every { categoryImagePort.loadById(1) } returns image
         every { categoryPort.persist(unCategorized) } returns unCategorized
+        every { categoryPort.persist(any(Category::class)) } returns unCategorized
 
         When("수정하려는 정보를 받으면") {
             val response = userService.signUp(user, request)

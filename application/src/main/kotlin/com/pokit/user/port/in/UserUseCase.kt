@@ -13,5 +13,7 @@ interface UserUseCase {
 
     fun updateNickname(user: User, request: UpdateNicknameRequest): User
 
+    fun fetchAllUserId(): List<Long>
+
     fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken
 }

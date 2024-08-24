@@ -128,7 +128,12 @@ class CategoryService(
     }
 
     @Transactional
-    override fun duplicateCategory(originCategoryId: Long, categoryName: String, userId: Long) {
+    override fun duplicateCategory(
+        originCategoryId: Long,
+        categoryName: String,
+        userId: Long,
+        categoryImageId: Int
+    ) {
         val originCategory = categoryPort.loadByIdAndOpenType(originCategoryId, OpenType.PUBLIC)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
 
@@ -137,14 +142,15 @@ class CategoryService(
         }
 
         if (categoryPort.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
-            throw InvalidRequestException(CategoryErrorCode.SHARE_MAX_CATEGORY_LIMIT_EXCEEDED)
+            throw InvalidRequestException(CategoryErrorCode.MAX_CATEGORY_LIMIT_EXCEEDED)
         }
 
         if (categoryPort.existsByNameAndUserId(categoryName, userId)) {
-            throw AlreadyExistsException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY_NAME)
+            throw AlreadyExistsException(CategoryErrorCode.ALREADY_EXISTS_CATEGORY)
         }
-
-        val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId))
+        val categoryImage = (categoryImagePort.loadById(categoryImageId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
+        val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId, categoryImage))
         contentPort.duplicateContent(originCategoryId, newCategory.categoryId)
     }
 

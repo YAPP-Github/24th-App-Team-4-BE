@@ -76,6 +76,10 @@ class UserService(
         return userPort.persist(findUser)
     }
 
+    override fun fetchAllUserId() =
+        userPort.loadAllIds()
+
+
     @Transactional
     override fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken {
         val user = userPort.loadById(userId)
