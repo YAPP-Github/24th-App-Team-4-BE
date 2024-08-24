@@ -55,7 +55,12 @@ class CategoryShareController(
         @AuthenticationPrincipal user: PrincipalUser,
         @RequestBody request: DuplicateCategoryRequest,
     ): ResponseEntity<Unit> =
-        categoryUseCase.duplicateCategory(request.originCategoryId, request.categoryName, user.id)
+        categoryUseCase.duplicateCategory(
+            request.originCategoryId,
+            request.categoryName,
+            user.id,
+            request.categoryImageId
+        )
             .wrapOk()
 
 }

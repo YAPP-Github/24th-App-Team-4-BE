@@ -128,7 +128,12 @@ class CategoryService(
     }
 
     @Transactional
-    override fun duplicateCategory(originCategoryId: Long, categoryName: String, userId: Long) {
+    override fun duplicateCategory(
+        originCategoryId: Long,
+        categoryName: String,
+        userId: Long,
+        categoryImageId: Int
+    ) {
         val originCategory = categoryPort.loadByIdAndOpenType(originCategoryId, OpenType.PUBLIC)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
 
@@ -143,8 +148,9 @@ class CategoryService(
         if (categoryPort.existsByNameAndUserId(categoryName, userId)) {
             throw AlreadyExistsException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY_NAME)
         }
-
-        val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId))
+        val categoryImage = (categoryImagePort.loadById(categoryImageId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
+        val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId, categoryImage))
         contentPort.duplicateContent(originCategoryId, newCategory.categoryId)
     }
 
