@@ -1,8 +1,10 @@
 package com.pokit.content.dto.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.pokit.category.model.RemindCategory
 import java.time.format.DateTimeFormatter
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class RemindContentResponse(
     val contentId: Long,
     val category: RemindCategory,
@@ -10,7 +12,7 @@ data class RemindContentResponse(
     val data: String,
     val createdAt: String,
     val domain: String,
-    val isRead: Boolean,
+    val isRead: Boolean?,
     val thumbNail: String,
 )
 
