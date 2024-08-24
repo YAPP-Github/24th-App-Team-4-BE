@@ -10,6 +10,7 @@ import com.pokit.token.model.AuthPlatform
 import com.pokit.user.UserFixture
 import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.model.User
+import com.pokit.user.port.out.FcmTokenPort
 import com.pokit.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -21,7 +22,8 @@ class UserServiceTest : BehaviorSpec({
     val userPort = mockk<UserPort>()
     val categoryPort = mockk<CategoryPort>()
     val categoryImagePort = mockk<CategoryImagePort>()
-    val userService = UserService(userPort, categoryPort, categoryImagePort)
+    val fcmTokenPort = mockk<FcmTokenPort>()
+    val userService = UserService(userPort, categoryPort, categoryImagePort, fcmTokenPort)
     Given("회원을 등록할 때") {
         val user = UserFixture.getUser()
         val invalidUser = UserFixture.getInvalidUser()
