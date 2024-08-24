@@ -53,6 +53,8 @@ data class SharedCategoryResponse(
     val categoryId: Long = 0L,
     var categoryName: String,
     var contentCount: Int = 0,
+    val categoryImageId: Int,
+    val categoryImageUrl: String
 ) {
     companion object {
         fun of(category: Category): SharedCategoryResponse {
@@ -60,6 +62,8 @@ data class SharedCategoryResponse(
                 categoryId = category.categoryId,
                 categoryName = category.categoryName,
                 contentCount = category.contentCount,
+                categoryImageId = category.categoryImage.imageId,
+                categoryImageUrl = category.categoryImage.imageUrl
             )
         }
     }
