@@ -13,6 +13,7 @@ class DailyContentService(
 ) : DailyContentUseCase {
     companion object {
         private const val MIN_CONTENT_COUNT = 5
+        private const val RANDOM_CONTENT_COUNT = 3
     }
 
     @Transactional
@@ -34,7 +35,7 @@ class DailyContentService(
             return emptyList()
         }
 
-        return ids.shuffled().take(MIN_CONTENT_COUNT)
+        return ids.shuffled().take(RANDOM_CONTENT_COUNT)
     }
 
 }
