@@ -18,8 +18,7 @@ class DailyContentUpdateScheduler(
         private const val 매일_자정 = "0 0 0 * * *"
     }
 
-    //    @Scheduled(cron = 매일_자정)
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = 매일_자정)
     fun updateDailyContent() {
         val jobParameters = JobParametersBuilder()
             .addLong("run.id", System.currentTimeMillis())
