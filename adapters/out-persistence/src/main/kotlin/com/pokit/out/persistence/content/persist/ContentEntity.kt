@@ -38,7 +38,7 @@ class ContentEntity(
     @Column(name = "is_deleted")
     var deleted: Boolean = false,
 
-    @Column(name = "thumb_nail")
+    @Column(name = "thumb_nail", columnDefinition = "LONGTEXT")
     var thumbNail: String?
 ) : BaseEntity() {
     fun delete() {
