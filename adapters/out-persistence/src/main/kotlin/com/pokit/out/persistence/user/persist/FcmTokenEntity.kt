@@ -15,8 +15,15 @@ class FcmTokenEntity(
     val userId: Long,
 
     @Column(name = "token")
-    val token: String
+    val token: String,
+
+    @Column(name = "is_deleted")
+    var deleted: Boolean = false
 ) {
+    fun delete() {
+        this.deleted = true
+    }
+
     companion object {
         fun of(fcmToken: FcmToken) = FcmTokenEntity(
             userId = fcmToken.userId,
@@ -24,3 +31,8 @@ class FcmTokenEntity(
         )
     }
 }
+
+fun FcmTokenEntity.toDomain() = FcmToken(
+    userId = this.userId,
+    token = this.token
+)
