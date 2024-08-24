@@ -16,4 +16,6 @@ interface UserUseCase {
     fun fetchAllUserId(): List<Long>
 
     fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken
+
+    fun getUserInfo(userId: Long): User
 }

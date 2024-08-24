@@ -80,4 +80,14 @@ class UserController(
         return userUseCase.createFcmToken(user.id, request.toDto())
             .wrapOk()
     }
+
+    @GetMapping("/nickname")
+    @Operation(summary = "유저 정보(닉네임) 조회 API")
+    fun getUserInfo(
+        @AuthenticationPrincipal user: PrincipalUser
+    ): ResponseEntity<UserResponse> {
+        return userUseCase.getUserInfo(user.id)
+            .toResponse()
+            .wrapOk()
+    }
 }
