@@ -19,7 +19,7 @@ class FcmSender : AlertSender {
         const val body = "저장하신 링크가 기다리고 있어요.\n잊지 말고 링크를 확인하세요!"
     }
 
-    override fun send(tokens: List<String>, alertBatch: AlertBatch) {
+    override fun send(tokens: List<String>) {
         val notification = Notification.builder()
             .setTitle(title)
             .setBody(body)
