@@ -84,13 +84,17 @@ class ContentServiceTest : BehaviorSpec({
             categoryPort.loadByIdAndUserId(invalidCommand.categoryId, user.id)
         } returns null
 
+        every {
+            bookmarkPort.isBookmarked(content.id, user.id)
+        } returns true
+
         When("저장 요청이 들어오면") {
             val content = contentService.create(user, command)
             Then("저장 후 저장 된 컨텐츠를 반환한다.") {
                 content.data shouldBe command.data
                 content.title shouldBe command.title
                 content.memo shouldBe command.memo
-                content.categoryId shouldBe command.categoryId
+                content.category.categoryId shouldBe command.categoryId
                 content.alertYn shouldBe command.alertYn
             }
         }
@@ -108,7 +112,7 @@ class ContentServiceTest : BehaviorSpec({
                 modifiedContent.data shouldBe command.data
                 modifiedContent.title shouldBe command.title
                 modifiedContent.memo shouldBe command.memo
-                modifiedContent.categoryId shouldBe command.categoryId
+                modifiedContent.category.categoryId shouldBe command.categoryId
                 modifiedContent.alertYn shouldBe command.alertYn
             }
         }

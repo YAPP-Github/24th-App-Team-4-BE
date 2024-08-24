@@ -4,6 +4,7 @@ import com.pokit.bookmark.BookmarkFixture
 import com.pokit.category.CategoryFixture
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
+import com.pokit.category.model.OpenType
 import com.pokit.content.ContentFixture
 import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
@@ -156,7 +157,8 @@ class ContentAdapterTest(
             val anotherCategory = Category(
                 userId = savedUser.id,
                 categoryName = "다른 카테고리",
-                categoryImage = savedAnotherImage.toDomain()
+                categoryImage = savedAnotherImage.toDomain(),
+                openType = OpenType.PUBLIC
             )
             val savedAnotherCategory = categoryRepository.save(CategoryEntity.of(anotherCategory))
 
