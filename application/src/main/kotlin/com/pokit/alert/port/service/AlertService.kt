@@ -3,7 +3,9 @@ package com.pokit.alert.port.service
 import com.pokit.alert.dto.response.AlertsResponse
 import com.pokit.alert.dto.response.toAlertsResponse
 import com.pokit.alert.exception.AlertErrorCode
+import com.pokit.alert.model.AlertBatch
 import com.pokit.alert.port.`in`.AlertUseCase
+import com.pokit.alert.port.out.AlertBatchPort
 import com.pokit.alert.port.out.AlertPort
 import com.pokit.common.exception.NotFoundCustomException
 import org.springframework.data.domain.Pageable
@@ -19,7 +21,8 @@ import kotlin.math.abs
 @Transactional(readOnly = true)
 class AlertService(
     private val now: Supplier<LocalDateTime>,
-    private val alertPort: AlertPort
+    private val alertPort: AlertPort,
+    private val alertBatchPort: AlertBatchPort,
 ) : AlertUseCase {
     override fun getAlerts(userId: Long, pageable: Pageable): Slice<AlertsResponse> {
         val nowDay = now.get().toLocalDate()
@@ -36,5 +39,9 @@ class AlertService(
         val alert = alertPort.loadByIdAndUserId(alertId, userId)
             ?: throw NotFoundCustomException(AlertErrorCode.NOT_FOUND_ALERT)
         alertPort.delete(alert)
+    }
+
+    override fun loadAllAlertBatch(): List<AlertBatch> {
+        return alertBatchPort.loadAllByShouldBeSentAt(now.get().toLocalDate())
     }
 }

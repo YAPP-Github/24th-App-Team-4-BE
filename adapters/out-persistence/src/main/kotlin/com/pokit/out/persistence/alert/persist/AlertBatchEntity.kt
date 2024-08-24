@@ -33,3 +33,8 @@ class AlertBatchEntity(
         )
     }
 }
+
+fun AlertBatchEntity.toDomain() = AlertBatch(
+    userId = this.userId,
+    shouldBeSentAt = this.shouldBeSentAt
+)
