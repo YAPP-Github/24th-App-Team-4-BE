@@ -13,9 +13,10 @@ import java.time.ZoneId
 @EntityListeners(value = [AuditingEntityListener::class])
 abstract class BaseEntity {
     @CreatedDate
-    @Column(updatable = false)
+    @Column(updatable = false, name = "created_at")
     var createdAt: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
 
     @LastModifiedDate
+    @Column(name = "updated_at")
     var updatedAt: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
 }

@@ -71,4 +71,8 @@ class UserService(
         findUser.modifyNickname(request.nickname)
         return userPort.persist(findUser)
     }
+
+    override fun fetchAllUserId() =
+        userPort.loadAllIds()
+
 }

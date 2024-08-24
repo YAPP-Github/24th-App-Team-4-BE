@@ -15,6 +15,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-batch")
+    implementation("org.springframework.boot:spring-boot-starter-quartz")
+    implementation("com.navercorp.spring:spring-boot-starter-batch-plus-kotlin:1.1.0")
 
     // 테스팅
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.1")

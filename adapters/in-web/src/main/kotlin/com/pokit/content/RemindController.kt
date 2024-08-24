@@ -7,6 +7,7 @@ import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import com.pokit.content.dto.response.RemindContentResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.port.`in`.ContentUseCase
+import com.pokit.content.port.`in`.DailyContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/remind")
 class RemindController(
-    private val contentUseCase: ContentUseCase
+    private val contentUseCase: ContentUseCase,
+    private val dailyContentUseCase: DailyContentUseCase,
 ) {
     @GetMapping("/bookmark")
     @Operation(summary = "즐겨찾기 링크 모음 조회 API")
@@ -56,10 +58,10 @@ class RemindController(
 
     @GetMapping("/today")
     @Operation(summary = "오늘의 리마인드 조회 API")
-    fun getUnreadContents(
+    fun getDailyContents(
         @AuthenticationPrincipal user: PrincipalUser,
     ): ResponseEntity<List<RemindContentResponse>> =
-        contentUseCase.getTodayContents(user.id)
+        dailyContentUseCase.getDailyContents(user.id)
             .map { it.toResponse() }
             .wrapOk()
 

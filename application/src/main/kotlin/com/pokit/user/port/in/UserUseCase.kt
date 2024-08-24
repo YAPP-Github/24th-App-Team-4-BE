@@ -10,4 +10,6 @@ interface UserUseCase {
     fun checkDuplicateNickname(nickname: String): Boolean
 
     fun updateNickname(user: User, request: UpdateNicknameRequest): User
+
+    fun fetchAllUserId(): List<Long>
 }

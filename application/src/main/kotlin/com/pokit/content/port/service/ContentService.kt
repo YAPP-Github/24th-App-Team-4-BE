@@ -136,46 +136,6 @@ class ContentService(
         return SliceImpl(remindContents, pageable, unreadContents.hasNext())
     }
 
-    override fun getTodayContents(userId: Long): List<RemindContentResult> {
-//        if (contentPort.countByUserId(userId) < MIN_CONTENT_COUNT) {
-//            return emptyList()
-//        }
-
-        //TODO 알고리즘 구현
-        return listOf(
-            RemindContentResult(
-                1L,
-                RemindCategory(1L, "category"),
-                "title",
-                "url",
-                LocalDateTime.now(),
-                "domain",
-                false,
-                "thumbNail"
-            ),
-            RemindContentResult(
-                2L,
-                RemindCategory(1L, "category"),
-                "양궁 올림픽 덜덜",
-                "https://www.youtube.com/watch?v=s9L9yRL_I0s",
-                LocalDateTime.now(),
-                "youtu.be",
-                true,
-                "thumbNail"
-            ),
-            RemindContentResult(
-                3L,
-                RemindCategory(1L, "category"),
-                "요리 맛있겠땅",
-                "https://www.youtube.com/shorts/aLZEwkm4tGU",
-                LocalDateTime.now(),
-                "youtu.be",
-                true,
-                "thumbNail"
-            ),
-        )
-    }
-
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)
             ?: throw NotFoundCustomException(ContentErrorCode.NOT_FOUND_CONTENT)
