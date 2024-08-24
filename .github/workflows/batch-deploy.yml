@@ -6,8 +6,9 @@ on:
       - feature/#58
       - main
       - develop
-    paths:
-      - 'adapters/in-batch/**'
+      - feature/daily-remind
+#    paths:
+#      - 'adapters/in-batch/**'
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
