@@ -8,11 +8,14 @@ import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
+import com.pokit.user.dto.request.CreateFcmTokenRequest
 import com.pokit.user.dto.request.SignUpRequest
 import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.exception.UserErrorCode
+import com.pokit.user.model.FcmToken
 import com.pokit.user.model.User
 import com.pokit.user.port.`in`.UserUseCase
+import com.pokit.user.port.out.FcmTokenPort
 import com.pokit.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +25,8 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val userPort: UserPort,
     private val categoryPort: CategoryPort,
-    private val categoryImagePort: CategoryImagePort
+    private val categoryImagePort: CategoryImagePort,
+    private val fcmTokenPort: FcmTokenPort
 ) : UserUseCase {
     companion object {
         private const val UNCATEGORIZED_IMAGE_ID = 1
@@ -75,4 +79,12 @@ class UserService(
     override fun fetchAllUserId() =
         userPort.loadAllIds()
 
+
+    @Transactional
+    override fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken {
+        val user = userPort.loadById(userId)
+            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+        val fcmToken = FcmToken(user.id, request.token)
+        return fcmTokenPort.persist(fcmToken)
+    }
 }

@@ -4,6 +4,7 @@ import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.model.toDomain
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
+import com.pokit.user.dto.request.ApiCreateFcmTokenRequest
 import com.pokit.user.dto.request.ApiSignUpRequest
 import com.pokit.user.dto.request.ApiUpdateNicknameRequest
 import com.pokit.user.dto.request.toDto
@@ -12,6 +13,7 @@ import com.pokit.user.dto.response.InterestTypeResponse
 import com.pokit.user.dto.response.UserResponse
 import com.pokit.user.dto.response.toResponse
 import com.pokit.user.exception.UserErrorCode
+import com.pokit.user.model.FcmToken
 import com.pokit.user.model.InterestType
 import com.pokit.user.port.`in`.UserUseCase
 import io.swagger.v3.oas.annotations.Operation
@@ -68,4 +70,14 @@ class UserController(
         InterestType.values()
             .map { InterestTypeResponse(it.name, it.kor) }
             .wrapOk()
+
+    @PostMapping("/fcm")
+    @Operation(summary = "fcm 토큰 저장 API")
+    fun createFcmToken(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @RequestBody request: ApiCreateFcmTokenRequest
+    ): ResponseEntity<FcmToken> {
+        return userUseCase.createFcmToken(user.id, request.toDto())
+            .wrapOk()
+    }
 }
