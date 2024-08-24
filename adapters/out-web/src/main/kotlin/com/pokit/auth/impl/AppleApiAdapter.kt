@@ -30,6 +30,9 @@ class AppleApiAdapter(
     }
 
     override fun revoke(refreshToken: String) {
+        if (refreshToken.isBlank()) {
+            return
+        }
         val clientSecret = appleSecretGenerator.createClientSecret()
 
         revokeAuth(refreshToken, clientSecret)

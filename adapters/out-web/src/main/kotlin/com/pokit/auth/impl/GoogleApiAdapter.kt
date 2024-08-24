@@ -24,6 +24,9 @@ class GoogleApiAdapter(
     }
 
     override fun revoke(refreshToken: String) {
+        if(refreshToken.isBlank()) {
+            return
+        }
         val revokeResponse = googleFeignClient.revoke(refreshToken)
 
         if (revokeResponse.status() != HttpStatus.SC_OK) {
