@@ -12,7 +12,7 @@ class DailyContentService(
     private val dailyContentPort: DailyContentPort,
 ) : DailyContentUseCase {
     companion object {
-        private const val MIN_CONTENT_COUNT = 3
+        private const val MIN_CONTENT_COUNT = 5
     }
 
     @Transactional
@@ -30,7 +30,7 @@ class DailyContentService(
         dailyContentPort.loadByUserId(userId)
 
     private fun getRandomIds(ids: List<Long>): List<Long> {
-        if (ids.isEmpty() || ids.size < MIN_CONTENT_COUNT) {
+        if (ids.isEmpty() || ids.size <= MIN_CONTENT_COUNT) {
             return emptyList()
         }
 

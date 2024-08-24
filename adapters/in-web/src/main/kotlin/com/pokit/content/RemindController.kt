@@ -58,7 +58,7 @@ class RemindController(
 
     @GetMapping("/today")
     @Operation(summary = "오늘의 리마인드 조회 API")
-    fun getUnreadContents(
+    fun getDailyContents(
         @AuthenticationPrincipal user: PrincipalUser,
     ): ResponseEntity<List<RemindContentResponse>> =
         dailyContentUseCase.getDailyContents(user.id)
