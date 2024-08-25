@@ -9,6 +9,6 @@ import org.springframework.boot.runApplication
 class WebApplication
 
 fun main(args: Array<String>) {
-    System.setProperty("spring.config.name", "application-out-web, application-core, application-out-persistence")
+    System.setProperty("spring.config.name", "application-out-web, application-core, application-out-persistence, application-in-web")
     runApplication<WebApplication>(*args)
 }

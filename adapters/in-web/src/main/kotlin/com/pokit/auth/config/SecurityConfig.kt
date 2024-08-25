@@ -27,7 +27,8 @@ class SecurityConfig(
             "/swagger-ui/**",
             "/api-docs",
             "/api-docs/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/actuator/prometheus",
         )
     }
 
