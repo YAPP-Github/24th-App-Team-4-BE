@@ -17,7 +17,11 @@ class RequestLoggingInterceptor : HandlerInterceptor {
         handler: Any
     ): Boolean {
         val uri = request.requestURI
-        logger.debug { "[Requested URI] $uri" }
+        val params = request.parameterMap.map { (key, value) -> "$key=${value.joinToString(",")}" }.joinToString("&")
+        logger.info{"Requested URI: $uri"}
+        if (params.isNotEmpty()) {
+            logger.info{"Request Parameters: $params"}
+        }
         return true
     }
 }

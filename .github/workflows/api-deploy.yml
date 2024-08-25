@@ -6,6 +6,7 @@ on:
       - feature/db-config
       - main
       - develop
+      - fix/batch-count
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
