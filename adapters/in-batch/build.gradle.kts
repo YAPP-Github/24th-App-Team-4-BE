@@ -14,6 +14,7 @@ dependencies {
     // 라이브러리
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
     implementation("com.navercorp.spring:spring-boot-starter-batch-plus-kotlin:1.1.0")
