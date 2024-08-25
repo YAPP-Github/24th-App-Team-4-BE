@@ -1,5 +1,6 @@
 package com.pokit.category
 
+import com.pokit.auth.aop.KakaoAuth
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.category.dto.request.DuplicateCategoryRequest
 import com.pokit.category.dto.response.SharedContentsResponse
@@ -20,13 +21,13 @@ class CategoryShareController(
     private val categoryUseCase: CategoryUseCase,
     private val contentUseCase: ContentUseCase,
 ) {
+    @KakaoAuth
     @Operation(summary = "포킷 공유 후 callback API")
     @PostMapping("/callback")
     fun completeShare(
-        @AuthenticationPrincipal user: PrincipalUser,
         @RequestParam("categoryId") categoryId: Long,
     ): ResponseEntity<Unit> {
-        return categoryUseCase.completeShare(categoryId, user.id)
+        return categoryUseCase.completeShare(categoryId)
             .wrapOk()
     }
 
