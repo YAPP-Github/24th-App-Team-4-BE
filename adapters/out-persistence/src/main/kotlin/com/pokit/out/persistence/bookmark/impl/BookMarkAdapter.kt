@@ -19,12 +19,15 @@ class BookMarkAdapter(
         return savedBookmark.toDomain()
     }
 
-    override fun delete(contentId: Long, userId: Long) {
+    override fun delete(userId: Long, contentId: Long) {
         bookMarkRepository.findByContentIdAndUserIdAndDeleted(
             contentId,
             userId,
             false
-        )?.delete()
+        )?.let {
+            it.delete()
+            bookMarkRepository.save(it)
+        }
     }
 
     override fun loadByContentIdAndUserId(contentId: Long, userId: Long): Bookmark? {
