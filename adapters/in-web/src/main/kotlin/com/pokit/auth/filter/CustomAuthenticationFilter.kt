@@ -35,7 +35,8 @@ class CustomAuthenticationFilter(
             "/swagger-ui/**",
             "/api-docs",
             "/api-docs/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/actuator/prometheus",
         )
         val path = request.requestURI
         val shouldNotFilter =
