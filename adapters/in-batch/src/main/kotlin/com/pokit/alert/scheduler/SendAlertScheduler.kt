@@ -1,4 +1,4 @@
-package com.pokit.remind.scheduler
+package com.pokit.alert.scheduler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.Job
@@ -9,24 +9,24 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
-class DailyContentUpdateScheduler(
+class SendAlertScheduler(
     private val jobLauncher: JobLauncher,
-    @Qualifier("updateDailyContentJob") private val updateDailyContent: Job,
+    @Qualifier("sendAlertJob") private val sendAlertJob: Job
 ) {
     private val logger = KotlinLogging.logger { }
 
     companion object {
-        private const val 매일_자정 = "0 0 0 * * *"
+        private const val 매일_오전_8시 = "0 0 8 * * *"
     }
 
-    @Scheduled(cron = 매일_자정)
-    fun updateDailyContent() {
+    @Scheduled(cron = 매일_오전_8시)
+    fun sendAlert() {
         val jobParameters = JobParametersBuilder()
             .addLong("run.id", System.currentTimeMillis())
             .toJobParameters()
 
-        logger.info { "[CONTENT BATCH] start daily content update job" }
-        jobLauncher.run(updateDailyContent, jobParameters)
-        logger.info { "[CONTENT BATCH] end daily content update job" }
+        logger.info { "[ALERT BATCH] start daily send alert job" }
+        jobLauncher.run(sendAlertJob, jobParameters)
+        logger.info { "[ALERT BATCH] end daily send alert job" }
     }
 }
