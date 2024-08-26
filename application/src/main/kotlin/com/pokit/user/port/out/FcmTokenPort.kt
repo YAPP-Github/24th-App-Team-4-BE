@@ -4,4 +4,6 @@ import com.pokit.user.model.FcmToken
 
 interface FcmTokenPort {
     fun persist(fcmToken: FcmToken): FcmToken
+
+    fun loadByUserId(userId: Long): List<FcmToken>
 }

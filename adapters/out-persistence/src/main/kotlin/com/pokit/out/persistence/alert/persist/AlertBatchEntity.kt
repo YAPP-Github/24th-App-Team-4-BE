@@ -35,6 +35,7 @@ class AlertBatchEntity(
 }
 
 fun AlertBatchEntity.toDomain() = AlertBatch(
+    id = this.id,
     userId = this.userId,
     shouldBeSentAt = this.shouldBeSentAt
 )
