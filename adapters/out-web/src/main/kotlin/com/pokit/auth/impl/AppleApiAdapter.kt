@@ -11,6 +11,7 @@ import com.pokit.common.exception.ClientValidationException
 import com.pokit.token.exception.AuthErrorCode
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.dto.UserInfo
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.http.HttpStatus
 import org.springframework.stereotype.Component
 
@@ -22,6 +23,8 @@ class AppleApiAdapter(
     private val appleFeignClient: AppleFeignClient,
     private val appleSecretGenerator: AppleSecretGenerator
 ) : AppleApiClient {
+    private val logger = KotlinLogging.logger { }
+
     override fun getUserInfo(idToken: String): UserInfo {
         val claims = decodeAndVerifyIdToken(idToken) // id token을 통해 사용자 정보 추출
         val email = claims["email"] as String
@@ -56,6 +59,8 @@ class AppleApiAdapter(
         )
         val response = appleFeignClient.revoke(request)
         if (response.status() != HttpStatus.SC_OK) {
+            val responseBody = response.body()?.asInputStream()?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }
+            logger.info{"[APPLE RESPONSE] $responseBody"}
             throw ClientValidationException(AuthErrorCode.FAILED_TO_REVOKE)
         }
     }
