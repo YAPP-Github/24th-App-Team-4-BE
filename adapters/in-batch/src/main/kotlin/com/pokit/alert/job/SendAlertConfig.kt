@@ -6,6 +6,7 @@ import com.pokit.alert.component.AlertProcessor
 import com.pokit.alert.component.AlertReader
 import com.pokit.alert.component.AlertWriter
 import com.pokit.alert.model.AlertBatch
+import com.pokit.alert.model.AlertBatchValue
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
@@ -31,7 +32,7 @@ class SendAlertConfig(
     @Bean
     fun sendAlertStep() = batch {
         step("sendAlertStep") {
-            chunk(50, transactionManager, fun SimpleStepBuilderDsl<AlertBatch, AlertBatch>.() {
+            chunk(AlertBatchValue.CHUNK_SIZE, transactionManager, fun SimpleStepBuilderDsl<AlertBatch, AlertBatch>.() {
                 reader(alertReader)
                 processor(alertProcessor)
                 writer(alertWriter)

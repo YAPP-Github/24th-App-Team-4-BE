@@ -7,3 +7,7 @@ data class AlertBatch(
     val userId: Long,
     val shouldBeSentAt: LocalDate,
 )
+
+object AlertBatchValue {
+    const val CHUNK_SIZE = 50
+}
