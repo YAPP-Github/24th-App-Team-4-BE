@@ -5,6 +5,7 @@ import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.response.SharedContentResult
 import com.pokit.content.model.Content
+import com.pokit.content.model.ContentWithUser
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
 import com.pokit.out.persistence.bookmark.persist.QBookmarkEntity.bookmarkEntity
@@ -187,6 +188,10 @@ class ContentAdapter(
         }
 
         contentRepository.bulkInsert(targetContentEntities)
+    }
+
+    override fun loadByContentIdsWithUser(contetIds: List<Long>): List<ContentWithUser> {
+        return contentRepository.findByIdInWithUser(contetIds)
     }
 
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =

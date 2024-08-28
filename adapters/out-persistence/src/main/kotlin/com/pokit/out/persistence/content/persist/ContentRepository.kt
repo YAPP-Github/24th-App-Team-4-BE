@@ -1,5 +1,6 @@
 package com.pokit.out.persistence.content.persist
 
+import com.pokit.content.model.ContentWithUser
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -40,4 +41,12 @@ interface ContentRepository : JpaRepository<ContentEntity, Long>, ContentJdbcRep
     """
     )
     fun countByUserId(userId: Long): Int
+
+    @Query("""
+        select new com.pokit.content.model.ContentWithUser(c.id, u.id, c.title, c.thumbNail) from ContentEntity c
+        join CategoryEntity ca on ca.id = c.categoryId
+        join UserEntity u on u.id = ca.userId
+        where c.id in :ids
+    """)
+    fun findByIdInWithUser(ids: List<Long>): List<ContentWithUser>
 }

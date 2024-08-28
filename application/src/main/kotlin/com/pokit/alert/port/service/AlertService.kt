@@ -12,6 +12,8 @@ import com.pokit.alert.port.out.AlertContentPort
 import com.pokit.alert.port.out.AlertPort
 import com.pokit.alert.port.out.AlertSender
 import com.pokit.common.exception.NotFoundCustomException
+import com.pokit.content.model.ContentDefault
+import com.pokit.content.port.out.ContentPort
 import com.pokit.user.port.out.FcmTokenPort
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -31,7 +33,8 @@ class AlertService(
     private val alertBatchPort: AlertBatchPort,
     private val alertSender: AlertSender,
     private val fcmTokenPort: FcmTokenPort,
-    private val alertContentPort: AlertContentPort
+    private val alertContentPort: AlertContentPort,
+    private val contentPort: ContentPort
 ) : AlertUseCase {
     override fun getAlerts(userId: Long, pageable: Pageable): Slice<AlertsResponse> {
         val nowDay = now.get().toLocalDate()
@@ -69,11 +72,12 @@ class AlertService(
 
     @Transactional
     override fun createAlerts(alertContents: List<AlertContent>) {
-        val alerts = alertContents.map {
+        val contents = contentPort.loadByContentIdsWithUser(alertContents.map { it.contentId })
+        val alerts = contents.map {
             Alert(
                 userId = it.userId,
                 contentId = it.contentId,
-                contentThumbNail = it.contentThumbNail,
+                contentThumbNail = it.thumbNail ?: ContentDefault.THUMB_NAIL,
                 title = it.title
             )
         }
