@@ -51,10 +51,6 @@ class AuthService(
             throw ClientValidationException(AuthErrorCode.INCORRECT_PLATFORM)
         }
 
-        when (request.authPlatform) {
-            AuthPlatform.GOOGLE -> googleApiClient.revoke(request.refreshToken)
-            AuthPlatform.APPLE -> appleApiClient.revoke(request.refreshToken)
-        }
         contentPort.deleteByUserId(user.id)
         userPort.delete(user)
     }
