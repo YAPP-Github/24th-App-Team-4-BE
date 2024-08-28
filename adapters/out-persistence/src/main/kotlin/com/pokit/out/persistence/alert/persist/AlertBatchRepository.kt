@@ -7,4 +7,6 @@ import java.time.LocalDate
 
 interface AlertBatchRepository : JpaRepository<AlertBatchEntity, Long> {
     fun findAllByShouldBeSentAtAfterAndSent(now: LocalDate, send: Boolean, pageable: Pageable): Page<AlertBatchEntity>
+
+    fun findByUserIdAndShouldBeSentAtAndSent(userId: Long, date: LocalDate, sent: Boolean): AlertBatchEntity?
 }

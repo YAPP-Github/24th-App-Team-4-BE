@@ -11,3 +11,8 @@ data class AlertBatch(
 object AlertBatchValue {
     const val CHUNK_SIZE = 50
 }
+
+data class CreateAlertRequest(
+    val userId: Long,
+    val contetId: Long
+)

@@ -9,4 +9,8 @@ interface AlertBatchPort {
     fun loadAllByShouldBeSentAt(now: LocalDate, pageable: Pageable): Page<AlertBatch>
 
     fun send(alertBatch: AlertBatch)
+
+    fun loadByUserIdAndDate(userId: Long, date: LocalDate): AlertBatch?
+
+    fun persist(alertBatch: AlertBatch): AlertBatch
 }
