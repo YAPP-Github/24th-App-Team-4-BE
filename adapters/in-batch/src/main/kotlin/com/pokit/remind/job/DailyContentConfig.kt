@@ -18,7 +18,7 @@ class DailyContentConfig(
     private val batch: BatchDsl,
 ) {
 
-    @Bean
+    @Bean(name = ["updateDailyContentJob"])
     fun updateDailyContentJob(): Job = batch {
         job("updateDailyContentJob") {
             step(deleteAllStep()) {

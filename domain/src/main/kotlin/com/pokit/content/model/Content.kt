@@ -52,3 +52,10 @@ data class CategoryInfo(
 object ContentDefault {
     const val THUMB_NAIL = "https://pokit-storage.s3.ap-northeast-2.amazonaws.com/logo/pokit.png"
 }
+
+data class ContentWithUser(
+    val contentId: Long,
+    val userId: Long,
+    var title: String,
+    var thumbNail: String?
+)

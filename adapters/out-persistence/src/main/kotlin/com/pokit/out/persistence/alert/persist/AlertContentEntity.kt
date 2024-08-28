@@ -17,18 +17,18 @@ class AlertContentEntity(
 
     @Column(name = "content_id")
     val contentId: Long,
-
-    @Column(name = "is_deleted")
-    var delete: Boolean = false
 ) : BaseEntity() {
-    fun delete() {
-        this.delete = true
-    }
 
     companion object {
         fun of(alertContent: AlertContent) = AlertContentEntity(
             alertBatchId = alertContent.alertBatchId,
-            contentId = alertContent.contentId
+            contentId = alertContent.contentId,
         )
     }
 }
+
+fun AlertContentEntity.toDomain() = AlertContent(
+    id = this.id,
+    alertBatchId = this.alertBatchId,
+    contentId = this.contentId,
+)

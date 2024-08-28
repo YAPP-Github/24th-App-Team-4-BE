@@ -14,6 +14,7 @@ class ContentJdbcRepositoryImpl(
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         """.trimIndent()
 
+
         val batchArgs = contentEntities.map { content ->
             arrayOf(
                 content.categoryId,

@@ -5,6 +5,7 @@ import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.SharedContentResult
 import com.pokit.content.model.Content
+import com.pokit.content.model.ContentWithUser
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 
@@ -44,4 +45,6 @@ interface ContentPort {
     ): Slice<SharedContentResult>
 
     fun duplicateContent(originCategoryId: Long, targetCategoryId: Long)
+
+    fun loadByContentIdsWithUser(contetIds: List<Long>): List<ContentWithUser>
 }

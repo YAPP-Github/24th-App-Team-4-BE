@@ -1,5 +1,6 @@
 package com.pokit.content.port.service
 
+import com.pokit.alert.model.CreateAlertRequest
 import com.pokit.bookmark.exception.BookmarkErrorCode
 import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
@@ -22,6 +23,7 @@ import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.model.User
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -34,8 +36,14 @@ class ContentService(
     private val contentPort: ContentPort,
     private val bookMarkPort: BookmarkPort,
     private val categoryPort: CategoryPort,
-    private val userLogPort: UserLogPort
+    private val userLogPort: UserLogPort,
+    private val publisher: ApplicationEventPublisher
 ) : ContentUseCase {
+    companion object {
+        private const val MIN_CONTENT_COUNT = 3
+        private const val YES = "YES"
+    }
+
     @Transactional
     override fun bookmarkContent(user: User, contentId: Long): BookMarkContentResponse {
         verifyContent(user.id, contentId)
@@ -53,8 +61,14 @@ class ContentService(
         val category = categoryPort.loadCategoryOrThrow(contentCommand.categoryId, user.id)
         val content = contentCommand.toDomain()
         content.parseDomain()
-        return contentPort.persist(content)
+        val contentResult = contentPort.persist(content)
             .toGetContentResult(false, category)
+
+        if (contentCommand.alertYn == YES) {
+            publisher.publishEvent(CreateAlertRequest(userId = user.id, contetId = contentResult.contentId))
+        }
+
+        return contentResult
     }
 
     @Transactional
@@ -62,6 +76,11 @@ class ContentService(
         val category = categoryPort.loadCategoryOrThrow(contentCommand.categoryId, user.id)
         val content = verifyContent(user.id, contentId)
         content.modify(contentCommand)
+
+        if (contentCommand.alertYn === YES) {
+            publisher.publishEvent(CreateAlertRequest(userId = user.id, contetId = content.id))
+        }
+
         return contentPort.persist(content)
             .toGetContentResult(bookMarkPort.isBookmarked(contentId, user.id), category)
     }

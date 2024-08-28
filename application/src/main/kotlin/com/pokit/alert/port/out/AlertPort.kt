@@ -10,4 +10,6 @@ interface AlertPort {
     fun loadByIdAndUserId(id: Long, userId: Long): Alert?
 
     fun delete(alert: Alert)
+
+    fun persistAlerts(alerts: List<Alert>)
 }

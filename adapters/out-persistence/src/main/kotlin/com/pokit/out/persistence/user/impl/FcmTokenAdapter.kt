@@ -15,4 +15,9 @@ class FcmTokenAdapter(
         val fcmTokenEntity = FcmTokenEntity.of(fcmToken)
         return fcmTokenRepository.save(fcmTokenEntity).toDomain()
     }
+
+    override fun loadByUserId(userId: Long): List<FcmToken> {
+        return fcmTokenRepository.findByUserId(userId)
+            .map { it.toDomain() }
+    }
 }
