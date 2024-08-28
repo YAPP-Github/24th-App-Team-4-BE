@@ -23,7 +23,7 @@ class CategoryShareController(
 ) {
     @KakaoAuth
     @Operation(summary = "포킷 공유 후 callback API")
-    @PostMapping("/callback")
+    @GetMapping("/callback")
     fun completeShare(
         @RequestParam("categoryId") categoryId: Long,
     ): ResponseEntity<Unit> {
