@@ -11,11 +11,11 @@ class AlertContentAdapter(
     private val alertContentRepository: AlertContentRepository
 ) : AlertContentPort {
     override fun loadAllInAlertBatchIds(ids: List<Long>): List<AlertContent> {
-        return alertContentRepository.findAllByAlertBatchIdInAndDeleted(ids, false)
+        return alertContentRepository.findAllByAlertBatchIdIn(ids)
             .map { it.toDomain() }
     }
 
     override fun deleteAll(ids: List<Long>) {
-        alertContentRepository.deleteAllInIds(ids)
+        alertContentRepository.deleteAllByIdInBatch(ids)
     }
 }
