@@ -49,7 +49,7 @@ jobs:
           mkdir -p ./adapters/in-batch/src/main/resources
           echo "${{ secrets.APPLICATION_IN_BATCH_YML }}" > ./application/src/main/resources/application-in-batch.yml
           mkdir -p ./adapters/in-batch/src/main/resources
-          echo "${{ secrets.APPLICATION_IN_BATCH }}" > ./application/src/main/resources/application-in-batch.yml
+          echo "${{ secrets.APPLICATION_IN_BATCH }}" > ./adapters/in-batch/src/main/resources/application-adapters-in-batch.yml
 
       - name: Build with Gradle
         run: ./gradlew :entry:batch:build --no-daemon
