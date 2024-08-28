@@ -135,6 +135,7 @@ class ContentAdapter(
             .where(
                 categoryEntity.userId.eq(userId),
                 contentEntity.deleted.isFalse,
+                bookmarkEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
             .groupBy(contentEntity)

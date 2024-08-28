@@ -120,8 +120,8 @@ class CategoryService(
     }
 
     @Transactional
-    override fun completeShare(categoryId: Long, userId: Long) {
-        val category = categoryPort.loadCategoryOrThrow(categoryId, userId)
+    override fun completeShare(categoryId: Long) {
+        val category = categoryPort.loadByIdOrThrow(categoryId)
             .completeShare()
 
         categoryPort.persist(category)

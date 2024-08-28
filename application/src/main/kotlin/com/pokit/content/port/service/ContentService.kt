@@ -1,6 +1,7 @@
 package com.pokit.content.port.service
 
 import com.pokit.alert.model.CreateAlertRequest
+import com.pokit.bookmark.exception.BookmarkErrorCode
 import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
@@ -8,6 +9,7 @@ import com.pokit.category.model.Category
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.category.port.service.loadCategoryOrThrow
+import com.pokit.common.exception.AlreadyExistsException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
@@ -45,6 +47,10 @@ class ContentService(
     @Transactional
     override fun bookmarkContent(user: User, contentId: Long): BookMarkContentResponse {
         verifyContent(user.id, contentId)
+        bookMarkPort.loadByContentIdAndUserId(contentId, user.id)?.let {
+            throw AlreadyExistsException(BookmarkErrorCode.ALREADY_EXISTS_BOOKMARK)
+        }
+
         val bookmark = Bookmark(userId = user.id, contentId = contentId)
         val savedBookmark = bookMarkPort.persist(bookmark)
         return BookMarkContentResponse(savedBookmark.contentId)

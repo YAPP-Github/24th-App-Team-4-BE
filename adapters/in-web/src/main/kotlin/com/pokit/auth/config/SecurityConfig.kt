@@ -21,13 +21,15 @@ class SecurityConfig(
             "/api/v1/auth/signin",
             "/api/v1/auth/reissue",
             "/api/v1/user/interests",
+            "/api/v1/category/share/callback",
             "/swagger-ui/index.html#/",
             "/swagger",
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs",
             "/api-docs/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/actuator/prometheus",
         )
     }
 

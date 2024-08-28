@@ -7,6 +7,7 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.token.exception.AuthErrorCode
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.port.out.UserPort
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -30,12 +31,14 @@ class CustomAuthenticationFilter(
             "/api/v1/auth/signin",
             "/api/v1/auth/reissue",
             "/api/v1/user/interests",
+            "/api/v1/category/share/callback",
             "/swagger-ui/index.html#/",
             "/swagger", "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs",
             "/api-docs/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/actuator/prometheus",
         )
         val path = request.requestURI
         val shouldNotFilter =
