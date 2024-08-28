@@ -6,6 +6,7 @@ on:
       - feature/db-config
       - main
       - develop
+      - fix/#147
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -46,8 +47,6 @@ jobs:
           echo "${{ secrets.APPLICATION_CORE }}" > ./application/src/main/resources/application-core.yml
           mkdir -p ./adapters/in-web/src/main/resources
           echo "${{ secrets.APPLICATION_IN_WEB_YML }}" > ./application/src/main/resources/application-in-web.yml
-          mkdir -p ./adapters/in-batch/src/main/resources
-          echo "${{ secrets.APPLICATION_IN_BATCH }}" > ./application/src/main/resources/application-in-batch.yml
 
       - name: Build with Gradle
         run: ./gradlew :entry:web:build --no-daemon

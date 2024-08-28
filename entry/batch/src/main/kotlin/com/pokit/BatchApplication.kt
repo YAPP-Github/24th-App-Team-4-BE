@@ -11,6 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class BatchApplication
 
 fun main(args: Array<String>) {
-    System.setProperty("spring.config.name", "application-out-web, application-core, application-out-persistence, application-in-batch")
+    System.setProperty("spring.config.name", "application-out-web, application-core, application-out-persistence, application-entry-batch")
     runApplication<BatchApplication>(*args)
 }
