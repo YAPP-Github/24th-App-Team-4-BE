@@ -23,7 +23,7 @@ class ContentEntity(
     @Column(name = "data")
     val data: String, // ex. LINK - url
 
-    @Column(name = "title")
+    @Column(name = "title", columnDefinition = "LONGTEXT")
     val title: String,
 
     @Column(name = "memo")
