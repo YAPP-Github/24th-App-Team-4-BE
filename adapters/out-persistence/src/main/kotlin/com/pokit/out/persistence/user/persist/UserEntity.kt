@@ -1,5 +1,6 @@
 package com.pokit.out.persistence.user.persist
 
+import com.pokit.out.persistence.BaseEntity
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
@@ -32,7 +33,7 @@ class UserEntity(
 
     @Column(name = "is_registered")
     var registered: Boolean
-) {
+) : BaseEntity() {
     fun delete() {
         this.deleted = true
     }
