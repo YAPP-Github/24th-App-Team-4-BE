@@ -19,9 +19,12 @@ class JwtTokenProvider(
     private val jwtProperty: JwtProperty,
     private val refreshTokenPort: RefreshTokenPort,
 ) : TokenProvider {
+    companion object {
+        private const val TO_DAY = 86400000
+    }
     override fun createToken(userId: Long): Token {
-        val accessToken = generateToken(userId, jwtProperty.accessExpiryTime)
-        val refreshToken = generateToken(userId, jwtProperty.refreshExpiryTime)
+        val accessToken = generateToken(userId, jwtProperty.accessExpiryTime * TO_DAY)
+        val refreshToken = generateToken(userId, jwtProperty.refreshExpiryTime * TO_DAY)
 
         refreshTokenPort.deleteByUserId(userId)
         refreshTokenPort.persist(RefreshToken(userId, refreshToken))
