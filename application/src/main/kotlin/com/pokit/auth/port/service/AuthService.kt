@@ -37,8 +37,9 @@ class AuthService(
                 AuthPlatform.GOOGLE -> googleApiClient.getUserInfo(request.idToken)
                 AuthPlatform.APPLE -> appleApiClient.getUserInfo(request.idToken)
             }
-
-        val user = userPort.loadByEmailAndAuthPlatform(userInfo.email, platformType) ?: createUser(userInfo) // 없으면 저장
+        val user = userPort.loadBySubAndAuthPlatform(userInfo.sub, platformType)
+            ?: getUserByEmail(userInfo) // 기존 로그인 유저용, 추후 제거
+            ?: createUser(userInfo) // 없으면 저장
 
         val token = tokenProvider.createToken(user.id)
 
@@ -63,7 +64,26 @@ class AuthService(
     }
 
     private fun createUser(userInfo: UserInfo): User {
-        val user = User(email = userInfo.email, role = Role.USER, authPlatform = userInfo.authPlatform)
+        val user = User(
+            email = userInfo.email!!, // 존재하지 않았던 유저면 이메일 항상 존재
+            role = Role.USER,
+            authPlatform = userInfo.authPlatform,
+            sub = userInfo.sub
+        )
         return userPort.persist(user)
+    }
+
+    private fun getUserByEmail(userInfo: UserInfo): User? {
+        val userEmail = userInfo.email
+
+        return if(userEmail == null) {
+            return null
+        } else {
+            val user = userPort.loadByEmailAndAuthPlatform(userEmail, userInfo.authPlatform)
+            user?.let {
+                it.insertSub(userInfo.sub)
+                userPort.persist(user)
+            }
+        }
     }
 }

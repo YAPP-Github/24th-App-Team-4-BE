@@ -19,8 +19,8 @@ class UserAdapter(
         return savedUser.toDomain()
     }
 
-    override fun loadByEmailAndAuthPlatform(email: String, authPlatform: AuthPlatform) =
-        userRepository.findByEmailAndAuthPlatformAndDeleted(email, authPlatform, false)
+    override fun loadBySubAndAuthPlatform(sub: String, authPlatform: AuthPlatform) =
+        userRepository.findBySubAndAuthPlatformAndDeleted(sub, authPlatform, false)
         ?.run { toDomain() }
 
     override fun loadById(id: Long) = userRepository.findByIdAndDeleted(id, false)
@@ -36,4 +36,7 @@ class UserAdapter(
         userRepository.findByDeleted(false)
             .map { it.id }
 
+    override fun loadByEmailAndAuthPlatform(email: String, authPlatform: AuthPlatform) =
+        userRepository.findByEmailAndAuthPlatformAndDeleted(email, authPlatform, false)
+            ?.run { toDomain() }
 }
