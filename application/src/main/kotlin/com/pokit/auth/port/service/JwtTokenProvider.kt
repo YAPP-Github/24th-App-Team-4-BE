@@ -40,7 +40,7 @@ class JwtTokenProvider(
             throw ClientValidationException(AuthErrorCode.INVALID_TOKEN)
         }
 
-        return generateToken(userId, jwtProperty.accessExpiryTime)
+        return generateToken(userId, jwtProperty.accessExpiryTime * TO_DAY)
     }
 
     override fun deleteRefreshToken(refreshTokenId: Long) {
