@@ -39,6 +39,7 @@ class CustomAuthenticationFilter(
             "/api-docs/**",
             "/v3/api-docs/**",
             "/actuator/prometheus",
+            "/api/v1/version"
         )
         val path = request.requestURI
         val shouldNotFilter =

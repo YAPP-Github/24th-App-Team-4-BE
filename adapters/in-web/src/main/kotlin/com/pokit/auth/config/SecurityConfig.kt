@@ -30,6 +30,7 @@ class SecurityConfig(
             "/api-docs/**",
             "/v3/api-docs/**",
             "/actuator/prometheus",
+            "/api/v1/version"
         )
     }
 
