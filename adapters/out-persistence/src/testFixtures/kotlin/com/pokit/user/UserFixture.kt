@@ -9,11 +9,11 @@ import com.pokit.user.model.User
 
 class UserFixture {
     companion object {
-        fun getUser() = User(1L, "ij@naver.com", Role.USER, authPlatform = AuthPlatform.GOOGLE)
+        fun getUser() = User(1L, "ij@naver.com", Role.USER, authPlatform = AuthPlatform.GOOGLE, sub = "asdasd")
 
-        fun getUserInfo() = UserInfo("ig@naver.com", AuthPlatform.GOOGLE)
+        fun getUserInfo() = UserInfo("ig@naver.com", AuthPlatform.GOOGLE, sub = "asdasd")
 
-        fun getInvalidUser() = User(2L, "dls@naver.com", Role.USER, authPlatform = AuthPlatform.GOOGLE)
+        fun getInvalidUser() = User(2L, "dls@naver.com", Role.USER, authPlatform = AuthPlatform.GOOGLE, sub = "sub")
 
         fun getSignUpRequest() = SignUpRequest("인주니", listOf(InterestType.SPORTS))
     }

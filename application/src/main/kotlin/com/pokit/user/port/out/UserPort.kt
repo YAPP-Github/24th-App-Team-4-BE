@@ -6,7 +6,7 @@ import com.pokit.user.model.User
 interface UserPort {
     fun persist(user: User): User
 
-    fun loadByEmailAndAuthPlatform(email: String, authPlatform: AuthPlatform): User?
+    fun loadBySubAndAuthPlatform(sub: String, authPlatform: AuthPlatform): User?
 
     fun loadById(id: Long): User?
 
@@ -15,4 +15,6 @@ interface UserPort {
     fun delete(user: User)
 
     fun loadAllIds(): List<Long>
+
+    fun loadByEmailAndAuthPlatform(email: String, authPlatform: AuthPlatform): User?
 }
