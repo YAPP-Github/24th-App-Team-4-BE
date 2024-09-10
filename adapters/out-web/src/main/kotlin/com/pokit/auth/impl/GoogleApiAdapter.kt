@@ -1,6 +1,5 @@
 package com.pokit.auth.impl
 
-import com.pokit.auth.common.property.GoogleProperty
 import com.pokit.auth.common.support.GoogleFeignClient
 import com.pokit.auth.port.out.GoogleApiClient
 import com.pokit.common.exception.ClientValidationException
@@ -19,12 +18,13 @@ class GoogleApiAdapter(
 
         return UserInfo(
             email = response.email,
-            authPlatform = AuthPlatform.GOOGLE
+            authPlatform = AuthPlatform.GOOGLE,
+            sub = response.sub
         )
     }
 
     override fun revoke(refreshToken: String) {
-        if(refreshToken.isBlank()) {
+        if (refreshToken.isBlank()) {
             return
         }
         val revokeResponse = googleFeignClient.revoke(refreshToken)
