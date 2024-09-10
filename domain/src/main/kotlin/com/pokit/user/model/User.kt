@@ -11,11 +11,16 @@ data class User(
     val role: Role,
     var nickName: String = email,
     val authPlatform: AuthPlatform,
-    var registered: Boolean = false
+    var registered: Boolean = false,
+    var sub: String?
 ) {
     fun register(nickName: String) {
         this.nickName = nickName
         this.registered = true
+    }
+
+    fun insertSub(sub: String) {
+        this.sub = sub
     }
 
     fun modifyNickname(nickName: String) {

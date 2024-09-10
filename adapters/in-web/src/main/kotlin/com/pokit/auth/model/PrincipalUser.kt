@@ -11,7 +11,8 @@ data class PrincipalUser(
     val id: Long,
     val email: String,
     val role: Role,
-    val authPlatform: AuthPlatform
+    val authPlatform: AuthPlatform,
+    val sub: String?
 ) : UserDetails {
     companion object {
         fun of(user: User) =
@@ -19,7 +20,8 @@ data class PrincipalUser(
                 id = user.id,
                 email = user.email,
                 role = user.role,
-                authPlatform = user.authPlatform
+                authPlatform = user.authPlatform,
+                sub = user.sub
             )
     }
 
@@ -36,4 +38,4 @@ data class PrincipalUser(
     }
 }
 
-fun PrincipalUser.toDomain() = User(id = this.id, email = this.email, role = this.role, authPlatform = this.authPlatform)
+fun PrincipalUser.toDomain() = User(id = this.id, email = this.email, role = this.role, authPlatform = this.authPlatform, sub = this.sub)
