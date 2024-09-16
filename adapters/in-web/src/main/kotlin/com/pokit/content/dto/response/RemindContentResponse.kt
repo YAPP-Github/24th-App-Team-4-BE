@@ -16,6 +16,14 @@ data class RemindContentResponse(
     val thumbNail: String,
 )
 
+data class UnreadCountResponse(
+    val unreadContentCount: Int
+)
+
+data class BookmarkCountResponse(
+    val bookmarkContentCount: Int
+)
+
 fun RemindContentResult.toResponse(): RemindContentResponse {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
