@@ -4,7 +4,9 @@ import com.pokit.auth.model.PrincipalUser
 import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
+import com.pokit.content.dto.response.BookmarkCountResponse
 import com.pokit.content.dto.response.RemindContentResponse
+import com.pokit.content.dto.response.UnreadCountResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.port.`in`.ContentUseCase
 import com.pokit.content.port.`in`.DailyContentUseCase
@@ -65,4 +67,23 @@ class RemindController(
             .map { it.toResponse() }
             .wrapOk()
 
+    @GetMapping("/unread/count")
+    @Operation(summary = "안읽음 컨텐츠 개수 조회 API")
+    fun getUnreadCount(
+        @AuthenticationPrincipal user: PrincipalUser
+    ): ResponseEntity<UnreadCountResponse> {
+        val unreadCount = contentUseCase.getUnreadCount(user.id)
+        return UnreadCountResponse(unreadCount)
+            .wrapOk()
+    }
+
+    @GetMapping("/bookmark/count")
+    @Operation(summary = "즐겨찾기 컨텐츠 개수 조회 API")
+    fun getBookmarkCount(
+        @AuthenticationPrincipal user: PrincipalUser
+    ): ResponseEntity<BookmarkCountResponse> {
+        val bookmarkCount = contentUseCase.getBookmarkCount(user.id)
+        return BookmarkCountResponse(bookmarkCount)
+            .wrapOk()
+    }
 }
