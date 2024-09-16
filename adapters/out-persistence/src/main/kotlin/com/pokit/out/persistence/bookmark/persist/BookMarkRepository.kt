@@ -14,4 +14,6 @@ interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
     fun findByUserIdAndDeleted(userId: Long, deleted: Boolean, pageable: Pageable): Slice<BookmarkEntity>
 
     fun existsByContentIdAndUserIdAndDeleted(contentId: Long, userId: Long, deleted: Boolean): Boolean
+
+    fun countByUserIdAndDeleted(userId: Long, deleted: Boolean): Int
 }
