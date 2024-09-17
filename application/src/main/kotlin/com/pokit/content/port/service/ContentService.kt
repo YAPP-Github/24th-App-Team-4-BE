@@ -18,6 +18,7 @@ import com.pokit.content.dto.response.*
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
+import com.pokit.content.port.out.ContentCountPort
 import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
@@ -37,7 +38,8 @@ class ContentService(
     private val bookMarkPort: BookmarkPort,
     private val categoryPort: CategoryPort,
     private val userLogPort: UserLogPort,
-    private val publisher: ApplicationEventPublisher
+    private val publisher: ApplicationEventPublisher,
+    private val contentCountPort: ContentCountPort
 ) : ContentUseCase {
     companion object {
         private const val MIN_CONTENT_COUNT = 3
@@ -154,6 +156,12 @@ class ContentService(
 
         return SliceImpl(remindContents, pageable, unreadContents.hasNext())
     }
+
+    override fun getUnreadCount(userId: Long) =
+        contentCountPort.getUnreadCount(userId)
+
+    override fun getBookmarkCount(userId: Long) =
+        contentCountPort.getBookmarkContent(userId)
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)
