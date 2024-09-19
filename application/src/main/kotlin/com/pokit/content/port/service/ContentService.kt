@@ -79,7 +79,7 @@ class ContentService(
         val content = verifyContent(user.id, contentId)
         content.modify(contentCommand)
 
-        if (contentCommand.alertYn === YES) {
+        if (contentCommand.alertYn == YES) {
             publisher.publishEvent(CreateAlertRequest(userId = user.id, contetId = content.id))
         }
 
