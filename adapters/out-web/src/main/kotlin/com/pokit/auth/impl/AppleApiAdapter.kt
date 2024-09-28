@@ -24,7 +24,7 @@ class AppleApiAdapter(
 ) : AppleApiClient {
     override fun getUserInfo(idToken: String): UserInfo {
         val claims = decodeAndVerifyIdToken(idToken) // id token을 통해 사용자 정보 추출
-        val email = claims["email"] as String
+        val email = claims["email"] as? String
         val sub = claims["sub"] as String
         return UserInfo(email = email, authPlatform = AuthPlatform.APPLE, sub = sub)
     }
