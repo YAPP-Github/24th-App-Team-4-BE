@@ -15,7 +15,7 @@ class UserEntity(
     val id: Long = 0L,
 
     @Column(name = "email")
-    val email: String = "EMAIL",
+    val email: String = "EMAIL@EMAIL.COM",
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
