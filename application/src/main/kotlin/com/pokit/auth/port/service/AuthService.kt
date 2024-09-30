@@ -65,7 +65,6 @@ class AuthService(
 
     private fun createUser(userInfo: UserInfo): User {
         val user = User(
-            email = userInfo.email!!, // 존재하지 않았던 유저면 이메일 항상 존재
             role = Role.USER,
             authPlatform = userInfo.authPlatform,
             sub = userInfo.sub
