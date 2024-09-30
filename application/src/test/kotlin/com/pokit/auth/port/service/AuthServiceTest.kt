@@ -35,7 +35,7 @@ class AuthServiceTest : BehaviorSpec({
 
         every { googleApiClient.getUserInfo(request.idToken) } returns userInfo
         every {
-            userPort.loadByEmailAndAuthPlatform(userInfo.email, AuthPlatform.of(request.authPlatform))
+            userPort.loadByEmailAndAuthPlatform(userInfo.email!!, AuthPlatform.of(request.authPlatform))
         } returns user
         every { userPort.loadById(user.id) } returns user
         every { tokenProvider.createToken(user.id) } returns token
