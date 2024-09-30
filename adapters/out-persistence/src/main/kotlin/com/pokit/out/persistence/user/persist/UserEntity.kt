@@ -15,14 +15,14 @@ class UserEntity(
     val id: Long = 0L,
 
     @Column(name = "email")
-    val email: String,
+    val email: String = "EMAIL",
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     val role: Role,
 
     @Column(name = "nickname")
-    var nickname: String = email,
+    var nickname: String = "NOT_REGISTERED",
 
     @Column(name = "auth_platform")
     @Enumerated(EnumType.STRING)

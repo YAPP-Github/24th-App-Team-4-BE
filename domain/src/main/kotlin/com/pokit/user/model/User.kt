@@ -7,9 +7,9 @@ import java.util.regex.Pattern
 
 data class User(
     val id: Long = 0L,
-    val email: String,
+    val email: String = "EMAIL",
     val role: Role,
-    var nickName: String = email,
+    var nickName: String = "NOT_REGISTERED",
     val authPlatform: AuthPlatform,
     var registered: Boolean = false,
     var sub: String?
