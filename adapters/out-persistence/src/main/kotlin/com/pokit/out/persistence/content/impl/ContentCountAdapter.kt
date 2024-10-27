@@ -27,6 +27,6 @@ class ContentCountAdapter(
             .fetchFirst()!!.toInt()
     }
 
-    override fun getBookmarkContent(userId: Long) =
-        bookMarkRepository.countByUserIdAndDeleted(userId, false)
+    override fun getBookmarkCount(userId: Long): Int =
+        bookMarkRepository.countByUserId(userId)
 }

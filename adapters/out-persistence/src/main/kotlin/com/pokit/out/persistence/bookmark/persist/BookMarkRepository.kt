@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface BookMarkRepository : JpaRepository<BookmarkEntity, Long> {
+interface BookMarkRepository : JpaRepository<BookmarkEntity, Long>, BookmarkQuerydslRepository {
     fun findByContentIdAndUserIdAndDeleted(
         contentId: Long,
         userId: Long,
