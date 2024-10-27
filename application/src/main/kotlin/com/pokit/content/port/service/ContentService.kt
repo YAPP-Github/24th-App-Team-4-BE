@@ -90,6 +90,7 @@ class ContentService(
     @Transactional
     override fun delete(user: User, contentId: Long) {
         val content = verifyContent(user.id, contentId)
+        bookMarkPort.delete(user.id, contentId)
         contentPort.delete(content)
     }
 
