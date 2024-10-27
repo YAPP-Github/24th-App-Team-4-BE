@@ -162,7 +162,7 @@ class ContentService(
         contentCountPort.getUnreadCount(userId)
 
     override fun getBookmarkCount(userId: Long) =
-        contentCountPort.getBookmarkContent(userId)
+        contentCountPort.getBookmarkCount(userId)
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)
