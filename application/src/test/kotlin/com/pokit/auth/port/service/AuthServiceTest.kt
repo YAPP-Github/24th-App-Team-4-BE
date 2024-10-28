@@ -41,6 +41,9 @@ class AuthServiceTest : BehaviorSpec({
         every { tokenProvider.createToken(user.id) } returns token
         every { tokenProvider.getUserId("refresh") } returns user.id
         every { tokenProvider.reissueToken(user.id, "refresh") } returns reissueResult
+        every {
+            userPort.loadBySubAndAuthPlatform(userInfo.sub, AuthPlatform.of(request.authPlatform))
+        } returns user
 
         When("로그인할 때 구글 플랫폼으로 올바른 인증코드로 요청하면") {
             val resultToken = authService.signIn(request)

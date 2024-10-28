@@ -28,7 +28,7 @@ class UserServiceTest : BehaviorSpec({
         val user = UserFixture.getUser()
         val invalidUser = UserFixture.getInvalidUser()
         val request = UserFixture.getSignUpRequest()
-        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE)
+        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE, sub = "sub")
         val image = CategoryImage(1, "https://www.image.com")
         val unCategorized = CategoryFixture.getUnCategorized(user.id, image)
 
