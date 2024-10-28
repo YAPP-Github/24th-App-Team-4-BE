@@ -2,8 +2,12 @@ package com.pokit.alert.port.service
 
 import com.pokit.alert.AlertFixure
 import com.pokit.alert.port.out.AlertBatchPort
+import com.pokit.alert.port.out.AlertContentPort
 import com.pokit.alert.port.out.AlertPort
+import com.pokit.alert.port.out.AlertSender
+import com.pokit.content.port.out.ContentPort
 import com.pokit.user.UserFixture
+import com.pokit.user.port.out.FcmTokenPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -17,7 +21,11 @@ class AlertServiceTest : BehaviorSpec({
     val alertPort = mockk<AlertPort>()
     val now = mockk<Supplier<LocalDateTime>>()
     val alertBatchPort = mockk<AlertBatchPort>()
-    val alertService = AlertService(now, alertPort, alertBatchPort)
+    val alertSender = mockk<AlertSender>()
+    val fcmTokenPort = mockk<FcmTokenPort>()
+    val alertContentPort = mockk<AlertContentPort>()
+    val contentPort = mockk<ContentPort>()
+    val alertService = AlertService(now, alertPort, alertBatchPort, alertSender, fcmTokenPort, alertContentPort, contentPort)
 
     Given("알림 관련 요청이 들어올 때") {
         val nowTime = LocalDateTime.of(2024, 8, 15, 15, 30)
