@@ -4,9 +4,7 @@ import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.model.toDomain
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
-import com.pokit.user.dto.request.ApiCreateFcmTokenRequest
-import com.pokit.user.dto.request.ApiSignUpRequest
-import com.pokit.user.dto.request.ApiUpdateNicknameRequest
+import com.pokit.user.dto.request.*
 import com.pokit.user.dto.request.toDto
 import com.pokit.user.dto.response.CheckDuplicateNicknameResponse
 import com.pokit.user.dto.response.InterestTypeResponse
@@ -87,6 +85,17 @@ class UserController(
         @AuthenticationPrincipal user: PrincipalUser
     ): ResponseEntity<UserResponse> {
         return userUseCase.getUserInfo(user.id)
+            .toResponse()
+            .wrapOk()
+    }
+
+    @PutMapping
+    @Operation(summary = "유저 프로필 수정 API")
+    fun update(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @RequestBody request: UpdateProfileRequest
+    ): ResponseEntity<UserResponse> {
+        return userUseCase.updateProfile(user.id, request.toDto())
             .toResponse()
             .wrapOk()
     }
