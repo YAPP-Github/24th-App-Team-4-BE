@@ -28,9 +28,8 @@ class UserServiceTest : BehaviorSpec({
     val userService = UserService(userPort, categoryPort, categoryImagePort, fcmTokenPort)
     Given("회원을 등록할 때") {
         val user = UserFixture.getUser()
-        val invalidUser = UserFixture.getInvalidUser()
         val request = UserFixture.getSignUpRequest()
-        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE, sub = "sub")
+        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE, sub = "sub", profileImage = "url")
         val image = CategoryImage(1, "https://www.image.com")
         val unCategorized = CategoryFixture.getUnCategorized(user.id, image)
 
