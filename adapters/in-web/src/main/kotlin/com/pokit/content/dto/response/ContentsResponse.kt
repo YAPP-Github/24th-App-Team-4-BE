@@ -15,6 +15,7 @@ data class ContentsResponse(
     val createdAt: String,
     val isRead: Boolean,
     val thumbNail: String,
+    val isFavorite: Boolean
 )
 
 fun ContentsResult.toResponse(): ContentsResponse {
@@ -30,6 +31,7 @@ fun ContentsResult.toResponse(): ContentsResponse {
         alertYn = this.alertYn,
         createdAt = this.createdAt.format(formatter),
         isRead = this.isRead,
-        thumbNail = this.thumbNail
+        thumbNail = this.thumbNail,
+        isFavorite = this.isFavorite
     )
 }
