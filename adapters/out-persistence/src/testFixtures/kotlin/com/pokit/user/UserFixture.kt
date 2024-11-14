@@ -17,7 +17,6 @@ class UserFixture {
             sub = "asdasd",
             nickName = "nickname",
             registered = true,
-            profileImage = "imageUrl"
         )
 
         fun getUserInfo() = UserInfo("ig@naver.com", AuthPlatform.GOOGLE, sub = "asdasd")
@@ -26,8 +25,7 @@ class UserFixture {
             2L,
             "dls@naver.com",
             Role.USER, authPlatform = AuthPlatform.GOOGLE,
-            sub = "sub",
-            profileImage = "imageUrl"
+            sub = "sub"
         )
 
         fun getSignUpRequest() = SignUpRequest("인주니", listOf(InterestType.SPORTS))
