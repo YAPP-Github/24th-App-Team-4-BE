@@ -11,6 +11,7 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.user.dto.request.CreateFcmTokenRequest
 import com.pokit.user.dto.request.SignUpRequest
 import com.pokit.user.dto.request.UpdateNicknameRequest
+import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.FcmToken
 import com.pokit.user.model.User
@@ -34,8 +35,7 @@ class UserService(
 
     @Transactional
     override fun signUp(user: User, request: SignUpRequest): User {
-        val findUser = userPort.loadById(user.id)
-            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+        val findUser = validate(user.id)
 
         if (findUser.registered) {
             throw ClientValidationException(UserErrorCode.ALREADY_REGISTERED)
@@ -64,8 +64,7 @@ class UserService(
 
     @Transactional
     override fun updateNickname(user: User, request: UpdateNicknameRequest): User {
-        val findUser = (userPort.loadById(user.id)
-            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER))
+        val findUser = validate(user.id)
 
         val isDuplicate = userPort.checkByNickname(request.nickname)
         if (isDuplicate) {
@@ -82,14 +81,33 @@ class UserService(
 
     @Transactional
     override fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken {
-        val user = userPort.loadById(userId)
-            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+        val user = validate(userId)
         val fcmToken = FcmToken(user.id, request.token)
         return fcmTokenPort.persist(fcmToken)
     }
 
     override fun getUserInfo(userId: Long): User {
-        return userPort.loadById(userId)
-            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+        return validate(userId)
     }
+
+    @Transactional
+    override fun updateProfile(userId: Long, request: UserCommand): User {
+        val user = validate(userId)
+        val nickname = request.nickname
+
+        val image = (categoryImagePort.loadById(request.profileImageId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
+
+        val isDuplicate = userPort.checkByNickname(request.nickname)
+        if (isDuplicate) {
+            throw ClientValidationException(UserErrorCode.ALREADY_EXISTS_NICKNAME)
+        }
+
+        user.modifyProfile(image.imageUrl, nickname)
+        return userPort.persist(user)
+    }
+
+    private fun validate(userId: Long) = (userPort.loadById(userId)
+        ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER))
+
 }

@@ -6,9 +6,11 @@ import com.pokit.category.model.CategoryImage
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.common.exception.ClientValidationException
+import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.UserFixture
 import com.pokit.user.dto.request.UpdateNicknameRequest
+import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.model.User
 import com.pokit.user.port.out.FcmTokenPort
 import com.pokit.user.port.out.UserPort
@@ -94,6 +96,59 @@ class UserServiceTest : BehaviorSpec({
                 shouldThrow<ClientValidationException> {
                     userService.updateNickname(user, invalidRequest)
                 }
+            }
+        }
+    }
+
+    Given("프로필 변경 시") {
+        val notExistUserId = 0L
+        val notExistImageId = 0
+        val existNickname = "Duplicate"
+
+        val user = UserFixture.getUser()
+        val toModifyName = "Modify"
+
+        val imageId = 1
+        val image = CategoryImage(imageId, "url")
+
+        val command = UserCommand(imageId, toModifyName)
+        val invalidCommand = UserCommand(notExistImageId, toModifyName)
+        val duplicateCommand = UserCommand(imageId, existNickname)
+
+        every { userPort.loadById(notExistUserId) } returns null
+        every { categoryImagePort.loadById(notExistImageId) } returns null
+        every { userPort.checkByNickname(existNickname) } returns true
+        every { userPort.loadById(user.id) } returns user
+        every { categoryImagePort.loadById(imageId) } returns image
+        every { userPort.checkByNickname(toModifyName) } returns false
+        every { userPort.persist(user) } returns user
+
+        When("존재하지 않는 유저하면") {
+            Then("예외가 발생한다.") {
+                shouldThrow<NotFoundCustomException> {
+                    userService.updateProfile(notExistUserId, command)
+                }
+            }
+        }
+        When("존재하지 않는 이미지로 요청 시 ") {
+            Then("예외가 발생한다.") {
+                shouldThrow<NotFoundCustomException> {
+                    userService.updateProfile(user.id, invalidCommand)
+                }
+            }
+        }
+        When("이미 존재하는 닉네임으로 변경할 시") {
+            Then("예외가 발생한다.") {
+                shouldThrow<ClientValidationException> {
+                    userService.updateProfile(user.id, duplicateCommand)
+                }
+            }
+        }
+        When("유효한 닉네임, 프로필로 요청 시") {
+            val response = userService.updateProfile(user.id, command)
+            Then("프로필 변경에 성공한다.") {
+                response.nickName shouldBe toModifyName
+                response.profileImage shouldBe image.imageUrl
             }
         }
     }

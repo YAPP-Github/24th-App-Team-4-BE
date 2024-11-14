@@ -3,6 +3,8 @@ package com.pokit.user.port.`in`
 import com.pokit.user.dto.request.CreateFcmTokenRequest
 import com.pokit.user.dto.request.SignUpRequest
 import com.pokit.user.dto.request.UpdateNicknameRequest
+import com.pokit.user.dto.request.UserCommand
+import com.pokit.user.dto.response.UserResponse
 import com.pokit.user.model.FcmToken
 import com.pokit.user.model.User
 
@@ -18,4 +20,6 @@ interface UserUseCase {
     fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken
 
     fun getUserInfo(userId: Long): User
+
+    fun updateProfile(userId: Long, request: UserCommand): User
 }
