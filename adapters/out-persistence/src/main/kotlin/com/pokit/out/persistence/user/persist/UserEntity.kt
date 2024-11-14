@@ -35,7 +35,10 @@ class UserEntity(
     var registered: Boolean,
 
     @Column(name = "sub")
-    var sub: String?
+    var sub: String?,
+
+    @Column(name = "profile_image")
+    var profileImage: String?
 ) : BaseEntity() {
     fun delete() {
         this.deleted = true
@@ -50,7 +53,8 @@ class UserEntity(
                 nickname = user.nickName,
                 authPlatform = user.authPlatform,
                 registered = user.registered,
-                sub = user.sub
+                sub = user.sub,
+                profileImage = user.profileImage
             )
     }
 }
@@ -62,5 +66,6 @@ fun UserEntity.toDomain() = User(
     nickName = this.nickname,
     authPlatform = this.authPlatform,
     registered = this.registered,
-    sub = this.sub
+    sub = this.sub,
+    profileImage = this.profileImage
 )
