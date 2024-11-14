@@ -61,10 +61,11 @@ class ContentAdapter(
         condition: ContentSearchCondition,
         pageable: Pageable,
     ): Slice<ContentsResult> {
-        val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
+        val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
 
         FavoriteOrNot(condition.favorites, query) // 북마크 조인 여부
 
@@ -90,7 +91,8 @@ class ContentAdapter(
             ContentsResult.of(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
-                it[userLogEntity.count()]!!
+                it[userLogEntity.count()]!!,
+                it[bookmarkEntity.count()]!!
             )
         }
 
@@ -98,10 +100,11 @@ class ContentAdapter(
     }
 
     override fun loadByUserIdAndCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult> {
-        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
+        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
             .where(
                 categoryEntity.userId.eq(userId),
                 categoryEntity.name.eq(categoryName),
@@ -119,7 +122,8 @@ class ContentAdapter(
             ContentsResult.of(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
-                it[userLogEntity.count()]!!
+                it[userLogEntity.count()]!!,
+                it[bookmarkEntity.count()]!!
             )
         }
 
@@ -127,11 +131,11 @@ class ContentAdapter(
     }
 
     override fun loadBookmarkedContentsByUserId(userId: Long, pageable: Pageable): Slice<ContentsResult> {
-        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count())
+        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .join(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
+            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
             .where(
                 categoryEntity.userId.eq(userId),
                 contentEntity.deleted.isFalse,
@@ -149,7 +153,8 @@ class ContentAdapter(
             ContentsResult.of(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
-                it[userLogEntity.count()]!!
+                it[userLogEntity.count()]!!,
+                it[bookmarkEntity.count()]!!
             )
         }
 
