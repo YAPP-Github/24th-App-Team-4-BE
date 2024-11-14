@@ -5,7 +5,6 @@ import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.model.toDomain
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.user.dto.request.*
-import com.pokit.user.dto.request.toDto
 import com.pokit.user.dto.response.CheckDuplicateNicknameResponse
 import com.pokit.user.dto.response.InterestTypeResponse
 import com.pokit.user.dto.response.UserResponse
@@ -93,7 +92,7 @@ class UserController(
     @Operation(summary = "유저 프로필 수정 API")
     fun update(
         @AuthenticationPrincipal user: PrincipalUser,
-        @RequestBody request: UpdateProfileRequest
+        @Valid @RequestBody request: UpdateProfileRequest
     ): ResponseEntity<UserResponse> {
         return userUseCase.updateProfile(user.id, request.toDto())
             .toResponse()
