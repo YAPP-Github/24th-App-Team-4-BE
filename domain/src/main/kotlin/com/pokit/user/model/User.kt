@@ -1,5 +1,6 @@
 package com.pokit.user.model
 
+import com.pokit.category.model.CategoryImage
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.exception.UserErrorCode
@@ -13,7 +14,7 @@ data class User(
     val authPlatform: AuthPlatform,
     var registered: Boolean = false,
     var sub: String?,
-    var profileImage: String?
+    var profileImage: CategoryImage? = null
 ) {
     fun register(nickName: String) {
         this.nickName = nickName
@@ -28,7 +29,7 @@ data class User(
         this.nickName = nickName
     }
 
-    fun modifyProfile(profileImage: String, nickName: String) {
+    fun modifyProfile(profileImage: CategoryImage, nickName: String) {
         this.nickName = nickName
         this.profileImage = profileImage
     }

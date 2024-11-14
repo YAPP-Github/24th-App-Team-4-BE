@@ -1,6 +1,8 @@
 package com.pokit.out.persistence.user.persist
 
 import com.pokit.out.persistence.BaseEntity
+import com.pokit.out.persistence.category.persist.CategoryImageEntity
+import com.pokit.out.persistence.category.persist.toDomain
 import com.pokit.token.model.AuthPlatform
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
@@ -37,8 +39,9 @@ class UserEntity(
     @Column(name = "sub")
     var sub: String?,
 
-    @Column(name = "profile_image")
-    var profileImage: String?
+    @OneToOne
+    @JoinColumn(name = "image_id", foreignKey = ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    var profileImage: CategoryImageEntity? = null
 ) : BaseEntity() {
     fun delete() {
         this.deleted = true
@@ -54,7 +57,7 @@ class UserEntity(
                 authPlatform = user.authPlatform,
                 registered = user.registered,
                 sub = user.sub,
-                profileImage = user.profileImage
+                profileImage = user.profileImage?.let { CategoryImageEntity.of(it) }
             )
     }
 }
@@ -67,5 +70,6 @@ fun UserEntity.toDomain() = User(
     authPlatform = this.authPlatform,
     registered = this.registered,
     sub = this.sub,
-    profileImage = this.profileImage
+    profileImage = this.profileImage?.toDomain()
+
 )

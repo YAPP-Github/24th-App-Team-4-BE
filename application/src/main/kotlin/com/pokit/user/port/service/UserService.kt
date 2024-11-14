@@ -103,7 +103,7 @@ class UserService(
             throw ClientValidationException(UserErrorCode.ALREADY_EXISTS_NICKNAME)
         }
 
-        user.modifyProfile(image.imageUrl, nickname)
+        user.modifyProfile(image, nickname)
         return userPort.persist(user)
     }
 
