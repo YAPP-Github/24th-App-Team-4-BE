@@ -44,4 +44,9 @@ class CategoryAdapter(
     override fun loadByIdAndOpenType(id: Long, openType: OpenType): Category? =
         categoryRepository.findByIdAndOpenTypeAndDeleted(id, openType, false)?.toDomain()
 
+    override fun loadByNameAndUserId(categoryName: String, userId: Long): Category? {
+        return categoryRepository.findByNameAndUserId(categoryName, userId)
+            ?.toDomain()
+    }
+
 }

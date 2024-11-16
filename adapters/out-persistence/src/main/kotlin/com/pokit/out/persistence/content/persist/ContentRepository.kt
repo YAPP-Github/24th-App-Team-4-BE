@@ -23,11 +23,13 @@ interface ContentRepository : JpaRepository<ContentEntity, Long>, ContentJdbcRep
     fun countByCategoryIdAndDeleted(id: Long, deleted: Boolean): Int
 
     @Modifying(clearAutomatically = true)
-    @Query("""
+    @Query(
+        """
         update ContentEntity c set c.deleted = true
         where c.categoryId in
         (select ct.id from CategoryEntity ct where ct.userId = :userId)
-    """)
+    """
+    )
     fun deleteByUserId(@Param("userId") userId: Long)
 
     fun findByIdIn(ids: List<Long>): List<ContentEntity>
@@ -42,11 +44,22 @@ interface ContentRepository : JpaRepository<ContentEntity, Long>, ContentJdbcRep
     )
     fun countByUserId(userId: Long): Int
 
-    @Query("""
+    @Query(
+        """
         select new com.pokit.content.model.ContentWithUser(c.id, u.id, c.title, c.thumbNail) from ContentEntity c
         join CategoryEntity ca on ca.id = c.categoryId
         join UserEntity u on u.id = ca.userId
         where c.id in :ids
-    """)
+    """
+    )
     fun findByIdInWithUser(ids: List<Long>): List<ContentWithUser>
+
+    @Modifying(clearAutomatically = true)
+    @Query(
+        """
+        update ContentEntity c set c.deleted = true
+        where c.id in :contentIds
+    """
+    )
+    fun deleteByContentIds(@Param("contentIds") contentIds: List<Long>)
 }

@@ -1,8 +1,8 @@
 package com.pokit.content.port.out
 
 import com.pokit.category.model.OpenType
-import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.request.ContentSearchCondition
+import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.response.SharedContentResult
 import com.pokit.content.model.Content
 import com.pokit.content.model.ContentWithUser
@@ -47,4 +47,5 @@ interface ContentPort {
     fun duplicateContent(originCategoryId: Long, targetCategoryId: Long)
 
     fun loadByContentIdsWithUser(contetIds: List<Long>): List<ContentWithUser>
+    fun deleteAllByIds(contentIds: List<Long>)
 }

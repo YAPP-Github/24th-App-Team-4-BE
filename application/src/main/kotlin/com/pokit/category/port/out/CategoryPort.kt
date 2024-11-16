@@ -14,4 +14,5 @@ interface CategoryPort {
     fun delete(category: Category)
     fun countByUserId(userId: Long): Int
     fun loadByIdAndOpenType(id: Long, openType: OpenType): Category?
+    fun loadByNameAndUserId(categoryName: String, userId: Long): Category?
 }

@@ -9,11 +9,11 @@ import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
-import com.pokit.content.dto.request.ContentSearchParams
-import com.pokit.content.dto.request.CreateContentRequest
-import com.pokit.content.dto.request.UpdateContentRequest
-import com.pokit.content.dto.request.toDto
-import com.pokit.content.dto.response.*
+import com.pokit.content.dto.request.*
+import com.pokit.content.dto.response.BookMarkContentResponse
+import com.pokit.content.dto.response.ContentResponse
+import com.pokit.content.dto.response.ContentsResponse
+import com.pokit.content.dto.response.toResponse
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
@@ -169,5 +169,17 @@ class ContentController(
             .wrapSlice()
             .wrapOk()
     }
+
+    @PutMapping("/uncategorized")
+    @Operation(summary = "미분류 링크 삭제 API")
+    @ErrorOperation(ContentErrorCode::class)
+    fun deleteUncategorizedContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @RequestBody request: DeleteUncategorizedRequest
+    ): ResponseEntity<Unit> {
+        return contentUseCase.deleteUncategorized(user.id, request.toDto())
+            .wrapUnit()
+    }
+
 }
 

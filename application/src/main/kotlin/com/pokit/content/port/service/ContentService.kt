@@ -6,10 +6,12 @@ import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.AlreadyExistsException
+import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
@@ -163,6 +165,21 @@ class ContentService(
 
     override fun getBookmarkCount(userId: Long) =
         contentCountPort.getBookmarkCount(userId)
+
+    @Transactional
+    override fun deleteUncategorized(userId: Long, contentIds: List<Long>) {
+        val category = (categoryPort.loadByNameAndUserId(UNCATEGORIZED.displayName, userId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_UNCATEGORIZED))
+
+        val contents = contentPort.loadByContentIds(contentIds)
+        contents.forEach {
+            if (it.categoryId != category.categoryId) {
+                throw ClientValidationException(ContentErrorCode.NOT_UNCATEGORIZED_CONTENT)
+            }
+        }
+
+        contentPort.deleteAllByIds(contentIds)
+    }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)

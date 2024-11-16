@@ -200,6 +200,10 @@ class ContentAdapter(
         return contentRepository.findByIdInWithUser(contetIds)
     }
 
+    override fun deleteAllByIds(contentIds: List<Long>) {
+        contentRepository.deleteByContentIds(contentIds)
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }

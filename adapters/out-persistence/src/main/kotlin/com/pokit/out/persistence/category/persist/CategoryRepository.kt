@@ -10,5 +10,6 @@ interface CategoryRepository : JpaRepository<CategoryEntity, Long> {
     fun findByUserIdAndDeleted(userId: Long, deleted: Boolean, pageable: Pageable): Slice<CategoryEntity>
     fun findByIdAndUserIdAndDeleted(id: Long, userId: Long, deleted: Boolean): CategoryEntity?
     fun countByUserIdAndDeleted(userId: Long, deleted: Boolean): Int
-    fun findByIdAndOpenTypeAndDeleted(id: Long, openType: OpenType, deleted:Boolean): CategoryEntity?
+    fun findByIdAndOpenTypeAndDeleted(id: Long, openType: OpenType, deleted: Boolean): CategoryEntity?
+    fun findByNameAndUserId(name: String, userId: Long): CategoryEntity?
 }
