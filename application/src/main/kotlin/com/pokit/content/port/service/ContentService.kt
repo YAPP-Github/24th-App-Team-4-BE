@@ -26,7 +26,6 @@ import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.model.User
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -167,16 +166,11 @@ class ContentService(
     override fun getBookmarkCount(userId: Long) =
         contentCountPort.getBookmarkCount(userId)
 
-    private val logger = KotlinLogging.logger { }
-
     @Transactional
     override fun deleteUncategorized(userId: Long, contentIds: List<Long>) {
-        // 유저의 미분류 카테고리 가져옴
         val category = (categoryPort.loadByNameAndUserId(UNCATEGORIZED.displayName, userId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_UNCATEGORIZED))
 
-        logger.info { "미분류 ID : ${category.categoryId}" }
-        // 삭제하려는 링크들이 미분류 카테고리 맞는 지 체크
         val contents = contentPort.loadByContentIds(contentIds)
         contents.forEach {
             if (it.categoryId != category.categoryId) {
@@ -184,7 +178,6 @@ class ContentService(
             }
         }
 
-        // 미분류 링크들 삭제
         contentPort.deleteAllByIds(contentIds)
     }
 
