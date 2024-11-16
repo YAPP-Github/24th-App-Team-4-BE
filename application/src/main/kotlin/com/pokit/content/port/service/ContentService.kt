@@ -6,10 +6,12 @@ import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
 import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.AlreadyExistsException
+import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
@@ -24,6 +26,7 @@ import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
 import com.pokit.user.model.User
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -163,6 +166,27 @@ class ContentService(
 
     override fun getBookmarkCount(userId: Long) =
         contentCountPort.getBookmarkCount(userId)
+
+    private val logger = KotlinLogging.logger { }
+
+    @Transactional
+    override fun deleteUncategorized(userId: Long, contentIds: List<Long>) {
+        // 유저의 미분류 카테고리 가져옴
+        val category = (categoryPort.loadByNameAndUserId(UNCATEGORIZED.displayName, userId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_UNCATEGORIZED))
+
+        logger.info { "미분류 ID : ${category.categoryId}" }
+        // 삭제하려는 링크들이 미분류 카테고리 맞는 지 체크
+        val contents = contentPort.loadByContentIds(contentIds)
+        contents.forEach {
+            if (it.categoryId != category.categoryId) {
+                throw ClientValidationException(ContentErrorCode.NOT_UNCATEGORIZED_CONTENT)
+            }
+        }
+
+        // 미분류 링크들 삭제
+        contentPort.deleteAllByIds(contentIds)
+    }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)

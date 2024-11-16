@@ -40,4 +40,6 @@ interface ContentUseCase {
     fun getUnreadCount(userId: Long): Int
 
     fun getBookmarkCount(userId: Long): Int
+
+    fun deleteUncategorized(userId: Long, contentIds: List<Long>)
 }
