@@ -62,4 +62,29 @@ interface ContentRepository : JpaRepository<ContentEntity, Long>, ContentJdbcRep
     """
     )
     fun deleteByContentIds(@Param("contentIds") contentIds: List<Long>)
+
+    @Query(
+        """
+        select c from ContentEntity c
+        join CategoryEntity ca on ca.id = c.categoryId
+        join UserEntity u on u.id = ca.userId
+        where u.id = :userId and c.id in :contentIds and c.deleted = false
+    """
+    )
+    fun findAllByUserIdAndContentIds(
+        @Param("userId") userId: Long,
+        @Param("contentIds") contentIds: List<Long>
+    ): List<ContentEntity>
+
+    @Modifying(clearAutomatically = true)
+    @Query(
+        """
+        update ContentEntity c set c.categoryId = :categoryId
+        where c.id in :contentIds
+    """
+    )
+    fun updateCategoryId(
+        @Param("contentIds") contentIds: List<Long>,
+        @Param("categoryId") categoryId: Long
+    )
 }

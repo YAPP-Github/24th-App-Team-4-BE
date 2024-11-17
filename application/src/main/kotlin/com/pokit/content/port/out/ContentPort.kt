@@ -48,4 +48,8 @@ interface ContentPort {
 
     fun loadByContentIdsWithUser(contetIds: List<Long>): List<ContentWithUser>
     fun deleteAllByIds(contentIds: List<Long>)
+
+    fun loadAllByUserIdAndContentIds(userId: Long, contentIds: List<Long>): List<Content>
+
+    fun updateCategoryId(contents: List<Content>, categoryId: Long)
 }

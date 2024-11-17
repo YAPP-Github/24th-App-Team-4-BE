@@ -204,6 +204,16 @@ class ContentAdapter(
         contentRepository.deleteByContentIds(contentIds)
     }
 
+    override fun loadAllByUserIdAndContentIds(userId: Long, contentIds: List<Long>): List<Content> {
+        return contentRepository.findAllByUserIdAndContentIds(userId, contentIds)
+            .map { it.toDomain() }
+    }
+
+    override fun updateCategoryId(contents: List<Content>, categoryId: Long) {
+        val contentIds = contents.map { it.id }
+        contentRepository.updateCategoryId(contentIds, categoryId)
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
