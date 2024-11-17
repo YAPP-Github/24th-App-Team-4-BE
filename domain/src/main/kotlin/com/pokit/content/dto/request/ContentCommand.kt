@@ -11,6 +11,11 @@ data class ContentCommand(
     val thumbNail: String?
 )
 
+data class CategorizeCommand(
+    val contentIds: List<Long>,
+    val categoryId: Long
+)
+
 fun ContentCommand.toDomain() = Content(
     categoryId = this.categoryId,
     data = this.data,

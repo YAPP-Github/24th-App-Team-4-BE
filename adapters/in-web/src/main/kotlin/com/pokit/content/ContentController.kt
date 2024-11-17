@@ -181,5 +181,16 @@ class ContentController(
             .wrapUnit()
     }
 
+    @PatchMapping
+    @Operation(summary = "미분류 링크 포킷으로 이동 API")
+    fun categorizeContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @RequestBody request: CategorizeRequest
+    ): ResponseEntity<Unit> {
+        return contentUseCase.categorize(user.id, request.toDto())
+            .wrapUnit()
+    }
+
+
 }
 

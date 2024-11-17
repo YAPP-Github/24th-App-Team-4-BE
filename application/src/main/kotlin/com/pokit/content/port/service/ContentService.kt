@@ -13,6 +13,7 @@ import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.AlreadyExistsException
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
+import com.pokit.content.dto.request.CategorizeCommand
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.request.toDomain
@@ -179,6 +180,13 @@ class ContentService(
         }
 
         contentPort.deleteAllByIds(contentIds)
+    }
+
+    @Transactional
+    override fun categorize(userId: Long, command: CategorizeCommand) {
+        val category = verifyCategory(command.categoryId, userId)
+        val contents = contentPort.loadAllByUserIdAndContentIds(userId, command.contentIds)
+        contentPort.updateCategoryId(contents, category.categoryId)
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
