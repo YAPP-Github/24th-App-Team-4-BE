@@ -1,5 +1,6 @@
 package com.pokit.content.port.`in`
 
+import com.pokit.content.dto.request.CategorizeCommand
 import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.*
@@ -42,4 +43,6 @@ interface ContentUseCase {
     fun getBookmarkCount(userId: Long): Int
 
     fun deleteUncategorized(userId: Long, contentIds: List<Long>)
+
+    fun categorize(userId: Long, command: CategorizeCommand)
 }
