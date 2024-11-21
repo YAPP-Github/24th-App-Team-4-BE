@@ -27,6 +27,10 @@ class UserAdapter(
         ?.run { toDomain() }
 
     override fun checkByNickname(nickname: String) = userRepository.existsByNickname(nickname)
+
+    override fun checkByNickname(nickname: String, userId: Long) =
+        userRepository.existsByNicknameAndIdNot(nickname, userId)
+
     override fun delete(user: User) {
         userRepository.findByIdOrNull(user.id)
             ?.delete()
