@@ -10,7 +10,9 @@ import com.pokit.token.model.AuthPlatform
 import com.pokit.user.UserFixture
 import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.model.User
+import com.pokit.user.model.UserImage
 import com.pokit.user.port.out.FcmTokenPort
+import com.pokit.user.port.out.UserImagePort
 import com.pokit.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -23,12 +25,14 @@ class UserServiceTest : BehaviorSpec({
     val categoryPort = mockk<CategoryPort>()
     val categoryImagePort = mockk<CategoryImagePort>()
     val fcmTokenPort = mockk<FcmTokenPort>()
-    val userService = UserService(userPort, categoryPort, categoryImagePort, fcmTokenPort)
+    val userImagePort = mockk<UserImagePort>()
+    val userService = UserService(userPort, categoryPort, categoryImagePort, fcmTokenPort, userImagePort)
     Given("회원을 등록할 때") {
         val user = UserFixture.getUser()
         val invalidUser = UserFixture.getInvalidUser()
         val request = UserFixture.getSignUpRequest()
-        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE, sub = "sub")
+        val userImage = UserImage(1, "url")
+        val modifieUser = User(user.id, user.email, user.role, request.nickName, AuthPlatform.GOOGLE, sub = "sub", image = userImage)
         val image = CategoryImage(1, "https://www.image.com")
         val unCategorized = CategoryFixture.getUnCategorized(user.id, image)
 
