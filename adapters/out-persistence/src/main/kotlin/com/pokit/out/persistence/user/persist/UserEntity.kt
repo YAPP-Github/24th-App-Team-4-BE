@@ -35,7 +35,11 @@ class UserEntity(
     var registered: Boolean,
 
     @Column(name = "sub")
-    var sub: String?
+    var sub: String?,
+
+    @OneToOne
+    @JoinColumn(name = "image_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    val image: UserImageEntity?
 ) : BaseEntity() {
     fun delete() {
         this.deleted = true
@@ -50,7 +54,8 @@ class UserEntity(
                 nickname = user.nickName,
                 authPlatform = user.authPlatform,
                 registered = user.registered,
-                sub = user.sub
+                sub = user.sub,
+                image = user.image?.let { UserImageEntity.of(it) }
             )
     }
 }
@@ -62,5 +67,6 @@ fun UserEntity.toDomain() = User(
     nickName = this.nickname,
     authPlatform = this.authPlatform,
     registered = this.registered,
-    sub = this.sub
+    sub = this.sub,
+    image = this.image?.toDomain()
 )
