@@ -18,4 +18,5 @@ interface CategoryUseCase {
     fun getSharedCategory(categoryId: Long, userId: Long): Category
     fun completeShare(categoryId: Long)
     fun duplicateCategory(originCategoryId: Long, categoryName: String, userId: Long, categoryImageId: Int)
+    fun acceptCategory(userId: Long, categoryId: Long)
 }
