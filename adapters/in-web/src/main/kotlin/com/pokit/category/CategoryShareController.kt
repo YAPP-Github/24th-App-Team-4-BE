@@ -6,6 +6,7 @@ import com.pokit.category.dto.request.DuplicateCategoryRequest
 import com.pokit.category.dto.response.SharedContentsResponse
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
+import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.Pageable
@@ -63,5 +64,15 @@ class CategoryShareController(
             request.categoryImageId
         )
             .wrapOk()
+
+    @Operation(summary = "포킷 초대 수락 API")
+    @PostMapping("/accept/{categoryId}")
+    fun acceptCategory(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable categoryId: Long,
+    ): ResponseEntity<Unit> {
+        return categoryUseCase.acceptCategory(user.id, categoryId)
+            .wrapUnit()
+    }
 
 }
