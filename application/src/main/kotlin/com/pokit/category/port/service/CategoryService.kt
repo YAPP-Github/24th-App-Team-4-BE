@@ -4,15 +4,14 @@ import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
 import com.pokit.category.dto.toCategoriesResponse
 import com.pokit.category.exception.CategoryErrorCode
-import com.pokit.category.model.Category
-import com.pokit.category.model.CategoryImage
+import com.pokit.category.model.*
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
-import com.pokit.category.model.OpenType
-import com.pokit.category.model.duplicate
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.category.port.out.CategoryImagePort
 import com.pokit.category.port.out.CategoryPort
+import com.pokit.category.port.out.SharedCategoryPort
 import com.pokit.common.exception.AlreadyExistsException
+import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.InvalidRequestException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.port.out.ContentPort
@@ -27,7 +26,8 @@ import org.springframework.transaction.annotation.Transactional
 class CategoryService(
     private val categoryPort: CategoryPort,
     private val categoryImagePort: CategoryImagePort,
-    private val contentPort: ContentPort
+    private val contentPort: ContentPort,
+    private val sharedCategoryPort: SharedCategoryPort
 ) : CategoryUseCase {
     companion object {
         private const val MAX_CATEGORY_COUNT = 30
@@ -152,6 +152,22 @@ class CategoryService(
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
         val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId, categoryImage))
         contentPort.duplicateContent(originCategoryId, newCategory.categoryId)
+    }
+
+    @Transactional
+    override fun acceptCategory(userId: Long, categoryId: Long) {
+        val category = categoryPort.loadByIdOrThrow(categoryId)
+
+        sharedCategoryPort.loadByUserIdAndCategoryId(userId, categoryId)
+            ?.let { throw ClientValidationException(CategoryErrorCode.ALREADY_ACCEPTED) }
+
+        category.addUserCount()
+        category.shared()
+
+        categoryPort.persist(category)
+
+        val sharedCategory = SharedCategory(userId = userId, categoryId = category.categoryId)
+        sharedCategoryPort.persist(sharedCategory)
     }
 
     override fun getAllCategoryImages(): List<CategoryImage> =
