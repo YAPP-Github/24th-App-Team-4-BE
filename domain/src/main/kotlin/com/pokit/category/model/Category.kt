@@ -10,6 +10,8 @@ data class Category(
     var contentCount: Int = 0,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var openType: OpenType,
+    var userCount: Int = 0,
+    var isShared: Boolean = false,
 ) {
     fun update(categoryName: String, categoryImage: CategoryImage) {
         this.categoryName = categoryName
@@ -19,6 +21,14 @@ data class Category(
     fun completeShare(): Category {
         this.openType = OpenType.PUBLIC
         return this
+    }
+
+    fun addUserCount() {
+        this.userCount++
+    }
+
+    fun shared() {
+        this.isShared = true
     }
 }
 

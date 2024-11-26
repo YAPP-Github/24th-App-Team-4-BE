@@ -27,6 +27,12 @@ class CategoryEntity(
     @Column(name = "open_type")
     @Enumerated(EnumType.STRING)
     var openType: OpenType = OpenType.PRIVATE,
+
+    @Column(name = "user_count")
+    var userCount: Int = 0,
+
+    @Column(name = "is_shared")
+    var isShared: Boolean = false
 ) : BaseEntity() {
 
     @Column(name = "is_deleted")
@@ -44,6 +50,8 @@ class CategoryEntity(
                 name = category.categoryName,
                 image = CategoryImageEntity.of(category.categoryImage),
                 openType = category.openType,
+                userCount = category.userCount,
+                isShared = category.isShared
             )
     }
 }
@@ -55,4 +63,6 @@ fun CategoryEntity.toDomain() = Category(
     userId = this.userId,
     createdAt = this.createdAt,
     openType = this.openType,
+    userCount = this.userCount,
+    isShared = this.isShared
 )
