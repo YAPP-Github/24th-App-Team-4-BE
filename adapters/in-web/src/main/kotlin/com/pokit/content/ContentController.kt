@@ -15,6 +15,7 @@ import com.pokit.content.dto.response.ContentResponse
 import com.pokit.content.dto.response.ContentsResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.exception.ContentErrorCode
+import com.pokit.content.model.Content
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -191,6 +192,16 @@ class ContentController(
             .wrapUnit()
     }
 
+    @PatchMapping("/thumbnail/{contentId}")
+    @Operation(summary = "썸네일 수정 API")
+    fun updateThumbnail(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable("contentId") contentId: Long,
+        @RequestBody request: UpdateThumbnailRequest
+    ): ResponseEntity<Content> {
+        return contentUseCase.updateThumbnail(user.id, contentId,request.toDto())
+            .wrapOk()
+    }
 
 }
 
