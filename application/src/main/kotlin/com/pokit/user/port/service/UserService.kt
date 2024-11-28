@@ -14,9 +14,11 @@ import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.FcmToken
+import com.pokit.user.model.Interest
 import com.pokit.user.model.User
 import com.pokit.user.port.`in`.UserUseCase
 import com.pokit.user.port.out.FcmTokenPort
+import com.pokit.user.port.out.InterestPort
 import com.pokit.user.port.out.UserImagePort
 import com.pokit.user.port.out.UserPort
 import org.springframework.stereotype.Service
@@ -29,7 +31,8 @@ class UserService(
     private val categoryPort: CategoryPort,
     private val categoryImagePort: CategoryImagePort,
     private val fcmTokenPort: FcmTokenPort,
-    private val userImagePort: UserImagePort
+    private val userImagePort: UserImagePort,
+    private val interestPort: InterestPort,
 ) : UserUseCase {
     companion object {
         private const val UNCATEGORIZED_IMAGE_ID = 1
@@ -57,6 +60,12 @@ class UserService(
             openType = OpenType.PRIVATE,
         )
         categoryPort.persist(category)
+
+        request.interests.forEach {
+            interestPort.persist(
+                Interest(userId = user.id, interestType = it)
+            )
+        }
 
         return savedUser
     }
