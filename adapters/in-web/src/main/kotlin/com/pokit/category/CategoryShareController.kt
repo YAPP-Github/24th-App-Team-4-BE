@@ -75,4 +75,15 @@ class CategoryShareController(
             .wrapUnit()
     }
 
+    @Operation(summary = "포킷 내보내기 API")
+    @PostMapping("/resign/{categoryId}/{resignUserId}")
+    fun resignUserOfCategory(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable categoryId: Long,
+        @PathVariable resignUserId: Long,
+    ): ResponseEntity<Unit> {
+        return categoryUseCase.resignUser(user.id, categoryId, resignUserId)
+            .wrapUnit()
+    }
+
 }

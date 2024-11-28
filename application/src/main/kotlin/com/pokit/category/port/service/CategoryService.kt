@@ -170,6 +170,15 @@ class CategoryService(
         sharedCategoryPort.persist(sharedCategory)
     }
 
+    @Transactional
+    override fun resignUser(userId: Long, categoryId: Long, resignUserId: Long) {
+        val category = categoryPort.loadByIdAndUserId(categoryId, userId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+        val sharedCategory = (sharedCategoryPort.loadByUserIdAndCategoryId(resignUserId, category.categoryId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NEVER_ACCPTED))
+        sharedCategoryPort.delete(sharedCategory)
+    }
+
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
 

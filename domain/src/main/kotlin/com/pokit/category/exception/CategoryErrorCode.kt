@@ -15,5 +15,6 @@ enum class CategoryErrorCode(
     SHARE_ALREADY_EXISTS_CATEGORY("직접 생성한 포킷은 공유받을 수 없습니다.\n 다른 유저의 포킷을 공유받아보세요.", "CA_007"),
     NOT_FOUND_UNCATEGORIZED("사용자가 미분류 카테고리가 없습니다.(서버 에러)", "CA_008"),
     ALREADY_ACCEPTED("이미 초대를 수락한 포킷입니다.", "CA_009"),
+    NEVER_ACCPTED("해당 유저가 포킷에 초대된 이력이 없습니다.", "CA_0010"),
 
 }
