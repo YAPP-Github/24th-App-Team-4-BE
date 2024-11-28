@@ -37,6 +37,10 @@ data class Content(
             else -> domain
         }
     }
+
+    fun modifyThumbnail(thumbnail: String) {
+        this.thumbNail = thumbnail
+    }
 }
 
 data class ContentInfo(

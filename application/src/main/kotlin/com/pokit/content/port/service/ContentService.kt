@@ -189,6 +189,13 @@ class ContentService(
         contentPort.updateCategoryId(contents, category.categoryId)
     }
 
+    @Transactional
+    override fun updateThumbnail(userId: Long, contentId: Long, thumbnail: String): Content {
+        val content = verifyContent(userId, contentId)
+        content.modifyThumbnail(thumbnail)
+        return contentPort.persist(content)
+    }
+
     private fun verifyContent(userId: Long, contentId: Long): Content {
         return contentPort.loadByUserIdAndId(userId, contentId)
             ?: throw NotFoundCustomException(ContentErrorCode.NOT_FOUND_CONTENT)
