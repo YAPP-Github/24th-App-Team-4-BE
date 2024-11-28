@@ -16,9 +16,17 @@ class SharedCategoryEntity(
 
     @Column(name = "category_id")
     val categoryId: Long,
+
+    @Column(name = "is_deleted")
+    var isDeleted: Boolean = false
 ) : BaseEntity() {
+    fun delete() {
+        this.isDeleted = true
+    }
+
     companion object {
         fun of(sharedCategory: SharedCategory) = SharedCategoryEntity(
+            id= sharedCategory.id,
             userId = sharedCategory.userId,
             categoryId = sharedCategory.categoryId
         )
@@ -26,6 +34,7 @@ class SharedCategoryEntity(
 }
 
 internal fun SharedCategoryEntity.toDomain() = SharedCategory(
+    id = this.id,
     userId = this.userId,
     categoryId = this.categoryId
 )

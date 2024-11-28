@@ -5,6 +5,7 @@ import com.pokit.category.port.out.SharedCategoryPort
 import com.pokit.out.persistence.category.persist.SharedCategoryEntity
 import com.pokit.out.persistence.category.persist.SharedCategoryRepository
 import com.pokit.out.persistence.category.persist.toDomain
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -17,8 +18,15 @@ class SharedCategoryAdapter(
     }
 
     override fun loadByUserIdAndCategoryId(userId: Long, categoryId: Long): SharedCategory? {
-        return sharedCategoryRepository.findByUserIdAndCategoryId(userId, categoryId)
-            ?.toDomain()
+        return sharedCategoryRepository.findByUserIdAndCategoryIdAndIsDeleted(
+            userId,
+            categoryId,
+            false
+        )?.toDomain()
     }
 
+    override fun delete(sharedCategory: SharedCategory) {
+        sharedCategoryRepository.findByIdOrNull(sharedCategory.id)
+            ?.delete()
+    }
 }

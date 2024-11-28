@@ -6,4 +6,6 @@ interface SharedCategoryPort {
     fun persist(sharedCategory: SharedCategory): SharedCategory
 
     fun loadByUserIdAndCategoryId(userId: Long, categoryId: Long): SharedCategory?
+
+    fun delete(sharedCategory: SharedCategory)
 }
