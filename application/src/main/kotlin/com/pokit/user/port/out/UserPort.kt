@@ -12,6 +12,8 @@ interface UserPort {
 
     fun checkByNickname(nickname: String): Boolean
 
+    fun checkByNickname(nickname: String, userId: Long): Boolean
+
     fun delete(user: User)
 
     fun loadAllIds(): List<Long>

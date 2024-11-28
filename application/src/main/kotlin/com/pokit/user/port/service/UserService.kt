@@ -11,11 +11,13 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.user.dto.request.CreateFcmTokenRequest
 import com.pokit.user.dto.request.SignUpRequest
 import com.pokit.user.dto.request.UpdateNicknameRequest
+import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.FcmToken
 import com.pokit.user.model.User
 import com.pokit.user.port.`in`.UserUseCase
 import com.pokit.user.port.out.FcmTokenPort
+import com.pokit.user.port.out.UserImagePort
 import com.pokit.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +28,8 @@ class UserService(
     private val userPort: UserPort,
     private val categoryPort: CategoryPort,
     private val categoryImagePort: CategoryImagePort,
-    private val fcmTokenPort: FcmTokenPort
+    private val fcmTokenPort: FcmTokenPort,
+    private val userImagePort: UserImagePort
 ) : UserUseCase {
     companion object {
         private const val UNCATEGORIZED_IMAGE_ID = 1
@@ -91,5 +94,22 @@ class UserService(
     override fun getUserInfo(userId: Long): User {
         return userPort.loadById(userId)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+    }
+
+    @Transactional
+    override fun updateProfile(userId: Long, command: UserCommand): User {
+        val user = userPort.loadById(userId)
+            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+
+        val image = userImagePort.loadById(command.profileImageId)
+            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_PROFILE_IMAGE)
+
+        val isDuplicate = userPort.checkByNickname(command.nickname, userId)
+        if (isDuplicate) {
+            throw ClientValidationException(UserErrorCode.ALREADY_EXISTS_NICKNAME)
+        }
+
+        user.modifyProfile(image, command.nickname)
+        return userPort.persist(user)
     }
 }

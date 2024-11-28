@@ -12,7 +12,8 @@ data class User(
     var nickName: String = "NOT_REGISTERED",
     val authPlatform: AuthPlatform,
     var registered: Boolean = false,
-    var sub: String?
+    var sub: String?,
+    var image: UserImage? = null
 ) {
     fun register(nickName: String) {
         this.nickName = nickName
@@ -25,6 +26,11 @@ data class User(
 
     fun modifyNickname(nickName: String) {
         this.nickName = nickName
+    }
+
+    fun modifyProfile(image: UserImage, nickname: String) {
+        this.image = image
+        this.nickName = nickname
     }
 
     init {

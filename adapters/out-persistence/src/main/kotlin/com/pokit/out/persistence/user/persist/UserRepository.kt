@@ -8,6 +8,8 @@ interface UserRepository : JpaRepository<UserEntity, Long> {
 
     fun existsByNickname(nickname: String): Boolean
 
+    fun existsByNicknameAndIdNot(nickname: String, userId: Long): Boolean
+
     fun findByIdAndDeleted(id: Long, deleted: Boolean): UserEntity?
 
     fun findByDeleted(deleted: Boolean): List<UserEntity>
