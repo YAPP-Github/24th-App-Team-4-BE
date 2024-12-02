@@ -65,7 +65,7 @@ class ContentAdapter(
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
+            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
 
         FavoriteOrNot(condition.favorites, query) // 북마크 조인 여부
 
@@ -77,7 +77,6 @@ class ContentAdapter(
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds),
             containsWord(condition.searchWord),
-            bookmarkEntity.deleted.isFalse,
         )
             .offset(pageable.offset)
             .groupBy(contentEntity)
@@ -105,12 +104,11 @@ class ContentAdapter(
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
+            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
             .where(
                 categoryEntity.userId.eq(userId),
                 categoryEntity.name.eq(categoryName),
                 contentEntity.deleted.isFalse,
-                bookmarkEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
             .groupBy(contentEntity)
@@ -137,11 +135,10 @@ class ContentAdapter(
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id))
+            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
             .where(
                 categoryEntity.userId.eq(userId),
                 contentEntity.deleted.isFalse,
-                bookmarkEntity.deleted.isFalse,
                 bookmarkEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
