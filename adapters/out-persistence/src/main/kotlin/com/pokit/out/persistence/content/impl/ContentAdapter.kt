@@ -76,7 +76,8 @@ class ContentAdapter(
             contentEntity.deleted.isFalse,
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds),
-            containsWord(condition.searchWord)
+            containsWord(condition.searchWord),
+            bookmarkEntity.deleted.isFalse,
         )
             .offset(pageable.offset)
             .groupBy(contentEntity)
@@ -109,6 +110,7 @@ class ContentAdapter(
                 categoryEntity.userId.eq(userId),
                 categoryEntity.name.eq(categoryName),
                 contentEntity.deleted.isFalse,
+                bookmarkEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
             .groupBy(contentEntity)
@@ -139,6 +141,7 @@ class ContentAdapter(
             .where(
                 categoryEntity.userId.eq(userId),
                 contentEntity.deleted.isFalse,
+                bookmarkEntity.deleted.isFalse,
                 bookmarkEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
