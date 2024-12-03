@@ -20,7 +20,7 @@ class ContentEntity(
     @Enumerated(EnumType.STRING)
     val type: ContentType,
 
-    @Column(name = "data")
+    @Column(name = "data", columnDefinition = "LONGTEXT")
     val data: String, // ex. LINK - url
 
     @Column(name = "title", columnDefinition = "LONGTEXT")
