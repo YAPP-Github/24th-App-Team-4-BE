@@ -10,7 +10,9 @@ data class CategoriesResponse(
     var categoryName: String,
     var categoryImage: CategoryImage,
     var contentCount: Int,
-    val createdAt: String
+    val createdAt: String,
+    val openType: String,
+    val keywordType: String,
 )
 
 fun Category.toCategoriesResponse(): CategoriesResponse {
@@ -22,6 +24,8 @@ fun Category.toCategoriesResponse(): CategoriesResponse {
         categoryName = this.categoryName,
         categoryImage = this.categoryImage,
         contentCount = this.contentCount,
-        createdAt = this.createdAt.format(formatter)
+        createdAt = this.createdAt.format(formatter),
+        openType = this.openType.toString(),
+        keywordType = this.keyword.kor
     )
 }

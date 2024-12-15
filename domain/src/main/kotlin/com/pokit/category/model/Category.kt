@@ -1,5 +1,7 @@
 package com.pokit.category.model
 
+import com.pokit.category.dto.CategoryCommand
+import com.pokit.user.model.InterestType
 import java.time.LocalDateTime
 
 data class Category(
@@ -12,10 +14,13 @@ data class Category(
     var openType: OpenType,
     var userCount: Int = 0,
     var isShared: Boolean = false,
+    var keyword: InterestType,
 ) {
-    fun update(categoryName: String, categoryImage: CategoryImage) {
-        this.categoryName = categoryName
+    fun update(command: CategoryCommand, categoryImage: CategoryImage) {
+        this.categoryName = command.categoryName
         this.categoryImage = categoryImage
+        this.openType = command.openType
+        this.keyword = command.keywordType
     }
 
     fun completeShare(): Category {
