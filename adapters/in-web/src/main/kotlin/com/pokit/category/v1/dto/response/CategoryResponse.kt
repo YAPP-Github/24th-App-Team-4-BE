@@ -1,4 +1,4 @@
-package com.pokit.category.dto.response
+package com.pokit.category.v1.dto.response
 
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage

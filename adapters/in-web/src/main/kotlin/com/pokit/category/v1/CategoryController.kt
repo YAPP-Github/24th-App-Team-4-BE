@@ -1,13 +1,13 @@
-package com.pokit.category
+package com.pokit.category.v1
 
 import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.category.dto.CategoriesResponse
-import com.pokit.category.dto.request.CreateCategoryRequest
-import com.pokit.category.dto.request.toDto
-import com.pokit.category.dto.response.CategoryCountResponse
-import com.pokit.category.dto.response.CategoryResponse
-import com.pokit.category.dto.response.toResponse
+import com.pokit.category.v1.dto.request.CreateCategoryRequest
+import com.pokit.category.v1.dto.request.toDto
+import com.pokit.category.v1.dto.response.CategoryCountResponse
+import com.pokit.category.v1.dto.response.CategoryResponse
+import com.pokit.category.v1.dto.response.toResponse
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.CategoryImage
 import com.pokit.category.port.`in`.CategoryUseCase

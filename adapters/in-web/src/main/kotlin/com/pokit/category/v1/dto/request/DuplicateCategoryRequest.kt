@@ -1,4 +1,4 @@
-package com.pokit.category.dto.request
+package com.pokit.category.v1.dto.request
 
 import jakarta.validation.constraints.Size
 
