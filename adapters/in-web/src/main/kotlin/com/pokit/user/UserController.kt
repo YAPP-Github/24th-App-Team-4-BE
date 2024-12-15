@@ -98,4 +98,14 @@ class UserController(
             .toResponse()
             .wrapOk()
     }
+
+    @GetMapping("/myinterests")
+    @Operation(summary = "유저의 관심사 목록 조회 API")
+    fun getMyInterests(
+        @AuthenticationPrincipal user: PrincipalUser
+    ): ResponseEntity<List<InterestTypeResponse>> {
+        return userUseCase.getMyInterests(user.id)
+            .map { InterestTypeResponse(it.name, it.kor) }
+            .wrapOk()
+    }
 }
