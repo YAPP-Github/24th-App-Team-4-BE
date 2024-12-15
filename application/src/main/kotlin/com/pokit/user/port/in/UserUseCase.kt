@@ -5,6 +5,7 @@ import com.pokit.user.dto.request.SignUpRequest
 import com.pokit.user.dto.request.UpdateNicknameRequest
 import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.model.FcmToken
+import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
 
 interface UserUseCase {
@@ -21,4 +22,6 @@ interface UserUseCase {
     fun getUserInfo(userId: Long): User
 
     fun updateProfile(userId: Long, command: UserCommand): User
+
+    fun getMyInterests(userId: Long): List<InterestType>
 }

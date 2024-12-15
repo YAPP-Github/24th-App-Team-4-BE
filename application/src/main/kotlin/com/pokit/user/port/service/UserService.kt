@@ -123,4 +123,8 @@ class UserService(
         user.modifyProfile(image, command.nickname)
         return userPort.persist(user)
     }
+
+    override fun getMyInterests(userId: Long) =
+        interestPort.loadByUserId(userId)
+            .map { it.interestType }
 }
