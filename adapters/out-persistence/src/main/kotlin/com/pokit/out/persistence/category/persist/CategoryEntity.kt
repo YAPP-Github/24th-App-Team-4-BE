@@ -3,6 +3,7 @@ package com.pokit.out.persistence.category.persist
 import com.pokit.category.model.Category
 import com.pokit.category.model.OpenType
 import com.pokit.out.persistence.BaseEntity
+import com.pokit.user.model.InterestType
 import jakarta.persistence.*
 
 // 포킷 엔티티
@@ -32,7 +33,11 @@ class CategoryEntity(
     var userCount: Int = 0,
 
     @Column(name = "is_shared")
-    var isShared: Boolean = false
+    var isShared: Boolean = false,
+
+    @Column(name = "keyword")
+    @Enumerated(EnumType.STRING)
+    var keyword: InterestType = InterestType.DEFAULT,
 ) : BaseEntity() {
 
     @Column(name = "is_deleted")
@@ -51,7 +56,8 @@ class CategoryEntity(
                 image = CategoryImageEntity.of(category.categoryImage),
                 openType = category.openType,
                 userCount = category.userCount,
-                isShared = category.isShared
+                isShared = category.isShared,
+                keyword = category.keyword
             )
     }
 }
@@ -64,5 +70,6 @@ fun CategoryEntity.toDomain() = Category(
     createdAt = this.createdAt,
     openType = this.openType,
     userCount = this.userCount,
-    isShared = this.isShared
+    isShared = this.isShared,
+    keyword = this.keyword
 )

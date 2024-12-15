@@ -1,9 +1,9 @@
-package com.pokit.category
+package com.pokit.category.v1
 
 import com.pokit.auth.aop.KakaoAuth
 import com.pokit.auth.model.PrincipalUser
-import com.pokit.category.dto.request.DuplicateCategoryRequest
-import com.pokit.category.dto.response.SharedContentsResponse
+import com.pokit.category.v1.dto.request.DuplicateCategoryRequest
+import com.pokit.category.v1.dto.response.SharedContentsResponse
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapUnit

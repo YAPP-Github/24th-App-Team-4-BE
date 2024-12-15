@@ -15,6 +15,7 @@ import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.FcmToken
 import com.pokit.user.model.Interest
+import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
 import com.pokit.user.port.`in`.UserUseCase
 import com.pokit.user.port.out.FcmTokenPort
@@ -58,6 +59,7 @@ class UserService(
             categoryName = UNCATEGORIZED.displayName,
             categoryImage = image,
             openType = OpenType.PRIVATE,
+            keyword = InterestType.DEFAULT
         )
         categoryPort.persist(category)
 

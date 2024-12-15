@@ -1,4 +1,4 @@
-package com.pokit.category.dto.request
+package com.pokit.category.v1.dto.request
 
 import com.pokit.category.dto.CategoryCommand
 import jakarta.validation.constraints.NotBlank

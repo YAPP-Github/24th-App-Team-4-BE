@@ -6,6 +6,7 @@ import com.pokit.user.exception.UserErrorCode
 enum class InterestType(
     val kor: String,
 ) {
+    DEFAULT("default"),
     SPORTS("스포츠/레저"),
     OFFICE("문구/오피스"),
     FASHION("패션"),

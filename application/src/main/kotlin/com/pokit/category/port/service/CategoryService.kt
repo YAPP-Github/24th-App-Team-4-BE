@@ -55,7 +55,8 @@ class CategoryService(
                 categoryName = command.categoryName,
                 categoryImage = categoryImage,
                 userId = userId,
-                openType = OpenType.PRIVATE,
+                openType = command.openType,
+                keyword = command.keywordType
             )
         )
     }
@@ -67,7 +68,7 @@ class CategoryService(
         val categoryImage = categoryImagePort.loadById(categoryCommand.categoryImageId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE)
 
-        category.update(categoryCommand.categoryName, categoryImage)
+        category.update(categoryCommand, categoryImage)
         return categoryPort.persist(category)
     }
 
