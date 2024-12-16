@@ -15,6 +15,7 @@ data class Category(
     var userCount: Int = 0,
     var isShared: Boolean = false,
     var keyword: InterestType,
+    var ownerId: Long,
 ) {
     fun update(command: CategoryCommand, categoryImage: CategoryImage) {
         this.categoryName = command.categoryName
@@ -30,6 +31,10 @@ data class Category(
 
     fun addUserCount() {
         this.userCount++
+    }
+
+    fun minusUserCount() {
+        this.userCount--
     }
 
     fun shared() {

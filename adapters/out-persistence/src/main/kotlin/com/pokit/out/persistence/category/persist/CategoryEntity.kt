@@ -38,6 +38,9 @@ class CategoryEntity(
     @Column(name = "keyword")
     @Enumerated(EnumType.STRING)
     var keyword: InterestType = InterestType.DEFAULT,
+
+    @Column(name = "owner_id")
+    var ownerId: Long,
 ) : BaseEntity() {
 
     @Column(name = "is_deleted")
@@ -57,7 +60,8 @@ class CategoryEntity(
                 openType = category.openType,
                 userCount = category.userCount,
                 isShared = category.isShared,
-                keyword = category.keyword
+                keyword = category.keyword,
+                ownerId = category.ownerId,
             )
     }
 }
@@ -71,5 +75,6 @@ fun CategoryEntity.toDomain() = Category(
     openType = this.openType,
     userCount = this.userCount,
     isShared = this.isShared,
-    keyword = this.keyword
+    keyword = this.keyword,
+    ownerId = this.ownerId,
 )
