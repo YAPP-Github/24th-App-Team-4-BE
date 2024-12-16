@@ -8,4 +8,6 @@ interface SharedCategoryPort {
     fun loadByUserIdAndCategoryId(userId: Long, categoryId: Long): SharedCategory?
 
     fun delete(sharedCategory: SharedCategory)
+
+    fun loadFirstByCategoryId(categoryId: Long): SharedCategory?
 }
