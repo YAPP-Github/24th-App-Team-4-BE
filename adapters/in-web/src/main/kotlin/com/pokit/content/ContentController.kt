@@ -199,8 +199,27 @@ class ContentController(
         @PathVariable("contentId") contentId: Long,
         @RequestBody request: UpdateThumbnailRequest
     ): ResponseEntity<Content> {
-        return contentUseCase.updateThumbnail(user.id, contentId,request.toDto())
+        return contentUseCase.updateThumbnail(user.id, contentId, request.toDto())
             .wrapOk()
+    }
+
+    @GetMapping("/recommended")
+    @Operation(summary = "추천 컨텐츠 목록 조회 API", description = "keyword 생략이나 비워서 보내면 전체보기 적용")
+    fun getRecommendedContents(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @RequestParam("keyword") keyword: String?,
+    ): ResponseEntity<SliceResponseDto<ContentsResponse>> {
+        return contentUseCase.getRecommendedContent(user.id, keyword, pageable)
+            .map { it.toResponse() }
+            .wrapSlice()
+            .wrapOk()
+
     }
 
 }

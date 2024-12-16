@@ -6,6 +6,7 @@ import com.pokit.content.dto.response.ContentsResult
 import com.pokit.content.dto.response.SharedContentResult
 import com.pokit.content.model.Content
 import com.pokit.content.model.ContentWithUser
+import com.pokit.user.model.InterestType
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 
@@ -52,4 +53,6 @@ interface ContentPort {
     fun loadAllByUserIdAndContentIds(userId: Long, contentIds: List<Long>): List<Content>
 
     fun updateCategoryId(contents: List<Content>, categoryId: Long)
+
+    fun loadAllByKeyword(userId: Long, searchKeywords: List<InterestType>, pageable: Pageable): Slice<ContentsResult>
 }
