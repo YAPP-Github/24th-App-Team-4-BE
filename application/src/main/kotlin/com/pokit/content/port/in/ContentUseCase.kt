@@ -48,4 +48,6 @@ interface ContentUseCase {
     fun categorize(userId: Long, command: CategorizeCommand)
 
     fun updateThumbnail(userId: Long, contentId: Long, thumbnail: String): Content
+
+    fun getRecommendedContent(userId: Long, keyword: String?, pageable: Pageable): Slice<ContentsResult>
 }

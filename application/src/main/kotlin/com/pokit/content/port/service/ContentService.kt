@@ -26,7 +26,9 @@ import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
+import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
+import com.pokit.user.port.out.InterestPort
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -42,7 +44,8 @@ class ContentService(
     private val categoryPort: CategoryPort,
     private val userLogPort: UserLogPort,
     private val publisher: ApplicationEventPublisher,
-    private val contentCountPort: ContentCountPort
+    private val contentCountPort: ContentCountPort,
+    private val interestPort: InterestPort,
 ) : ContentUseCase {
     companion object {
         private const val MIN_CONTENT_COUNT = 3
@@ -194,6 +197,15 @@ class ContentService(
         val content = verifyContent(userId, contentId)
         content.modifyThumbnail(thumbnail)
         return contentPort.persist(content)
+    }
+
+    override fun getRecommendedContent(userId: Long, keyword: String?, pageable: Pageable): Slice<ContentsResult> {
+        val searchKeyword = keyword?.let {
+            listOf(InterestType.of(it))
+        } ?: interestPort.loadByUserId(userId).map {
+            it.interestType
+        }
+        return contentPort.loadAllByKeyword(userId, searchKeyword, pageable)
     }
 
     private fun verifyContent(userId: Long, contentId: Long): Content {
