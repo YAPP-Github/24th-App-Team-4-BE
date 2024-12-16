@@ -17,5 +17,7 @@ enum class CategoryErrorCode(
     ALREADY_ACCEPTED("이미 초대를 수락한 포킷입니다.", "CA_009"),
     NEVER_ACCPTED("해당 유저가 포킷에 초대된 이력이 없습니다.", "CA_0010"),
     INVALID_OPENTYPE("OpenType은 PUBLIC, PRIVATE중 하나여야 합니다.", "CA_0011"),
+    EMPTY_USER_IN_CATEGORY("포킷에 방장 제외 아무도 없습니다.", "CA_0012"),
+    NOT_OWNER("해당 유저는 방장이 아닙니다.", "CA_0013"),
 
 }
