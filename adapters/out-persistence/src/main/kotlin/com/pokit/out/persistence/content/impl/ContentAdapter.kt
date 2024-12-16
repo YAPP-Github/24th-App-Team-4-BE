@@ -15,6 +15,7 @@ import com.pokit.out.persistence.content.persist.ContentRepository
 import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
+import com.pokit.user.model.InterestType
 import com.querydsl.core.Tuple
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
@@ -212,6 +213,38 @@ class ContentAdapter(
     override fun updateCategoryId(contents: List<Content>, categoryId: Long) {
         val contentIds = contents.map { it.id }
         contentRepository.updateCategoryId(contentIds, categoryId)
+    }
+
+    override fun loadAllByKeyword(userId: Long, searchKeywords: List<InterestType>, pageable: Pageable): Slice<ContentsResult> {
+        val contents = queryFactory.select(contentEntity, categoryEntity.name, categoryEntity.keyword)
+            .from(contentEntity)
+            .join(categoryEntity).on(contentEntity.categoryId.eq(categoryEntity.id))
+            .where(
+                categoryEntity.openType.eq(OpenType.PUBLIC),
+                categoryEntity.userId.ne(userId),
+                categoryEntity.keyword.`in`(searchKeywords),
+                categoryEntity.deleted.isFalse,
+                contentEntity.deleted.isFalse
+            )
+            .offset(pageable.offset)
+            .groupBy(contentEntity)
+            .limit((pageable.pageSize + 1).toLong())
+            .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
+            .fetch()
+
+        val hasNext = getHasNext(contents, pageable)
+
+        val contentsResults = contents.map {
+            ContentsResult.of(
+                it[contentEntity]!!.toDomain(),
+                it[categoryEntity.name]!!,
+                0,
+                0,
+                it[categoryEntity.keyword]!!.kor
+            )
+        }
+
+        return SliceImpl(contentsResults, pageable, hasNext)
     }
 
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
