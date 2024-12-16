@@ -31,7 +31,9 @@ class SharedCategoryAdapter(
     }
 
     override fun loadFirstByCategoryId(categoryId: Long): SharedCategory? {
-        return sharedCategoryRepository.findFirstByCategoryIdOrderByCreatedAt(categoryId)
-            ?.toDomain()
+        return sharedCategoryRepository.findFirstByCategoryIdAndIsDeletedOrderByCreatedAt(
+            categoryId,
+            false
+        )?.toDomain()
     }
 }
