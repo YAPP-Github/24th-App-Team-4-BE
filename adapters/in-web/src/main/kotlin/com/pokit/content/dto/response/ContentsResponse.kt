@@ -15,7 +15,8 @@ data class ContentsResponse(
     val createdAt: String,
     val isRead: Boolean,
     val thumbNail: String,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val keyword: String,
 )
 
 fun ContentsResult.toResponse(): ContentsResponse {
@@ -32,6 +33,7 @@ fun ContentsResult.toResponse(): ContentsResponse {
         createdAt = this.createdAt.format(formatter),
         isRead = this.isRead,
         thumbNail = this.thumbNail,
-        isFavorite = this.isFavorite
+        isFavorite = this.isFavorite,
+        keyword = this.keyword,
     )
 }

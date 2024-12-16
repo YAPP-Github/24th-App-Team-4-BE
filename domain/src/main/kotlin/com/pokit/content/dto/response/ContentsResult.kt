@@ -16,10 +16,17 @@ data class ContentsResult(
     val createdAt: LocalDateTime,
     val isRead: Boolean,
     val thumbNail: String,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val keyword: String
 ) {
     companion object {
-        fun of(content: Content, categoryName: String, isRead: Long, isFavorite: Long): ContentsResult {
+        fun of(
+            content: Content,
+            categoryName: String,
+            isRead: Long,
+            isFavorite: Long,
+            keyword: String = "default"
+        ): ContentsResult {
             return ContentsResult(
                 contentId = content.id,
                 category = RemindCategory(content.categoryId, categoryName),
@@ -31,7 +38,8 @@ data class ContentsResult(
                 createdAt = content.createdAt,
                 isRead = isRead > 0,
                 thumbNail = content.thumbNail ?: ContentDefault.THUMB_NAIL,
-                isFavorite = isFavorite > 0
+                isFavorite = isFavorite > 0,
+                keyword = keyword
             )
         }
     }
