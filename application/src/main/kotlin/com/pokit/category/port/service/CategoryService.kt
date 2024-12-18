@@ -50,15 +50,25 @@ class CategoryService(
         val categoryImage = categoryImagePort.loadById(command.categoryImageId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE)
 
-        return categoryPort.persist(
+        val category = categoryPort.persist(
             Category(
                 categoryName = command.categoryName,
                 categoryImage = categoryImage,
                 userId = userId,
                 openType = command.openType,
-                keyword = command.keywordType
+                keyword = command.keywordType,
+                ownerId = userId
             )
         )
+
+        val sharedCategory = SharedCategory(
+            userId = userId,
+            categoryId = category.categoryId
+        )
+
+        sharedCategoryPort.persist(sharedCategory)
+
+        return category
     }
 
     @Transactional
@@ -167,17 +177,44 @@ class CategoryService(
 
         categoryPort.persist(category)
 
-        val sharedCategory = SharedCategory(userId = userId, categoryId = category.categoryId)
+        val sharedCategory = SharedCategory(
+            userId = userId,
+            categoryId = category.categoryId,
+        )
         sharedCategoryPort.persist(sharedCategory)
     }
 
     @Transactional
     override fun resignUser(userId: Long, categoryId: Long, resignUserId: Long) {
-        val category = categoryPort.loadByIdAndUserId(categoryId, userId)
-            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+        val category = categoryPort.loadCategoryOrThrow(categoryId, userId)
+        if (category.userId != userId) {
+            throw ClientValidationException(CategoryErrorCode.NOT_OWNER)
+        }
         val sharedCategory = (sharedCategoryPort.loadByUserIdAndCategoryId(resignUserId, category.categoryId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NEVER_ACCPTED))
+
         sharedCategoryPort.delete(sharedCategory)
+
+        category.minusUserCount() // 포킷 인원수 감소
+        categoryPort.persist(category)
+    }
+
+    @Transactional
+    override fun outCategory(userId: Long, categoryId: Long) {
+        val category = categoryPort.loadByIdOrThrow(categoryId)
+
+        val sharedCategory = sharedCategoryPort.loadByUserIdAndCategoryId(userId, categoryId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NEVER_ACCPTED)
+        sharedCategoryPort.delete(sharedCategory)
+
+        if (category.ownerId == userId) { // 나간사람이 방장이었다면
+            val firstSharedCategory = sharedCategoryPort.loadFirstByCategoryId(categoryId)
+                ?: throw ClientValidationException(CategoryErrorCode.EMPTY_USER_IN_CATEGORY)
+            category.ownerId = firstSharedCategory.userId // 권한 위임
+        }
+
+        category.minusUserCount() // 포킷 인원수 감소
+        categoryPort.persist(category)
     }
 
     override fun getAllCategoryImages(): List<CategoryImage> =

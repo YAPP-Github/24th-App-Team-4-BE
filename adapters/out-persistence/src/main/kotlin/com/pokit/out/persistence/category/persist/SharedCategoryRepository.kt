@@ -8,4 +8,9 @@ interface SharedCategoryRepository : JpaRepository<SharedCategoryEntity, Long> {
         categoryId: Long,
         isDeleted: Boolean
     ): SharedCategoryEntity?
+
+    fun findFirstByCategoryIdAndIsDeletedOrderByCreatedAt(
+        categoryId: Long,
+        deleted: Boolean
+    ): SharedCategoryEntity?
 }

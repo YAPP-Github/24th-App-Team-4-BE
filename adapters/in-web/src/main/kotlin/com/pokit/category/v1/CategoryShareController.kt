@@ -2,9 +2,9 @@ package com.pokit.category.v1
 
 import com.pokit.auth.aop.KakaoAuth
 import com.pokit.auth.model.PrincipalUser
+import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.category.v1.dto.request.DuplicateCategoryRequest
 import com.pokit.category.v1.dto.response.SharedContentsResponse
-import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
 import com.pokit.content.port.`in`.ContentUseCase
@@ -83,6 +83,16 @@ class CategoryShareController(
         @PathVariable resignUserId: Long,
     ): ResponseEntity<Unit> {
         return categoryUseCase.resignUser(user.id, categoryId, resignUserId)
+            .wrapUnit()
+    }
+
+    @Operation(summary = "포킷 나가기 API")
+    @PostMapping("/out/{categoryId}")
+    fun outCategory(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable categoryId: Long,
+    ): ResponseEntity<Unit> {
+        return categoryUseCase.outCategory(user.id, categoryId)
             .wrapUnit()
     }
 

@@ -59,7 +59,8 @@ class UserService(
             categoryName = UNCATEGORIZED.displayName,
             categoryImage = image,
             openType = OpenType.PRIVATE,
-            keyword = InterestType.DEFAULT
+            keyword = InterestType.DEFAULT,
+            ownerId = user.id,
         )
         categoryPort.persist(category)
 

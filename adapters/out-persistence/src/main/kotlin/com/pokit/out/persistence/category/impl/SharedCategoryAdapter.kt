@@ -29,4 +29,11 @@ class SharedCategoryAdapter(
         sharedCategoryRepository.findByIdOrNull(sharedCategory.id)
             ?.delete()
     }
+
+    override fun loadFirstByCategoryId(categoryId: Long): SharedCategory? {
+        return sharedCategoryRepository.findFirstByCategoryIdAndIsDeletedOrderByCreatedAt(
+            categoryId,
+            false
+        )?.toDomain()
+    }
 }
