@@ -13,6 +13,7 @@ data class CategoriesResponse(
     val createdAt: String,
     val openType: String,
     val keywordType: String,
+    val userCount: Int,
 )
 
 fun Category.toCategoriesResponse(): CategoriesResponse {
@@ -26,6 +27,7 @@ fun Category.toCategoriesResponse(): CategoriesResponse {
         contentCount = this.contentCount,
         createdAt = this.createdAt.format(formatter),
         openType = this.openType.toString(),
-        keywordType = this.keyword.kor
+        keywordType = this.keyword.kor,
+        userCount = this.userCount,
     )
 }
