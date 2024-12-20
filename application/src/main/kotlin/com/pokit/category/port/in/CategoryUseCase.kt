@@ -21,4 +21,6 @@ interface CategoryUseCase {
     fun acceptCategory(userId: Long, categoryId: Long)
     fun resignUser(userId: Long, categoryId: Long, resignUserId: Long)
     fun outCategory(userId: Long, categoryId: Long)
+    fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse>
+
 }
