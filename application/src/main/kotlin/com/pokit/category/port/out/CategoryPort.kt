@@ -15,4 +15,5 @@ interface CategoryPort {
     fun countByUserId(userId: Long): Int
     fun loadByIdAndOpenType(id: Long, openType: OpenType): Category?
     fun loadByNameAndUserId(categoryName: String, userId: Long): Category?
+    fun loadAllInId(categoryIds: List<Long>, pageable: Pageable): Slice<Category>
 }

@@ -217,6 +217,13 @@ class CategoryService(
         categoryPort.persist(category)
     }
 
+    override fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse> {
+        val sharedCategories = sharedCategoryPort.loadByUserId(userId)
+        val categoryIds = sharedCategories.map { it.categoryId }
+        val categories = categoryPort.loadAllInId(categoryIds, pageable)
+        return categories.map { it.toCategoriesResponse() }
+    }
+
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
 

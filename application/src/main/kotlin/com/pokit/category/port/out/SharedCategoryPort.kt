@@ -10,4 +10,6 @@ interface SharedCategoryPort {
     fun delete(sharedCategory: SharedCategory)
 
     fun loadFirstByCategoryId(categoryId: Long): SharedCategory?
+
+    fun loadByUserId(userId: Long): List<SharedCategory>
 }
