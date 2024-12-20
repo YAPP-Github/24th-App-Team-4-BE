@@ -49,4 +49,9 @@ class CategoryAdapter(
             ?.toDomain()
     }
 
+    override fun loadAllInId(categoryIds: List<Long>, pageable: Pageable): Slice<Category> {
+        return categoryRepository.findAllByIdInAndDeleted(categoryIds, pageable, false)
+            .map { it.toDomain() }
+    }
+
 }
