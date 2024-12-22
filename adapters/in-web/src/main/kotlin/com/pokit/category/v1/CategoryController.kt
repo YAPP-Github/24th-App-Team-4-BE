@@ -3,18 +3,20 @@ package com.pokit.category.v1
 import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.category.dto.CategoriesResponse
+import com.pokit.category.exception.CategoryErrorCode
+import com.pokit.category.model.CategoryImage
+import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.category.v1.dto.request.CreateCategoryRequest
 import com.pokit.category.v1.dto.request.toDto
 import com.pokit.category.v1.dto.response.CategoryCountResponse
 import com.pokit.category.v1.dto.response.CategoryResponse
 import com.pokit.category.v1.dto.response.toResponse
-import com.pokit.category.exception.CategoryErrorCode
-import com.pokit.category.model.CategoryImage
-import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
+import com.pokit.user.dto.response.InvitedUserResponse
+import com.pokit.user.dto.response.toResponse
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import org.springframework.data.domain.Pageable
@@ -104,4 +106,14 @@ class CategoryController(
         categoryUseCase.getAllCategoryImages()
             .wrapOk()
 
+    @GetMapping("/{categoryId}/invited")
+    @Operation(summary = "포킷 초대 된 유저 목록 조회 API")
+    fun getInvitedUsers(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable("categoryId") categoryId: Long,
+    ): ResponseEntity<List<InvitedUserResponse>> {
+        return categoryUseCase.getInvitedUsers(user.id, categoryId)
+            .toResponse()
+            .wrapOk()
+    }
 }
