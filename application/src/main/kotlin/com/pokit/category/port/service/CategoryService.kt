@@ -15,6 +15,8 @@ import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.InvalidRequestException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.port.out.ContentPort
+import com.pokit.user.model.User
+import com.pokit.user.port.out.UserPort
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -27,7 +29,8 @@ class CategoryService(
     private val categoryPort: CategoryPort,
     private val categoryImagePort: CategoryImagePort,
     private val contentPort: ContentPort,
-    private val sharedCategoryPort: SharedCategoryPort
+    private val sharedCategoryPort: SharedCategoryPort,
+    private val userPort: UserPort,
 ) : CategoryUseCase {
     companion object {
         private const val MAX_CATEGORY_COUNT = 30
@@ -222,6 +225,13 @@ class CategoryService(
         val categoryIds = sharedCategories.map { it.categoryId }
         val categories = categoryPort.loadAllInId(categoryIds, pageable)
         return categories.map { it.toCategoriesResponse() }
+    }
+
+    override fun getInvitedUsers(userId: Long, categoryId: Long): List<User> {
+        val sharedCategories = sharedCategoryPort.loadByCategoryId(categoryId)
+        val userIds = sharedCategories.map { it.userId }
+        val users = userPort.loadAllInIds(userIds)
+        return users
     }
 
     override fun getAllCategoryImages(): List<CategoryImage> =
