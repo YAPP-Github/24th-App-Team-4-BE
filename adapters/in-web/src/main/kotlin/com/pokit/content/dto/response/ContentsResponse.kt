@@ -17,6 +17,7 @@ data class ContentsResponse(
     val thumbNail: String,
     val isFavorite: Boolean,
     val keyword: String,
+    val memoExists: Boolean,
 )
 
 fun ContentsResult.toResponse(): ContentsResponse {
@@ -35,5 +36,6 @@ fun ContentsResult.toResponse(): ContentsResponse {
         thumbNail = this.thumbNail,
         isFavorite = this.isFavorite,
         keyword = this.keyword,
+        memoExists = this.memoExists,
     )
 }
