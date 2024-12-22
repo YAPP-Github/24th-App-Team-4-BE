@@ -41,4 +41,9 @@ class SharedCategoryAdapter(
         return sharedCategoryRepository.findByUserIdAndIsDeleted(userId, false)
             .map { it.toDomain() }
     }
+
+    override fun loadByCategoryId(categoryId: Long): List<SharedCategory> {
+        return sharedCategoryRepository.findByCategoryIdAndIsDeleted(categoryId, false)
+            .map { it.toDomain() }
+    }
 }

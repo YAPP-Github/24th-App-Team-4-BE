@@ -15,4 +15,6 @@ interface SharedCategoryRepository : JpaRepository<SharedCategoryEntity, Long> {
     ): SharedCategoryEntity?
 
     fun findByUserIdAndIsDeleted(userId: Long, isDeleted: Boolean): List<SharedCategoryEntity>
+
+    fun findByCategoryIdAndIsDeleted(categoryId: Long, isDeleted: Boolean): List<SharedCategoryEntity>
 }
