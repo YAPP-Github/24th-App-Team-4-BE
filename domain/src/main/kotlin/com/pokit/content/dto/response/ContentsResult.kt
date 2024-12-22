@@ -17,7 +17,8 @@ data class ContentsResult(
     val isRead: Boolean,
     val thumbNail: String,
     val isFavorite: Boolean,
-    val keyword: String
+    val keyword: String,
+    val memoExists: Boolean,
 ) {
     companion object {
         fun of(
@@ -39,7 +40,8 @@ data class ContentsResult(
                 isRead = isRead > 0,
                 thumbNail = content.thumbNail ?: ContentDefault.THUMB_NAIL,
                 isFavorite = isFavorite > 0,
-                keyword = keyword
+                keyword = keyword,
+                memoExists = content.memo.isNotBlank(),
             )
         }
     }
