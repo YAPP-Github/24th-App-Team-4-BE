@@ -19,4 +19,6 @@ interface UserPort {
     fun loadAllIds(): List<Long>
 
     fun loadByEmailAndAuthPlatform(email: String, authPlatform: AuthPlatform): User?
+
+    fun loadAllInIds(userIds: List<Long>): List<User>
 }

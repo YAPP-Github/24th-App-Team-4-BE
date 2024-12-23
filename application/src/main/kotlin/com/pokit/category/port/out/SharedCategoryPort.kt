@@ -12,4 +12,6 @@ interface SharedCategoryPort {
     fun loadFirstByCategoryId(categoryId: Long): SharedCategory?
 
     fun loadByUserId(userId: Long): List<SharedCategory>
+
+    fun loadByCategoryId(categoryId: Long): List<SharedCategory>
 }

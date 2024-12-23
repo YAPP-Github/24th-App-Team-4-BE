@@ -15,4 +15,6 @@ interface UserRepository : JpaRepository<UserEntity, Long> {
     fun findByDeleted(deleted: Boolean): List<UserEntity>
 
     fun findByEmailAndAuthPlatformAndDeleted(email: String, authPlatform: AuthPlatform, deleted: Boolean): UserEntity?
+
+    fun findAllByIdIn(ids: List<Long>): List<UserEntity>
 }

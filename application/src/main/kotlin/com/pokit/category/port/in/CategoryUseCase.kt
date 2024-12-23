@@ -4,6 +4,7 @@ import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
+import com.pokit.user.model.User
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 
@@ -22,5 +23,5 @@ interface CategoryUseCase {
     fun resignUser(userId: Long, categoryId: Long, resignUserId: Long)
     fun outCategory(userId: Long, categoryId: Long)
     fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse>
-
+    fun getInvitedUsers(userId: Long, categoryId: Long): List<User>
 }
