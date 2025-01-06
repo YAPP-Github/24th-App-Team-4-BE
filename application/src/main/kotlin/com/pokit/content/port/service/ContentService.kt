@@ -9,7 +9,6 @@ import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
-import com.pokit.category.port.service.loadCategoryOrThrow
 import com.pokit.common.exception.AlreadyExistsException
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
@@ -26,9 +25,11 @@ import com.pokit.content.port.out.ContentPort
 import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
+import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
 import com.pokit.user.port.out.InterestPort
+import com.pokit.user.port.out.UserPort
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -46,6 +47,7 @@ class ContentService(
     private val publisher: ApplicationEventPublisher,
     private val contentCountPort: ContentCountPort,
     private val interestPort: InterestPort,
+    private val userPort: UserPort,
 ) : ContentUseCase {
     companion object {
         private const val MIN_CONTENT_COUNT = 3
@@ -54,7 +56,7 @@ class ContentService(
 
     @Transactional
     override fun bookmarkContent(user: User, contentId: Long): BookMarkContentResponse {
-        verifyContent(user.id, contentId)
+        verifyContent(contentId)
         bookMarkPort.loadByContentIdAndUserId(contentId, user.id)?.let {
             throw AlreadyExistsException(BookmarkErrorCode.ALREADY_EXISTS_BOOKMARK)
         }
@@ -66,11 +68,11 @@ class ContentService(
 
     @Transactional
     override fun create(user: User, contentCommand: ContentCommand): ContentResult {
-        val category = categoryPort.loadCategoryOrThrow(contentCommand.categoryId, user.id)
-        val content = contentCommand.toDomain()
+        val category = verifyCategory(contentCommand.categoryId)
+        val content = contentCommand.toDomain(user.id)
         content.parseDomain()
         val contentResult = contentPort.persist(content)
-            .toGetContentResult(false, category)
+            .toGetContentResult(false, category, user)
 
         if (contentCommand.alertYn == YES) {
             publisher.publishEvent(CreateAlertRequest(userId = user.id, contetId = contentResult.contentId))
@@ -81,8 +83,8 @@ class ContentService(
 
     @Transactional
     override fun update(user: User, contentCommand: ContentCommand, contentId: Long): ContentResult {
-        val category = categoryPort.loadCategoryOrThrow(contentCommand.categoryId, user.id)
-        val content = verifyContent(user.id, contentId)
+        val category = verifyCategory(contentCommand.categoryId)
+        val content = verifyContent(contentId)
         content.modify(contentCommand)
 
         if (contentCommand.alertYn == YES) {
@@ -90,19 +92,19 @@ class ContentService(
         }
 
         return contentPort.persist(content)
-            .toGetContentResult(bookMarkPort.isBookmarked(contentId, user.id), category)
+            .toGetContentResult(bookMarkPort.isBookmarked(contentId, user.id), category, user)
     }
 
     @Transactional
     override fun delete(user: User, contentId: Long) {
-        val content = verifyContent(user.id, contentId)
+        val content = verifyContent(contentId)
         bookMarkPort.delete(user.id, contentId)
         contentPort.delete(content)
     }
 
     @Transactional
     override fun cancelBookmark(user: User, contentId: Long) {
-        verifyContent(user.id, contentId)
+        verifyContent(contentId)
         bookMarkPort.delete(user.id, contentId)
     }
 
@@ -133,11 +135,13 @@ class ContentService(
         )
         userLogPort.persist(userLog) // 읽음 처리
 
-        val content = verifyContent(userId, contentId)
-        val category = verifyCategory(content.categoryId, userId)
+        val content = verifyContent(contentId)
+        val category = verifyCategory(content.categoryId)
         val bookmarkStatus = bookMarkPort.isBookmarked(contentId, userId)
+        val user = userPort.loadById(content.userId)
+            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
 
-        return content.toGetContentResult(bookmarkStatus, category)
+        return content.toGetContentResult(bookmarkStatus, category, user)
     }
 
     override fun getBookmarkContents(userId: Long, pageable: Pageable): Slice<RemindContentResult> {
@@ -187,14 +191,14 @@ class ContentService(
 
     @Transactional
     override fun categorize(userId: Long, command: CategorizeCommand) {
-        val category = verifyCategory(command.categoryId, userId)
+        val category = verifyCategory(command.categoryId)
         val contents = contentPort.loadAllByUserIdAndContentIds(userId, command.contentIds)
         contentPort.updateCategoryId(contents, category.categoryId)
     }
 
     @Transactional
     override fun updateThumbnail(userId: Long, contentId: Long, thumbnail: String): Content {
-        val content = verifyContent(userId, contentId)
+        val content = verifyContent(contentId)
         content.modifyThumbnail(thumbnail)
         return contentPort.persist(content)
     }
@@ -208,13 +212,13 @@ class ContentService(
         return contentPort.loadAllByKeyword(userId, searchKeyword, pageable)
     }
 
-    private fun verifyContent(userId: Long, contentId: Long): Content {
-        return contentPort.loadByUserIdAndId(userId, contentId)
+    private fun verifyContent(contentId: Long): Content {
+        return contentPort.loadById(contentId)
             ?: throw NotFoundCustomException(ContentErrorCode.NOT_FOUND_CONTENT)
     }
 
-    private fun verifyCategory(categoryId: Long, userId: Long): Category {
-        return categoryPort.loadByIdAndUserId(categoryId, userId)
+    private fun verifyCategory(categoryId: Long): Category {
+        return categoryPort.loadById(categoryId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
     }
 }
