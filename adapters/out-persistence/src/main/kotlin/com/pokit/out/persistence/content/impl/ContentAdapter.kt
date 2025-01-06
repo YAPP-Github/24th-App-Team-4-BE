@@ -247,6 +247,10 @@ class ContentAdapter(
         return SliceImpl(contentsResults, pageable, hasNext)
     }
 
+    override fun loadById(id: Long): Content? {
+        return contentRepository.findByIdOrNull(id)?.toDomain()
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
