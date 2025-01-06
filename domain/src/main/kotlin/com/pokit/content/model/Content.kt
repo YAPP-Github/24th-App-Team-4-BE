@@ -15,7 +15,8 @@ data class Content(
     var alertYn: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var domain: String = data,
-    var thumbNail: String?
+    var thumbNail: String?,
+    var userId: Long = 0L,
 ) {
     fun modify(contentCommand: ContentCommand) {
         this.categoryId = contentCommand.categoryId

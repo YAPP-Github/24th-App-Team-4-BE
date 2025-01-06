@@ -16,11 +16,12 @@ data class CategorizeCommand(
     val categoryId: Long
 )
 
-fun ContentCommand.toDomain() = Content(
+fun ContentCommand.toDomain(userId: Long) = Content(
     categoryId = this.categoryId,
     data = this.data,
     title = this.title,
     memo = this.memo,
     alertYn = this.alertYn,
-    thumbNail = this.thumbNail
+    thumbNail = this.thumbNail,
+    userId = userId,
 )
