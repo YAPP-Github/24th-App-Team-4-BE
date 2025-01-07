@@ -10,9 +10,10 @@ data class ContentResponse(
     val data: String,
     val title: String,
     val memo: String,
-    val alertYn: String,
     val createdAt: String,
-    val favorites: Boolean = false
+    val favorites: Boolean = false,
+    val keyword: String,
+    val userNickname: String,
 )
 
 fun ContentResult.toResponse(): ContentResponse {
@@ -24,8 +25,9 @@ fun ContentResult.toResponse(): ContentResponse {
         data = this.data,
         title = this.title,
         memo = this.memo,
-        alertYn = this.alertYn,
         createdAt = this.createdAt.format(formatter),
-        favorites = this.favorites
+        favorites = this.favorites,
+        keyword = this.keyword,
+        userNickname = this.userNickname,
     )
 }

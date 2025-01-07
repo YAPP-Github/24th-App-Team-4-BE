@@ -39,7 +39,10 @@ class ContentEntity(
     var deleted: Boolean = false,
 
     @Column(name = "thumb_nail", columnDefinition = "LONGTEXT")
-    var thumbNail: String?
+    var thumbNail: String?,
+
+    @Column(name = "user_id")
+    val userId: Long,
 ) : BaseEntity() {
     fun delete() {
         this.deleted = true
@@ -55,7 +58,8 @@ class ContentEntity(
             memo = content.memo,
             alertYn = content.alertYn,
             domain = content.domain,
-            thumbNail = content.thumbNail
+            thumbNail = content.thumbNail,
+            userId = content.userId,
         )
 
         fun from(content: Content, categoryId: Long) = ContentEntity(
@@ -67,7 +71,8 @@ class ContentEntity(
             memo = content.memo,
             alertYn = "NO",
             domain = content.domain,
-            thumbNail = content.thumbNail
+            thumbNail = content.thumbNail,
+            userId = content.userId,
         )
     }
 }
@@ -82,5 +87,6 @@ fun ContentEntity.toDomain() = Content(
     alertYn = this.alertYn,
     domain = this.domain,
     createdAt = this.createdAt,
-    thumbNail = this.thumbNail
+    thumbNail = this.thumbNail,
+    userId = this.userId,
 )

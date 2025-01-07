@@ -55,4 +55,6 @@ interface ContentPort {
     fun updateCategoryId(contents: List<Content>, categoryId: Long)
 
     fun loadAllByKeyword(userId: Long, searchKeywords: List<InterestType>, pageable: Pageable): Slice<ContentsResult>
+
+    fun loadById(id: Long): Content?
 }

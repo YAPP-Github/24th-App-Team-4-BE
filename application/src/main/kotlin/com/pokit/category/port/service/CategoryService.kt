@@ -223,8 +223,22 @@ class CategoryService(
     override fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse> {
         val sharedCategories = sharedCategoryPort.loadByUserId(userId)
         val categoryIds = sharedCategories.map { it.categoryId }
-        val categories = categoryPort.loadAllInId(categoryIds, pageable)
-        return categories.map { it.toCategoriesResponse() }
+        val categoriesSlice = categoryPort.loadAllInId(categoryIds, pageable)
+
+        val categories = categoriesSlice.content.map { category ->
+            val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
+            category.copy(contentCount = contentCount)
+        }.map { category ->
+            category.toCategoriesResponse()
+        }
+
+        val filteredCategories = if (filterUncategorized) {
+            categories.filter { it.categoryName != UNCATEGORIZED.displayName }
+        } else {
+            categories
+        }
+
+        return SliceImpl(filteredCategories, pageable, categoriesSlice.hasNext())
     }
 
     override fun getInvitedUsers(userId: Long, categoryId: Long): List<User> {
