@@ -166,6 +166,13 @@ class CategoryService(
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
         val newCategory = categoryPort.persist(originCategory.duplicate(categoryName, userId, categoryImage))
         contentPort.duplicateContent(originCategoryId, newCategory.categoryId)
+
+        val sharedCategory = SharedCategory(
+            userId = userId,
+            categoryId = newCategory.categoryId
+        )
+
+        sharedCategoryPort.persist(sharedCategory)
     }
 
     @Transactional
