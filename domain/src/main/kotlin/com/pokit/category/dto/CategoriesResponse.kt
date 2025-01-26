@@ -14,9 +14,10 @@ data class CategoriesResponse(
     val openType: String,
     val keywordType: String,
     val userCount: Int,
+    val isFavorite: Boolean,
 )
 
-fun Category.toCategoriesResponse(): CategoriesResponse {
+fun Category.toCategoriesResponse(isFavorite: Boolean): CategoriesResponse {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     return CategoriesResponse(
@@ -29,5 +30,6 @@ fun Category.toCategoriesResponse(): CategoriesResponse {
         openType = this.openType.toString(),
         keywordType = this.keyword.kor,
         userCount = this.userCount,
+        isFavorite = isFavorite,
     )
 }
