@@ -5,6 +5,7 @@ import com.pokit.category.dto.CategoryCommand
 import com.pokit.category.dto.toCategoriesResponse
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.*
+import com.pokit.category.model.CategoryStatus.FAVORITE
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.port.`in`.CategoryUseCase
 import com.pokit.category.port.out.CategoryImagePort
@@ -103,7 +104,7 @@ class CategoryService(
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
             category.copy(contentCount = contentCount)
         }.map { category ->
-            category.toCategoriesResponse()
+            category.toCategoriesResponse(category.isFavorite)
         }
 
         val filteredCategories = if (filterUncategorized) {
@@ -227,16 +228,25 @@ class CategoryService(
         categoryPort.persist(category)
     }
 
-    override fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean): Slice<CategoriesResponse> {
+    override fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean, filterFavorite: Boolean): Slice<CategoriesResponse> {
         val sharedCategories = sharedCategoryPort.loadByUserId(userId)
         val categoryIds = sharedCategories.map { it.categoryId }
         val categoriesSlice = categoryPort.loadAllInId(categoryIds, pageable)
+
+        val bookmark = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
+        val favoriteCategory = categoryPort.loadByNameAndUserId(FAVORITE.displayName, userId)
+        favoriteCategory!!.copy(contentCount = bookmark.size)
 
         val categories = categoriesSlice.content.map { category ->
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
             category.copy(contentCount = contentCount)
         }.map { category ->
-            category.toCategoriesResponse()
+            category.toCategoriesResponse(category.isFavorite)
+        }.toMutableList()
+
+        if (!filterFavorite) {
+            val favoriteResponse = favoriteCategory.toCategoriesResponse(favoriteCategory.isFavorite)
+            categories.add(0, favoriteResponse)
         }
 
         val filteredCategories = if (filterUncategorized) {

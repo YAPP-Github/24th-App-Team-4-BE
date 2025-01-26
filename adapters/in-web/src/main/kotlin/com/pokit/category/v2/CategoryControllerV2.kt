@@ -13,6 +13,7 @@ import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Pageable
@@ -63,9 +64,11 @@ class CategoryControllerV2(
             sort = ["createdAt"],
             direction = Sort.Direction.DESC
         ) pageable: Pageable,
-        @RequestParam(defaultValue = "true") filterUncategorized: Boolean
+        @RequestParam(defaultValue = "true") filterUncategorized: Boolean,
+        @Parameter(description = "default는 false이고 즐겨찾기 포함 조회. true로 보내면 즐겨찾기 포킷이 제외됨")
+        @RequestParam(defaultValue = "false") filterFavorite: Boolean,
     ): ResponseEntity<SliceResponseDto<CategoriesResponse>> {
-        return categoryUseCase.getCategoriesV2(user.id, pageable, filterUncategorized)
+        return categoryUseCase.getCategoriesV2(user.id, pageable, filterUncategorized, filterFavorite)
             .wrapSlice()
             .wrapOk()
     }

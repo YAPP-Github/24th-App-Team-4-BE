@@ -16,6 +16,7 @@ data class Category(
     var isShared: Boolean = false,
     var keyword: InterestType,
     var ownerId: Long,
+    val isFavorite: Boolean = false,
 ) {
     fun update(command: CategoryCommand, categoryImage: CategoryImage) {
         this.categoryName = command.categoryName

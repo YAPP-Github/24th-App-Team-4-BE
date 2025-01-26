@@ -2,6 +2,7 @@ package com.pokit.user.port.service
 
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.CategoryStatus.FAVORITE
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryImagePort
@@ -61,6 +62,17 @@ class UserService(
             openType = OpenType.PRIVATE,
             keyword = InterestType.DEFAULT,
             ownerId = user.id,
+        )
+        categoryPort.persist(category)
+
+        Category(
+            userId = savedUser.id,
+            categoryName = FAVORITE.displayName,
+            categoryImage = image,
+            openType = OpenType.PRIVATE,
+            keyword = InterestType.DEFAULT,
+            ownerId = user.id,
+            isFavorite = true
         )
         categoryPort.persist(category)
 

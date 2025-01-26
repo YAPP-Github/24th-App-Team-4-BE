@@ -3,7 +3,8 @@ package com.pokit.category.model
 enum class CategoryStatus(
     val displayName: String
 ) {
-    UNCATEGORIZED("미분류")
+    UNCATEGORIZED("미분류"),
+    FAVORITE("즐겨찾기")
     ;
 
     companion object {

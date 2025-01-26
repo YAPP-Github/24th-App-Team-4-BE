@@ -41,6 +41,9 @@ class CategoryEntity(
 
     @Column(name = "owner_id")
     var ownerId: Long,
+
+    @Column(name = "is_favorite")
+    val isFavorite: Boolean
 ) : BaseEntity() {
 
     @Column(name = "is_deleted")
@@ -62,6 +65,7 @@ class CategoryEntity(
                 isShared = category.isShared,
                 keyword = category.keyword,
                 ownerId = category.ownerId,
+                isFavorite = category.isFavorite,
             )
     }
 }
@@ -77,4 +81,5 @@ fun CategoryEntity.toDomain() = Category(
     isShared = this.isShared,
     keyword = this.keyword,
     ownerId = this.ownerId,
+    isFavorite = this.isFavorite,
 )
