@@ -2,6 +2,7 @@ package com.pokit.category.port.`in`
 
 import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
+import com.pokit.category.dto.DuplicateCategoryCommandV2
 import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import com.pokit.user.model.User
@@ -24,4 +25,5 @@ interface CategoryUseCase {
     fun outCategory(userId: Long, categoryId: Long)
     fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean, filterFavorite: Boolean): Slice<CategoriesResponse>
     fun getInvitedUsers(userId: Long, categoryId: Long): List<User>
+    fun duplicateCategoryV2(userId: Long, command: DuplicateCategoryCommandV2)
 }
