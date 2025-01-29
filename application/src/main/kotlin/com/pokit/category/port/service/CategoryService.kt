@@ -2,6 +2,7 @@ package com.pokit.category.port.service
 
 import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
+import com.pokit.category.dto.DuplicateCategoryCommandV2
 import com.pokit.category.dto.toCategoriesResponse
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.*
@@ -263,6 +264,46 @@ class CategoryService(
         val userIds = sharedCategories.map { it.userId }
         val users = userPort.loadAllInIds(userIds)
         return users
+    }
+
+    @Transactional
+    override fun duplicateCategoryV2(
+        userId: Long,
+        command: DuplicateCategoryCommandV2,
+    ) {
+        val originCategory = categoryPort.loadByIdAndOpenType(command.originCategoryId, OpenType.PUBLIC)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+
+        if (originCategory.userId == userId) {
+            throw InvalidRequestException(CategoryErrorCode.SHARE_ALREADY_EXISTS_CATEGORY)
+        }
+
+        if (categoryPort.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
+            throw InvalidRequestException(CategoryErrorCode.MAX_CATEGORY_LIMIT_EXCEEDED)
+        }
+
+        if (categoryPort.existsByNameAndUserId(command.categoryName, userId)) {
+            throw AlreadyExistsException(CategoryErrorCode.ALREADY_EXISTS_CATEGORY)
+        }
+        val categoryImage = (categoryImagePort.loadById(command.categoryImageId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE))
+        val newCategory = categoryPort.persist(
+            originCategory.duplicate(
+                command.categoryName,
+                userId,
+                categoryImage,
+                command.keyword,
+                command.openType
+            )
+        )
+        contentPort.duplicateContent(command.originCategoryId, newCategory.categoryId)
+
+        val sharedCategory = SharedCategory(
+            userId = userId,
+            categoryId = newCategory.categoryId
+        )
+
+        sharedCategoryPort.persist(sharedCategory)
     }
 
     override fun getAllCategoryImages(): List<CategoryImage> =
