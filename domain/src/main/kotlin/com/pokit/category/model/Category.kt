@@ -61,3 +61,20 @@ fun Category.duplicate(newCategoryName: String, userId: Long, categoryImage: Cat
         categoryImage = categoryImage
     )
 }
+
+fun Category.duplicate(
+    newCategoryName: String,
+    userId: Long,
+    categoryImage: CategoryImage,
+    keyword: InterestType,
+    openType: OpenType,
+): Category {
+    return this.copy(
+        categoryId = 0L,
+        userId = userId,
+        categoryName = newCategoryName,
+        categoryImage = categoryImage,
+        keyword = keyword,
+        openType = openType,
+    )
+}
