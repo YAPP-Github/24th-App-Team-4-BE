@@ -48,7 +48,7 @@ jobs:
           mkdir -p ./adapters/in-web/src/main/resources
           echo "${{ secrets.APPLICATION_IN_WEB_YML }}" > ./application/src/main/resources/application-in-web.yml
           mkdir -p ./entry/web/src/main/resources
-          echo "${{ secrets.LOGBACK_XML }}" > ./entry/web/src/main/resources/logback.xml
+          echo "${{ secrets.LOGBACK_XML }}" | base64 --decode > ./entry/web/src/main/resources/logback.xml
 
       - name: Build with Gradle
         run: ./gradlew :entry:web:build --no-daemon
