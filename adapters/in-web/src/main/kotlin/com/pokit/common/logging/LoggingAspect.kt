@@ -43,13 +43,13 @@ class LoggingAspect(
         val requestBody = getRequestBody(args)
         log.info(
             "\n----Request Log----\n" +
-                "API: {}\n" +
-                "Method: {}\n" +
-                "API Path: {}\n" +
-                "User Id : {}\n" +
-                "Query String: {}\n" +
-                "Request Body: \n{}\n" +
-                "---------------",
+                    "API: {}\n" +
+                    "Method: {}\n" +
+                    "API Path: {}\n" +
+                    "User Id : {}\n" +
+                    "Query String: {}\n" +
+                    "Request Body: \n{}\n" +
+                    "---------------",
             operationSummary, httpMethod, requestUri, userId, queryString, requestBody
         )
 
@@ -61,10 +61,10 @@ class LoggingAspect(
         val responseBody = getResponseBody(response)
         log.info(
             "\n----Response Log----\n" +
-                "API: {}\n" +
-                "Response Body: \n{}\n" +
-                "Execution Time: ${executionTime}ms" +
-                "---------------",
+                    "API: {}\n" +
+                    "Response Body: \n{}\n" +
+                    "Execution Time: ${executionTime}ms" +
+                    "---------------",
             operationSummary, responseBody
         )
 
@@ -97,7 +97,8 @@ class LoggingAspect(
 
     private fun getResponseBody(response: Any?): String {
         return try {
-            objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(response)  // Pretty Print
+            objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(response)  // Pretty Print
         } catch (e: Exception) {
             log.error("Failed to serialize response body: {}", e.message)
             "Failed to serialize response body"
@@ -109,7 +110,10 @@ class LoggingAspect(
         return operation?.summary ?: "Summary 없음"
     }
 
-    private fun isDto(obj: Any): Boolean {
+    private fun isDto(obj: Any?): Boolean {
+        if (obj == null) {
+            return false
+        }
         val packageName = obj::class.qualifiedName ?: return false
         return packageName.startsWith("com.pokit") && packageName.contains(".dto")
     }
