@@ -46,3 +46,4 @@ out/
 **/src/main/resources/application-*.yml
 **/src/main/resources/google-services.json
 **/src/main/resources/*.p8
+**/src/main/resources/logback.xml
