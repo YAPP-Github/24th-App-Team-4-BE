@@ -27,11 +27,14 @@ class LoggingAspect(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @Pointcut("within(com.pokit..*) && within(@org.springframework.web.bind.annotation.RestController *)")
-    fun controllerPointcut() {
+    fun infoLogPointcut() {
     }
 
-    @Around("controllerPointcut()")
-    fun logApi(joinPoint: ProceedingJoinPoint): Any? {
+    @Pointcut("within(@org.springframework.web.bind.annotation.RestControllerAdvice *)")
+    fun errorLogPointcut() {}
+
+    @Around("infoLogPointcut()")
+    fun infoLogApi(joinPoint: ProceedingJoinPoint): Any? {
         val methodSignature = joinPoint.signature as MethodSignature
         val args = joinPoint.args
         val userId = getUserId(args)
@@ -65,6 +68,46 @@ class LoggingAspect(
                     "Response Body: \n{}\n" +
                     "Execution Time: ${executionTime}ms" +
                     "---------------",
+            operationSummary, responseBody
+        )
+
+        return response
+    }
+
+    @Around("errorLogPointcut()")
+    fun errorLogApi(joinPoint: ProceedingJoinPoint): Any? {
+        val methodSignature = joinPoint.signature as MethodSignature
+        val args = joinPoint.args
+        val userId = getUserId(args)
+        val httpMethod = request.method
+        val requestUri = request.requestURI
+        val operationSummary = getOperationSummary(methodSignature.method)
+        val queryString = request.queryString
+        val requestBody = getRequestBody(args)
+        log.error(
+            "\n----Request Log----\n" +
+                "API: {}\n" +
+                "Method: {}\n" +
+                "API Path: {}\n" +
+                "User Id : {}\n" +
+                "Query String: {}\n" +
+                "Request Body: \n{}\n" +
+                "---------------",
+            operationSummary, httpMethod, requestUri, userId, queryString, requestBody
+        )
+
+        var response: Any?
+        val executionTime = measureTimeMillis {
+            response = joinPoint.proceed()
+        }
+
+        val responseBody = getResponseBody(response)
+        log.error(
+            "\n----Response Log----\n" +
+                "API: {}\n" +
+                "Response Body: \n{}\n" +
+                "Execution Time: ${executionTime}ms" +
+                "---------------",
             operationSummary, responseBody
         )
 
