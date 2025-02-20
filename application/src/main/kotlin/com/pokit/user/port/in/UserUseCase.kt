@@ -24,4 +24,6 @@ interface UserUseCase {
     fun updateProfile(userId: Long, command: UserCommand): User
 
     fun getMyInterests(userId: Long): List<InterestType>
+
+    fun getProfile(userId: Long): User
 }
