@@ -108,4 +108,14 @@ class UserController(
             .map { InterestTypeResponse(it.name, it.kor) }
             .wrapOk()
     }
+
+    @GetMapping("/profile")
+    @Operation(summary = "유저 프로필 조회 API")
+    fun getProfile(
+        @AuthenticationPrincipal user: PrincipalUser
+    ): ResponseEntity<UserResponse> {
+        return userUseCase.getProfile(user.id)
+            .toResponse()
+            .wrapOk()
+    }
 }

@@ -140,4 +140,8 @@ class UserService(
     override fun getMyInterests(userId: Long) =
         interestPort.loadByUserId(userId)
             .map { it.interestType }
+
+    override fun getProfile(userId: Long): User =
+        userPort.loadById(userId)
+            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
 }
