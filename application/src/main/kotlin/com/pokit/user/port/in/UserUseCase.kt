@@ -7,6 +7,7 @@ import com.pokit.user.dto.request.UserCommand
 import com.pokit.user.model.FcmToken
 import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
+import com.pokit.user.model.UserImage
 
 interface UserUseCase {
     fun signUp(user: User, request: SignUpRequest): User
@@ -26,4 +27,6 @@ interface UserUseCase {
     fun getMyInterests(userId: Long): List<InterestType>
 
     fun getProfile(userId: Long): User
+
+    fun getProfileImages(): List<UserImage>
 }

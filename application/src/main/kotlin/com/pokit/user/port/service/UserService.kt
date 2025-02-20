@@ -144,4 +144,6 @@ class UserService(
     override fun getProfile(userId: Long): User =
         userPort.loadById(userId)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+
+    override fun getProfileImages() = userImagePort.loadAll()
 }

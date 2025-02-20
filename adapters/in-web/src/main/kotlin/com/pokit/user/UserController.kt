@@ -12,6 +12,7 @@ import com.pokit.user.dto.response.toResponse
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.FcmToken
 import com.pokit.user.model.InterestType
+import com.pokit.user.model.UserImage
 import com.pokit.user.port.`in`.UserUseCase
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -116,6 +117,13 @@ class UserController(
     ): ResponseEntity<UserResponse> {
         return userUseCase.getProfile(user.id)
             .toResponse()
+            .wrapOk()
+    }
+
+    @GetMapping("/profileImage")
+    @Operation(summary = "프로필 이미지(푸키) 목록 조회 API")
+    fun getProfileImage(): ResponseEntity<List<UserImage>> {
+        return userUseCase.getProfileImages()
             .wrapOk()
     }
 }
