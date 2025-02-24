@@ -24,4 +24,8 @@ class InterestAdapter (
         return interestRepository.findAllByUserId(userId)
             .map { it.toDomain() }
     }
+
+    override fun deleteByUserId(userId: Long) {
+        interestRepository.deleteByUserId(userId)
+    }
 }

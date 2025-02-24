@@ -8,4 +8,6 @@ interface InterestPort {
     fun delete(interest: Interest)
 
     fun loadByUserId(userId: Long): List<Interest>
+
+    fun deleteByUserId(userId: Long)
 }
