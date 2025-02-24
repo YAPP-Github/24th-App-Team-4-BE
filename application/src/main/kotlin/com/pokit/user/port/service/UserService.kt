@@ -146,4 +146,13 @@ class UserService(
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
 
     override fun getProfileImages() = userImagePort.loadAll()
+
+    @Transactional
+    override fun updateMyInterests(userId: Long, interests: List<String>) {
+        interestPort.deleteByUserId(userId)
+        val interestTypes = interests.map { InterestType.of(it) }
+        interestTypes.forEach {
+            interestPort.persist(Interest(userId = userId, interestType = it))
+        }
+    }
 }

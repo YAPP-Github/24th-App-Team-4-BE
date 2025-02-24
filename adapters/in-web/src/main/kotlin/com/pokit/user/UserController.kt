@@ -4,6 +4,7 @@ import com.pokit.auth.config.ErrorOperation
 import com.pokit.auth.model.PrincipalUser
 import com.pokit.auth.model.toDomain
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
+import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
 import com.pokit.user.dto.request.*
 import com.pokit.user.dto.response.CheckDuplicateNicknameResponse
 import com.pokit.user.dto.response.InterestTypeResponse
@@ -125,5 +126,15 @@ class UserController(
     fun getProfileImage(): ResponseEntity<List<UserImage>> {
         return userUseCase.getProfileImages()
             .wrapOk()
+    }
+
+    @PutMapping("/myinterests")
+    @Operation(summary = "관심사 수정 API")
+    fun updateMyInterests(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @Valid @RequestBody request: UpdateInterestRequest,
+    ): ResponseEntity<Unit> {
+        return userUseCase.updateMyInterests(user.id, request.interests)
+            .wrapUnit()
     }
 }
