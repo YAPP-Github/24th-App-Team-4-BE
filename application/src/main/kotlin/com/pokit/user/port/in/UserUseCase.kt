@@ -29,4 +29,6 @@ interface UserUseCase {
     fun getProfile(userId: Long): User
 
     fun getProfileImages(): List<UserImage>
+
+    fun updateMyInterests(userId: Long, interests: List<String>)
 }
