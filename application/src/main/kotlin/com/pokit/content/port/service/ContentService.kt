@@ -19,9 +19,11 @@ import com.pokit.content.dto.request.toDomain
 import com.pokit.content.dto.response.*
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
+import com.pokit.content.model.ReportedContent
 import com.pokit.content.port.`in`.ContentUseCase
 import com.pokit.content.port.out.ContentCountPort
 import com.pokit.content.port.out.ContentPort
+import com.pokit.content.port.out.ReportedContentPort
 import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
@@ -48,6 +50,7 @@ class ContentService(
     private val contentCountPort: ContentCountPort,
     private val interestPort: InterestPort,
     private val userPort: UserPort,
+    private val reportedContentPort: ReportedContentPort,
 ) : ContentUseCase {
     companion object {
         private const val MIN_CONTENT_COUNT = 3
@@ -210,6 +213,18 @@ class ContentService(
             it.interestType
         }
         return contentPort.loadAllByKeyword(userId, searchKeyword, pageable)
+    }
+
+    @Transactional
+    override fun report(userId: Long, contentId: Long) {
+        verifyContent(contentId)
+
+        val reportedContent = ReportedContent(
+            reporterId = userId,
+            contentId = contentId,
+        )
+
+        reportedContentPort.persist(reportedContent)
     }
 
     private fun verifyContent(contentId: Long): Content {
