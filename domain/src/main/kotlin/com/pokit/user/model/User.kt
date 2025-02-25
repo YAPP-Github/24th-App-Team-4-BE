@@ -28,7 +28,7 @@ data class User(
         this.nickName = nickName
     }
 
-    fun modifyProfile(image: UserImage, nickname: String) {
+    fun modifyProfile(image: UserImage?, nickname: String) {
         this.image = image
         this.nickName = nickname
     }

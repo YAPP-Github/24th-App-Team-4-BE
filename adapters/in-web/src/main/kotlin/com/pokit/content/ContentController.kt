@@ -222,5 +222,14 @@ class ContentController(
 
     }
 
+    @PostMapping("/report/{contentId}")
+    @Operation(summary = "신고하기 API", description = "신고된 컨텐츠 반환")
+    fun reportContent(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable("contentId") contentId: Long,
+    ): ResponseEntity<Unit> {
+        return contentUseCase.report(user.id, contentId)
+            .wrapUnit()
+    }
 }
 

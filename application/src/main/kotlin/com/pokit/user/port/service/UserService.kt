@@ -125,8 +125,10 @@ class UserService(
         val user = userPort.loadById(userId)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
 
-        val image = userImagePort.loadById(command.profileImageId)
-            ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_PROFILE_IMAGE)
+        val image = command.profileImageId?.let {
+            userImagePort.loadById(it)
+                ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_PROFILE_IMAGE)
+        }
 
         val isDuplicate = userPort.checkByNickname(command.nickname, userId)
         if (isDuplicate) {

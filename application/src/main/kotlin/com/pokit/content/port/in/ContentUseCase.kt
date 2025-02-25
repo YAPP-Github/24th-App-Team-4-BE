@@ -50,4 +50,6 @@ interface ContentUseCase {
     fun updateThumbnail(userId: Long, contentId: Long, thumbnail: String): Content
 
     fun getRecommendedContent(userId: Long, keyword: String?, pageable: Pageable): Slice<ContentsResult>
+
+    fun report(userId: Long, contentId: Long)
 }
