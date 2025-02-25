@@ -13,6 +13,7 @@ import com.pokit.out.persistence.category.persist.QCategoryEntity.categoryEntity
 import com.pokit.out.persistence.content.persist.ContentEntity
 import com.pokit.out.persistence.content.persist.ContentRepository
 import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
+import com.pokit.out.persistence.content.persist.QReportedContentEntity.reportedContentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
 import com.pokit.user.model.InterestType
@@ -66,12 +67,13 @@ class ContentAdapter(
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
 
         FavoriteOrNot(condition.favorites, query) // 북마크 조인 여부
 
         query.where(
-            categoryEntity.userId.eq(userId),
+            reportedContentEntity.id.isNull.or(reportedContentEntity.reporterId.ne(userId)),
             condition.categoryId?.let { categoryEntity.id.eq(it) },
             isUnread(condition.isRead),
             contentEntity.deleted.isFalse,
@@ -136,9 +138,10 @@ class ContentAdapter(
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
+            .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
             .where(
-                categoryEntity.userId.eq(userId),
+                reportedContentEntity.reporterId.ne(userId),
                 contentEntity.deleted.isFalse,
                 bookmarkEntity.deleted.isFalse,
             )
@@ -219,9 +222,10 @@ class ContentAdapter(
         val contents = queryFactory.select(contentEntity, categoryEntity.name, categoryEntity.keyword)
             .from(contentEntity)
             .join(categoryEntity).on(contentEntity.categoryId.eq(categoryEntity.id))
+            .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .where(
+                reportedContentEntity.reporterId.ne(userId),
                 categoryEntity.openType.eq(OpenType.PUBLIC),
-                categoryEntity.userId.ne(userId),
                 categoryEntity.keyword.`in`(searchKeywords),
                 categoryEntity.deleted.isFalse,
                 contentEntity.deleted.isFalse
