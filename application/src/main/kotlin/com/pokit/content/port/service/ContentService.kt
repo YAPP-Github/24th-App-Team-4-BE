@@ -1,5 +1,6 @@
 package com.pokit.content.port.service
 
+import com.pokit.alert.dto.request.DiscordRequest
 import com.pokit.alert.model.CreateAlertRequest
 import com.pokit.bookmark.exception.BookmarkErrorCode
 import com.pokit.bookmark.model.Bookmark
@@ -38,6 +39,7 @@ import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.format.DateTimeFormatter
 
 @Service
 @Transactional(readOnly = true)
@@ -217,13 +219,23 @@ class ContentService(
 
     @Transactional
     override fun report(userId: Long, contentId: Long) {
-        verifyContent(contentId)
+        val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+        val content = verifyContent(contentId)
+
+        val request = DiscordRequest(
+            reportedContentId = contentId,
+            reporterId = userId,
+            contentsUserId = content.userId,
+            data = content.data,
+            createdAt = formatter.format(content.createdAt),
+        )
 
         val reportedContent = ReportedContent(
             reporterId = userId,
             contentId = contentId,
         )
 
+        publisher.publishEvent(request)
         reportedContentPort.persist(reportedContent)
     }
 
