@@ -1,10 +1,12 @@
 package com.pokit.alert.port.event
 
+import com.pokit.alert.dto.request.DiscordRequest
 import com.pokit.alert.model.AlertBatch
 import com.pokit.alert.model.AlertContent
 import com.pokit.alert.model.CreateAlertRequest
 import com.pokit.alert.port.out.AlertBatchPort
 import com.pokit.alert.port.out.AlertContentPort
+import com.pokit.alert.port.out.DiscordPort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +20,7 @@ class AlertEventHandler(
     private val now: Supplier<LocalDate>,
     private val alertBatchPort: AlertBatchPort,
     private val alertContentPort: AlertContentPort,
+    private val discordPort: DiscordPort,
 ) {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -29,6 +32,11 @@ class AlertEventHandler(
             contentId = request.contetId
         )
         alertContentPort.persist(alertContent)
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    fun sendReportedContent(request: DiscordRequest) {
+        discordPort.sendReportedContent(request)
     }
 
     private fun createAlertBatch(userId: Long): AlertBatch {

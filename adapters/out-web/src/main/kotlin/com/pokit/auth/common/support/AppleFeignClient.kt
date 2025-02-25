@@ -1,8 +1,9 @@
 package com.pokit.auth.common.support
 
-import com.pokit.auth.common.config.OpenFeignConfig
 import com.pokit.auth.common.dto.ApplePublicKeys
 import com.pokit.auth.common.dto.AppleRevokeRequest
+import com.pokit.config.OpenFeignConfig
+import feign.Headers
 import feign.Response
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
@@ -21,6 +22,7 @@ interface AppleFeignClient {
     fun getApplePublicKeys(): ApplePublicKeys
 
     @PostMapping("/revoke", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @Headers("Content-Type: application/x-www-form-urlencoded")
     fun revoke(
         @RequestBody appleRevokeRequest: AppleRevokeRequest
     ): Response
