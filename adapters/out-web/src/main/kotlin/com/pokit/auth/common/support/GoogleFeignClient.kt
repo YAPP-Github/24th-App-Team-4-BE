@@ -1,7 +1,8 @@
 package com.pokit.auth.common.support
 
-import com.pokit.auth.common.config.OpenFeignConfig
 import com.pokit.auth.common.dto.GoogleUserResponse
+import com.pokit.config.OpenFeignConfig
+import feign.Headers
 import feign.Response
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
@@ -19,5 +20,6 @@ interface GoogleFeignClient {
     fun getUserInfo(@RequestParam("id_token") idToken: String): GoogleUserResponse
 
     @PostMapping("/revoke", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @Headers("Content-Type: application/x-www-form-urlencoded")
     fun revoke(@RequestParam("token") refreshToken: String): Response
 }
