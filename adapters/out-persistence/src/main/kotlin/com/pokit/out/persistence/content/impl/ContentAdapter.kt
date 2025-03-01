@@ -141,7 +141,7 @@ class ContentAdapter(
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
             .where(
-                reportedContentEntity.reporterId.ne(userId),
+                reportedContentEntity.reporterId.ne(userId).or(reportedContentEntity.reporterId.isNull),
                 contentEntity.deleted.isFalse,
                 bookmarkEntity.deleted.isFalse,
             )
@@ -224,7 +224,7 @@ class ContentAdapter(
             .join(categoryEntity).on(contentEntity.categoryId.eq(categoryEntity.id))
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .where(
-                reportedContentEntity.reporterId.ne(userId),
+                reportedContentEntity.reporterId.ne(userId).or(reportedContentEntity.reporterId.isNull),
                 categoryEntity.openType.eq(OpenType.PUBLIC),
                 categoryEntity.keyword.`in`(searchKeywords),
                 categoryEntity.deleted.isFalse,
