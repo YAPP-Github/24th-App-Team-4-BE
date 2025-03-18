@@ -16,6 +16,7 @@ import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.QReportedContentEntity.reportedContentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
+import com.pokit.out.persistence.user.persist.QUserEntity.userEntity
 import com.pokit.user.model.InterestType
 import com.querydsl.core.Tuple
 import com.querydsl.core.types.OrderSpecifier
@@ -70,12 +71,12 @@ class ContentAdapter(
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
 
-        FavoriteOrNot(condition.favorites, query) // 북마크 조인 여부
+        FavoriteOrNot(condition.favorites, userId, query) // 북마크 조인 여부
 
         query.where(
             reportedContentEntity.id.isNull.or(reportedContentEntity.reporterId.ne(userId)),
             condition.categoryId?.let { categoryEntity.id.eq(it) },
-            isUnread(condition.isRead),
+            isUnread(condition.isRead, userId),
             contentEntity.deleted.isFalse,
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds),
@@ -141,6 +142,7 @@ class ContentAdapter(
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
             .where(
+                categoryEntity.userId.eq(userId),
                 reportedContentEntity.reporterId.ne(userId).or(reportedContentEntity.reporterId.isNull),
                 contentEntity.deleted.isFalse,
                 bookmarkEntity.deleted.isFalse,
@@ -289,9 +291,9 @@ class ContentAdapter(
         return hasNext
     }
 
-    private fun isUnread(read: Boolean?): Predicate? {
+    private fun isUnread(read: Boolean?, userId: Long): Predicate? {
         return read?.let {
-            userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ))
+            userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ)).and(categoryEntity.userId.eq(userId))
         }
     }
 
@@ -323,6 +325,7 @@ class ContentAdapter(
 
     private fun FavoriteOrNot(
         favorites: Boolean?,
+        userId: Long,
         query: JPAQuery<Tuple>
     ): JPAQuery<Tuple>? {
         return favorites
@@ -333,6 +336,7 @@ class ContentAdapter(
                         bookmarkEntity.contentId.eq(contentEntity.id)
                             .and(bookmarkEntity.deleted.isFalse)
                     )
+                    .where(categoryEntity.userId.eq(userId))
             }
     }
 
