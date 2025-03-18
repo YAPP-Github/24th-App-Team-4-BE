@@ -19,6 +19,7 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.port.out.ContentPort
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -228,6 +229,7 @@ class CategoryService(
         category.minusUserCount() // 포킷 인원수 감소
         categoryPort.persist(category)
     }
+    private val logger = KotlinLogging.logger { }
 
     override fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean, filterFavorite: Boolean): Slice<CategoriesResponse> {
         val sharedCategories = sharedCategoryPort.loadByUserId(userId)
@@ -235,8 +237,8 @@ class CategoryService(
         val categoriesSlice = categoryPort.loadAllInId(categoryIds, pageable)
 
         val bookmark = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
-        val favoriteCategory = categoryPort.loadByNameAndUserId(FAVORITE.displayName, userId)
-        favoriteCategory!!.copy(contentCount = bookmark.size)
+        var favoriteCategory = categoryPort.loadByNameAndUserId(FAVORITE.displayName, userId)
+        favoriteCategory = favoriteCategory!!.copy(contentCount = bookmark.content.size)
 
         val categories = categoriesSlice.content.map { category ->
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
