@@ -7,6 +7,7 @@ import com.pokit.bookmark.model.Bookmark
 import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.exception.CategoryErrorCode
 import com.pokit.category.model.Category
+import com.pokit.category.model.CategoryStatus
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
@@ -33,6 +34,7 @@ import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
 import com.pokit.user.port.out.InterestPort
 import com.pokit.user.port.out.UserPort
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -112,12 +114,21 @@ class ContentService(
         verifyContent(contentId)
         bookMarkPort.delete(user.id, contentId)
     }
+    private val logger = KotlinLogging.logger { }
 
     override fun getContents(
         userId: Long,
         condition: ContentSearchCondition,
         pageable: Pageable,
     ): Slice<ContentsResult> {
+        val category = condition.categoryId?.let { verifyCategory(it) }
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY);
+        logger.info { "컨디션 Dto : $condition" }
+        if(category.categoryName == CategoryStatus.FAVORITE.displayName) {
+            val contents = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
+            return contents
+        }
+
         val contents = contentPort.loadAllByUserIdAndContentId(
             userId,
             condition,
