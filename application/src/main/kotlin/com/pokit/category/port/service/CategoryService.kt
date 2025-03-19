@@ -236,7 +236,7 @@ class CategoryService(
 
         val bookmark = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
         var favoriteCategory = categoryPort.loadByNameAndUserId(FAVORITE.displayName, userId)
-        favoriteCategory = favoriteCategory!!.copy(contentCount = bookmark.size)
+        favoriteCategory = favoriteCategory!!.copy(contentCount = bookmark.content.size)
 
         val categories = categoriesSlice.content.map { category ->
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
