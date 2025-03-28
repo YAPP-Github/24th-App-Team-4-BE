@@ -18,10 +18,10 @@ interface CategoryRepository : JpaRepository<CategoryEntity, Long> {
     @Query(
         """
             select ca from CategoryEntity ca
-            join ContentEntity co on co.categoryId = ca.id
+            left join ContentEntity co on co.categoryId = ca.id
             where ca.id in :categoryIds and ca.deleted = :isDeleted
             group by ca.id
-            order by max(co.createdAt) desc
+            order by coalesce(max(co.createdAt), ca.createdAt) desc
         """
     )
     fun findAllByIdInAndDeleted(

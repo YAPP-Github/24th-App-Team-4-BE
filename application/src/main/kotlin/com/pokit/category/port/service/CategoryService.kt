@@ -245,7 +245,7 @@ class CategoryService(
             category.toCategoriesResponse(category.isFavorite)
         }.toMutableList()
 
-        if (!filterFavorite) {
+        if (!filterFavorite && pageable.pageNumber == 0) {
             val favoriteResponse = favoriteCategory.toCategoriesResponse(favoriteCategory.isFavorite)
             categories.add(0, favoriteResponse)
         }
