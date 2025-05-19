@@ -122,9 +122,7 @@ class ContentService(
         pageable: Pageable,
     ): Slice<ContentsResult> {
         val category = condition.categoryId?.let { verifyCategory(it) }
-            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY);
-        logger.info { "컨디션 Dto : $condition" }
-        if(category.categoryName == CategoryStatus.FAVORITE.displayName) {
+        if (category != null && category.categoryName == CategoryStatus.FAVORITE.displayName) {
             val contents = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
             return contents
         }
