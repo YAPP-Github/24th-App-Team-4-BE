@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class ApiExceptionHandler {
-    private val logger = KotlinLogging.logger { }
 
     private val notValidMessage = "잘못된 입력 값입니다."
     private val notValidCode = "G_001"
@@ -29,7 +28,6 @@ class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PokitException::class)
     fun handlePokitException(e: PokitException): ErrorResponse {
-        logger.warn { "PokitException: ${e.message} / $e" }
         return ErrorResponse(e.errorCode.message, e.errorCode.code)
     }
 }

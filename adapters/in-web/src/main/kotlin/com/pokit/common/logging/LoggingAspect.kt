@@ -61,14 +61,13 @@ class LoggingAspect(
             response = joinPoint.proceed()
         }
 
-        val responseBody = getResponseBody(response)
         log.info(
             "\n----Response Log----\n" +
                     "API: {}\n" +
-                    "Response Body: \n{}\n" +
-                    "Execution Time: ${executionTime}ms" +
+                    "API Path : {}\n" +
+                    "Execution Time: ${executionTime}ms\n" +
                     "---------------",
-            operationSummary, responseBody
+            operationSummary, requestUri
         )
 
         return response
@@ -105,10 +104,11 @@ class LoggingAspect(
         log.error(
             "\n----Response Log----\n" +
                 "API: {}\n" +
+                "API Path : {}\n" +
                 "Response Body: \n{}\n" +
-                "Execution Time: ${executionTime}ms" +
+                "Execution Time: ${executionTime}ms\n" +
                 "---------------",
-            operationSummary, responseBody
+            operationSummary, requestUri, responseBody
         )
 
         return response
