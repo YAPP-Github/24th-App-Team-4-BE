@@ -62,6 +62,7 @@ class ContentAdapter(
     override fun loadAllByUserIdAndContentId(
         userId: Long,
         condition: ContentSearchCondition,
+        isPrivate: Boolean,
         pageable: Pageable,
     ): Slice<ContentsResult> {
         val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
@@ -74,6 +75,7 @@ class ContentAdapter(
         FavoriteOrNot(condition.favorites, userId, query) // 북마크 조인 여부
 
         query.where(
+            if(isPrivate) categoryEntity.userId.eq(userId) else null,
             reportedContentEntity.id.isNull.or(reportedContentEntity.reporterId.ne(userId)),
             condition.categoryId?.let { categoryEntity.id.eq(it) },
             isUnread(condition.isRead, userId),

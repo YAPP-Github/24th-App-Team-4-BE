@@ -110,6 +110,7 @@ class ContentController(
         return contentUseCase.getContents(
             user.id,
             condition.copy(categoryId = categoryId).toDto(),
+            false,
             pageable
         )
             .map { it.toResponse() }
@@ -164,6 +165,7 @@ class ContentController(
         return contentUseCase.getContents(
             user.id,
             condition.toDto(),
+            true,
             pageable
         )
             .map { it.toResponse() }

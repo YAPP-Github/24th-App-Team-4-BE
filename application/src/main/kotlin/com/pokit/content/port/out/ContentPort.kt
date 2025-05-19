@@ -24,6 +24,7 @@ interface ContentPort {
     fun loadAllByUserIdAndContentId(
         userId: Long,
         condition: ContentSearchCondition,
+        isPrivate: Boolean,
         pageable: Pageable,
     ): Slice<ContentsResult>
 

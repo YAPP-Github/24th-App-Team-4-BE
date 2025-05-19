@@ -119,6 +119,7 @@ class ContentService(
     override fun getContents(
         userId: Long,
         condition: ContentSearchCondition,
+        isPrivate: Boolean,
         pageable: Pageable,
     ): Slice<ContentsResult> {
         val category = condition.categoryId?.let { verifyCategory(it) }
@@ -132,6 +133,7 @@ class ContentService(
         val contents = contentPort.loadAllByUserIdAndContentId(
             userId,
             condition,
+            isPrivate,
             pageable,
         )
 
@@ -178,7 +180,7 @@ class ContentService(
             searchWord = null
         )
 
-        val unreadContents = contentPort.loadAllByUserIdAndContentId(userId, contentSearchCondition, pageable)
+        val unreadContents = contentPort.loadAllByUserIdAndContentId(userId, contentSearchCondition, true, pageable)
         val remindContents = unreadContents.content.map { it.toRemindContentResult() }
 
         return SliceImpl(remindContents, pageable, unreadContents.hasNext())
