@@ -7,6 +7,11 @@ enum class InterestType(
     val kor: String,
 ) {
     DEFAULT("default"),
+    MARKETING("기획/마케팅"),
+    SHOPPING("쇼핑"),
+    PLACE("장소"),
+    READING("독서"),
+    COOKING("요리/레시피"),
     SPORTS("스포츠/레저"),
     OFFICE("문구/오피스"),
     FASHION("패션"),
