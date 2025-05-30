@@ -11,6 +11,7 @@ enum class InterestType(
     SHOPPING("쇼핑"),
     PLACE("장소"),
     READING("독서"),
+    PET("반려동물"),
     COOKING("요리/레시피"),
     SPORTS("스포츠/레저"),
     OFFICE("문구/오피스"),
