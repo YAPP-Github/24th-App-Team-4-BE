@@ -26,7 +26,7 @@ class SharedCategoryEntity(
 
     companion object {
         fun of(sharedCategory: SharedCategory) = SharedCategoryEntity(
-            id= sharedCategory.id,
+            id = sharedCategory.id,
             userId = sharedCategory.userId,
             categoryId = sharedCategory.categoryId
         )

@@ -8,7 +8,7 @@ import com.pokit.user.port.out.InterestPort
 import org.springframework.stereotype.Repository
 
 @Repository
-class InterestAdapter (
+class InterestAdapter(
     private val interestRepository: InterestRepository
 ) : InterestPort {
     override fun persist(interest: Interest): Interest {

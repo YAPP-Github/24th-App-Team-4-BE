@@ -7,7 +7,6 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.token.exception.AuthErrorCode
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.port.out.UserPort
-import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -75,7 +74,7 @@ class CustomAuthenticationFilter(
         val user = (
             userPort.loadById(userId)
                 ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
-        )
+            )
 
         val principalUser = PrincipalUser.of(user)
         val authorities = listOf(SimpleGrantedAuthority(principalUser.role.description))

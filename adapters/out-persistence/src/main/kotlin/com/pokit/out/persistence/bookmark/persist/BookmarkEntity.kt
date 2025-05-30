@@ -21,7 +21,7 @@ class BookmarkEntity(
 
     @Column(name = "deleted")
     var deleted: Boolean = false
-): BaseEntity() {
+) : BaseEntity() {
     fun delete() {
         this.deleted = true
     }

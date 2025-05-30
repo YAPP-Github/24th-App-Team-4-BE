@@ -4,7 +4,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.Notification
-import com.pokit.alert.model.AlertBatch
 import com.pokit.alert.port.out.AlertSender
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component

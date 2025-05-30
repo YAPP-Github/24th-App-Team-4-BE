@@ -31,7 +31,8 @@ class LoggingAspect(
     }
 
     @Pointcut("within(@org.springframework.web.bind.annotation.RestControllerAdvice *)")
-    fun errorLogPointcut() {}
+    fun errorLogPointcut() {
+    }
 
     @Around("infoLogPointcut()")
     fun infoLogApi(joinPoint: ProceedingJoinPoint): Any? {
@@ -46,13 +47,13 @@ class LoggingAspect(
         val requestBody = getRequestBody(args)
         log.info(
             "\n----Request Log----\n" +
-                    "API: {}\n" +
-                    "Method: {}\n" +
-                    "API Path: {}\n" +
-                    "User Id : {}\n" +
-                    "Query String: {}\n" +
-                    "Request Body: \n{}\n" +
-                    "---------------",
+                "API: {}\n" +
+                "Method: {}\n" +
+                "API Path: {}\n" +
+                "User Id : {}\n" +
+                "Query String: {}\n" +
+                "Request Body: \n{}\n" +
+                "---------------",
             operationSummary, httpMethod, requestUri, userId, queryString, requestBody
         )
 
@@ -63,10 +64,10 @@ class LoggingAspect(
 
         log.info(
             "\n----Response Log----\n" +
-                    "API: {}\n" +
-                    "API Path : {}\n" +
-                    "Execution Time: ${executionTime}ms\n" +
-                    "---------------",
+                "API: {}\n" +
+                "API Path : {}\n" +
+                "Execution Time: ${executionTime}ms\n" +
+                "---------------",
             operationSummary, requestUri
         )
 

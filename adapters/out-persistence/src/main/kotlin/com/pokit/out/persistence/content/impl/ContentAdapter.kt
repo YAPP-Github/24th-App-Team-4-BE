@@ -16,7 +16,6 @@ import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.QReportedContentEntity.reportedContentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
-import com.pokit.out.persistence.user.persist.QUserEntity.userEntity
 import com.pokit.user.model.InterestType
 import com.querydsl.core.Tuple
 import com.querydsl.core.types.OrderSpecifier
@@ -75,7 +74,7 @@ class ContentAdapter(
         FavoriteOrNot(condition.favorites, userId, query) // 북마크 조인 여부
 
         query.where(
-            if(isPrivate) categoryEntity.userId.eq(userId) else null,
+            if (isPrivate) categoryEntity.userId.eq(userId) else null,
             reportedContentEntity.id.isNull.or(reportedContentEntity.reporterId.ne(userId)),
             condition.categoryId?.let { categoryEntity.id.eq(it) },
             isUnread(condition.isRead, userId),

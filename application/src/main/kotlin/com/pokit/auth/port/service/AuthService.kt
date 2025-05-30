@@ -75,7 +75,7 @@ class AuthService(
     private fun getUserByEmail(userInfo: UserInfo): User? {
         val userEmail = userInfo.email
 
-        return if(userEmail == null) {
+        return if (userEmail == null) {
             return null
         } else {
             val user = userPort.loadByEmailAndAuthPlatform(userEmail, userInfo.authPlatform)

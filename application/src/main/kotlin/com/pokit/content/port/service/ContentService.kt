@@ -114,6 +114,7 @@ class ContentService(
         verifyContent(contentId)
         bookMarkPort.delete(user.id, contentId)
     }
+
     private val logger = KotlinLogging.logger { }
 
     override fun getContents(
