@@ -14,7 +14,6 @@ import com.pokit.out.persistence.category.persist.*
 import com.pokit.out.persistence.config.QueryDslConfig
 import com.pokit.out.persistence.content.persist.ContentEntity
 import com.pokit.out.persistence.content.persist.ContentRepository
-import com.pokit.out.persistence.content.persist.QContentEntity.*
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.UserLogEntity
 import com.pokit.out.persistence.log.persist.UserLogRepository

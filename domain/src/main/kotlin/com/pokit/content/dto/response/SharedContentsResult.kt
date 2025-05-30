@@ -4,7 +4,7 @@ import com.pokit.content.model.Content
 import com.pokit.content.model.ContentDefault
 import java.time.LocalDateTime
 
-data class SharedContentResult (
+data class SharedContentResult(
     val contentId: Long,
     val data: String,
     val domain: String,

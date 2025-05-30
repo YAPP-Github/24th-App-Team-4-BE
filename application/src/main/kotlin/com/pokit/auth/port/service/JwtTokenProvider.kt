@@ -22,6 +22,7 @@ class JwtTokenProvider(
     companion object {
         private const val TO_DAY = 86400000
     }
+
     override fun createToken(userId: Long): Token {
         val accessToken = generateToken(userId, jwtProperty.accessExpiryTime * TO_DAY)
         val refreshToken = generateToken(userId, jwtProperty.refreshExpiryTime * TO_DAY)

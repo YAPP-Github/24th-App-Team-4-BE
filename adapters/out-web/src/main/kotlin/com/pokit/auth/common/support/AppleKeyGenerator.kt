@@ -9,7 +9,7 @@ import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.spec.RSAPublicKeySpec
-import java.util.Base64
+import java.util.*
 
 @Component
 class AppleKeyGenerator {
@@ -18,9 +18,9 @@ class AppleKeyGenerator {
         publicKeys: ApplePublicKeys,
     ): PublicKey {
         val alg = headers["alg"]
-                ?: throw ClientValidationException(AuthErrorCode.INVALID_ID_TOKEN)
+            ?: throw ClientValidationException(AuthErrorCode.INVALID_ID_TOKEN)
         val kid = headers["kid"]
-                ?: throw ClientValidationException(AuthErrorCode.INVALID_ID_TOKEN)
+            ?: throw ClientValidationException(AuthErrorCode.INVALID_ID_TOKEN)
         val publicKey = publicKeys.getMatchedKey(alg, kid) ?: throw ClientValidationException(AuthErrorCode.INVALID_ID_TOKEN)
 
         return getPublicKey(publicKey)

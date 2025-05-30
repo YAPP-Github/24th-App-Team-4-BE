@@ -6,7 +6,7 @@ import jakarta.persistence.*
 
 @Table(name = "INTEREST")
 @Entity
-class InterestEntity (
+class InterestEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

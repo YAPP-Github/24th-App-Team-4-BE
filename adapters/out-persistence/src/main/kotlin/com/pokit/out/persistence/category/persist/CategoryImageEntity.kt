@@ -1,6 +1,5 @@
 package com.pokit.out.persistence.category.persist
 
-import com.pokit.category.model.Category
 import com.pokit.category.model.CategoryImage
 import jakarta.persistence.*
 
