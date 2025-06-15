@@ -50,8 +50,13 @@ class CategoryAdapter(
     }
 
     override fun loadAllInId(categoryIds: List<Long>, pageable: Pageable): Slice<Category> {
-        return categoryRepository.findAllByIdInAndDeleted(categoryIds, pageable, false)
-            .map { it.toDomain() }
+        return if (pageable.sort.equals("createdAt")) {
+            categoryRepository.findAllByIdInAndCreatedAtSort(categoryIds, pageable, false)
+                .map { it.toDomain() }
+        } else {
+            categoryRepository.findAllByIdInAndNameSort(categoryIds, pageable, false)
+                .map { it.toDomain() }
+        }
     }
 
 }
