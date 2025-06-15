@@ -24,7 +24,20 @@ interface CategoryRepository : JpaRepository<CategoryEntity, Long> {
             order by coalesce(max(co.createdAt), ca.createdAt) desc
         """
     )
-    fun findAllByIdInAndDeleted(
+    fun findAllByIdInAndCreatedAtSort(
+        @Param("categoryIds") categoryIds: List<Long>,
+        pageable: Pageable,
+        @Param("isDeleted") isDeleted: Boolean
+    ): Slice<CategoryEntity>
+
+    @Query(
+        """
+        select ca from CategoryEntity ca
+        where ca.id in :categoryIds and ca.deleted = :isDeleted
+        order by ca.name asc
+    """
+    )
+    fun findAllByIdInAndNameSort(
         @Param("categoryIds") categoryIds: List<Long>,
         pageable: Pageable,
         @Param("isDeleted") isDeleted: Boolean
