@@ -82,6 +82,7 @@ class ContentAdapter(
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds),
             containsWord(condition.searchWord),
+            contentEntity.deleted.isFalse,
         )
             .offset(pageable.offset)
             .groupBy(contentEntity)
