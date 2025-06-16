@@ -87,4 +87,13 @@ interface ContentRepository : JpaRepository<ContentEntity, Long>, ContentJdbcRep
         @Param("contentIds") contentIds: List<Long>,
         @Param("categoryId") categoryId: Long
     )
+
+    @Modifying(clearAutomatically = true)
+    @Query(
+        """
+        update ContentEntity c set c.deleted = true
+        where c.categoryId = :categoryId
+    """
+    )
+    fun deleteByCategoryId(categoryId: Long)
 }

@@ -41,6 +41,10 @@ class BookMarkAdapter(
     override fun isBookmarked(contentId: Long, userId: Long): Boolean =
         bookMarkRepository.existsByContentIdAndUserIdAndDeleted(contentId, userId, false)
 
+    override fun deleteByContentIds(contentIds: List<Long>, userId: Long) {
+        bookMarkRepository.deleteByContentIdsAndUserId(contentIds, userId)
+    }
+
     override fun loadByUserId(userId: Long, pageable: Pageable): Slice<Bookmark> =
         bookMarkRepository.findByUserIdAndDeleted(userId, false, pageable)
             .map { it.toDomain() }

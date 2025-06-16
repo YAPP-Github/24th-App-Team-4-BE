@@ -1,5 +1,6 @@
 package com.pokit.category.port.service
 
+import com.pokit.bookmark.port.out.BookmarkPort
 import com.pokit.category.dto.CategoriesResponse
 import com.pokit.category.dto.CategoryCommand
 import com.pokit.category.dto.DuplicateCategoryCommandV2
@@ -19,6 +20,7 @@ import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.port.out.ContentPort
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -33,6 +35,7 @@ class CategoryService(
     private val contentPort: ContentPort,
     private val sharedCategoryPort: SharedCategoryPort,
     private val userPort: UserPort,
+    private val bookmarkPort: BookmarkPort,
 ) : CategoryUseCase {
     companion object {
         private const val MAX_CATEGORY_COUNT = 30
@@ -92,6 +95,11 @@ class CategoryService(
         val category = categoryPort.loadByIdAndUserId(categoryId, userId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
 
+        val contents = contentPort.loadByUserIdAndCategoryName(category.userId, category.categoryName, PageRequest.of(0, MAX_CATEGORY_COUNT))
+        val contentIds = contents.map { it.contentId }.toMutableList()
+
+        bookmarkPort.deleteByContentIds(contentIds, userId)
+        contentPort.deleteByCategoryId(categoryId)
         categoryPort.delete(category)
     }
 
