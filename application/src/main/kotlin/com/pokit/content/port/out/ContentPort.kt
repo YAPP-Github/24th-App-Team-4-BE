@@ -58,4 +58,6 @@ interface ContentPort {
     fun loadAllByKeyword(userId: Long, searchKeywords: List<InterestType>, pageable: Pageable): Slice<ContentsResult>
 
     fun loadById(id: Long): Content?
+
+    fun deleteByCategoryId(categoryId: Long)
 }

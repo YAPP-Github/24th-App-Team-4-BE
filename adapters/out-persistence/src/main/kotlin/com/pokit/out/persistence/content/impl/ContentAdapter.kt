@@ -259,6 +259,10 @@ class ContentAdapter(
         return contentRepository.findByIdOrNull(id)?.toDomain()
     }
 
+    override fun deleteByCategoryId(categoryId: Long) {
+        contentRepository.deleteByCategoryId(categoryId)
+    }
+
     override fun loadByContentIds(contentIds: List<Long>): List<Content> =
         contentRepository.findByIdIn(contentIds)
             .map { it.toDomain() }
