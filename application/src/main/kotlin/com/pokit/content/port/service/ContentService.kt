@@ -243,7 +243,7 @@ class ContentService(
         )
 
         val reportedContent = ReportedContent(
-            reporterId = userId,
+            reporterId = userId, // 신고자 ID
             contentId = contentId,
         )
 
