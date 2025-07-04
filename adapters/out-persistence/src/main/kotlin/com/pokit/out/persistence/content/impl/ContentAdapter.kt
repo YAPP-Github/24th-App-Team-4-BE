@@ -67,7 +67,11 @@ class ContentAdapter(
         val reportedUserIds = queryFactory.select(contentEntity.userId)
             .from(reportedContentEntity)
             .join(contentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
-            .where(reportedContentEntity.reporterId.eq(userId))
+            .where(
+                reportedContentEntity.reporterId.eq(userId),
+                contentEntity.deleted.isFalse,
+                reportedContentEntity.isDeleted.isFalse
+            )
 
         val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
             .from(contentEntity)
