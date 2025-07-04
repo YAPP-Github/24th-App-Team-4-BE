@@ -17,11 +17,9 @@ import com.pokit.out.persistence.content.persist.QReportedContentEntity.reported
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
 import com.pokit.user.model.InterestType
-import com.querydsl.core.Tuple
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.DateTimePath
-import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -79,7 +77,9 @@ class ContentAdapter(
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
 
-        FavoriteOrNot(condition.favorites, userId, query) // 북마크 조인 여부
+        if(condition.favorites == true) { // 즐겨찾기 필터링
+            query.where(bookmarkEntity.isNotNull)
+        }
 
         query.where(
             if (isPrivate) categoryEntity.userId.eq(userId) else null,
@@ -334,23 +334,6 @@ class ContentAdapter(
 
     override fun deleteByUserId(userId: Long) {
         contentRepository.deleteByUserId(userId)
-    }
-
-    private fun FavoriteOrNot(
-        favorites: Boolean?,
-        userId: Long,
-        query: JPAQuery<Tuple>
-    ): JPAQuery<Tuple>? {
-        return favorites
-            ?.let {
-                query
-                    .join(bookmarkEntity)
-                    .on(
-                        bookmarkEntity.contentId.eq(contentEntity.id)
-                            .and(bookmarkEntity.deleted.isFalse)
-                    )
-                    .where(categoryEntity.userId.eq(userId))
-            }
     }
 
     private fun getSortOrder(property: DateTimePath<LocalDateTime>, sortField: String, pageable: Pageable): OrderSpecifier<*> {
