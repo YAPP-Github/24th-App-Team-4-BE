@@ -8,7 +8,7 @@
 
 ## 🔗 Module Dependency Flow
 
-|                  | **Adapters** | **Application** | **Domain** | **Entry: Web** | **Entry: Batch** |
+|        ->        | **Adapters** | **Application** | **Domain** | **Entry: Web** | **Entry: Batch** |
 |------------------|--------------|-----------------|------------|----------------|------------------|
 | **Adapters**     | -            | ✅               | ✅          | ❌              | ❌                |
 | **Application**  | ❌            | -               | ✅          | ❌              | ❌                |
