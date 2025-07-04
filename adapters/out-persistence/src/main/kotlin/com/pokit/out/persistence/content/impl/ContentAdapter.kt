@@ -64,25 +64,28 @@ class ContentAdapter(
         isPrivate: Boolean,
         pageable: Pageable,
     ): Slice<ContentsResult> {
+        val reportedUserIds = queryFactory.select(contentEntity.userId)
+            .from(reportedContentEntity)
+            .join(contentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
+            .where(reportedContentEntity.reporterId.eq(userId))
+
         val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
 
         FavoriteOrNot(condition.favorites, userId, query) // 북마크 조인 여부
 
         query.where(
             if (isPrivate) categoryEntity.userId.eq(userId) else null,
-            reportedContentEntity.id.isNull.or(reportedContentEntity.reporterId.ne(userId)),
+            contentEntity.userId.notIn(reportedUserIds),
             condition.categoryId?.let { categoryEntity.id.eq(it) },
             isUnread(condition.isRead, userId),
             contentEntity.deleted.isFalse,
             dateBetween(condition.startDate, condition.endDate),
             categoryIn(condition.categoryIds),
             containsWord(condition.searchWord),
-            contentEntity.deleted.isFalse,
         )
             .offset(pageable.offset)
             .groupBy(contentEntity)
