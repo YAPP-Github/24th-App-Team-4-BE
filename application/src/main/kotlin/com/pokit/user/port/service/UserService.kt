@@ -19,10 +19,7 @@ import com.pokit.user.model.Interest
 import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
 import com.pokit.user.port.`in`.UserUseCase
-import com.pokit.user.port.out.FcmTokenPort
-import com.pokit.user.port.out.InterestPort
-import com.pokit.user.port.out.UserImagePort
-import com.pokit.user.port.out.UserPort
+import com.pokit.user.port.out.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -35,6 +32,7 @@ class UserService(
     private val fcmTokenPort: FcmTokenPort,
     private val userImagePort: UserImagePort,
     private val interestPort: InterestPort,
+    private val userCachePort: UserCachePort,
 ) : UserUseCase {
     companion object {
         private const val UNCATEGORIZED_IMAGE_ID = 1
@@ -116,7 +114,8 @@ class UserService(
     }
 
     override fun getUserInfo(userId: Long): User {
-        return userPort.loadById(userId)
+        return userCachePort.loadById(userId)
+            ?: userPort.loadById(userId)?.also { userCachePort.persist(it) }
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
     }
 
@@ -136,6 +135,8 @@ class UserService(
         }
 
         user.modifyProfile(image, command.nickname)
+        userCachePort.deleteById(userId)
+        userCachePort.persist(user)
         return userPort.persist(user)
     }
 
