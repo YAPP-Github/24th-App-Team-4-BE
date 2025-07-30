@@ -15,6 +15,7 @@ import com.pokit.user.dto.UserInfo
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.Role
 import com.pokit.user.model.User
+import com.pokit.user.port.out.UserCachePort
 import com.pokit.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +28,7 @@ class AuthService(
     private val tokenProvider: TokenProvider,
     private val userPort: UserPort,
     private val contentPort: ContentPort,
+    private val userCachePort: UserCachePort,
 ) : AuthUseCase {
     @Transactional
     override fun signIn(request: SignInRequest): Token {
@@ -51,7 +53,7 @@ class AuthService(
         if (user.authPlatform != request.authPlatform) {
             throw ClientValidationException(AuthErrorCode.INCORRECT_PLATFORM)
         }
-
+        userCachePort.deleteById(user.id)
         contentPort.deleteByUserId(user.id)
         userPort.delete(user)
     }
