@@ -13,6 +13,7 @@ dependencies {
 
     // 라이브러리
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation ("com.google.code.gson:gson:2.10.1")
 
     // 테스팅
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.1")

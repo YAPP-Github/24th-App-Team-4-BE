@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":adapters:out-persistence"))
     implementation(project(":domain"))
     implementation(project(":adapters:out-web"))
+    implementation(project(":adapters:out-cache"))
 
     // 라이브러리
     implementation("org.springframework.boot:spring-boot-starter-web")
