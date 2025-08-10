@@ -67,6 +67,7 @@ class UserController(
     @Operation(summary = "관심사 목록 조회 API")
     fun getInterests(): ResponseEntity<List<InterestTypeResponse>> =
         InterestType.values()
+            .filter { it != InterestType.DEFAULT }
             .map { InterestTypeResponse(it.name, it.kor) }
             .wrapOk()
 
