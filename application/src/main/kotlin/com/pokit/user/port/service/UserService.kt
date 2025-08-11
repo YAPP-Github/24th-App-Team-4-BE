@@ -81,6 +81,8 @@ class UserService(
             )
         }
 
+        userCachePort.persist(user)
+
         return savedUser
     }
 
