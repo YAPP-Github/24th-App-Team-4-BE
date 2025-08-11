@@ -63,7 +63,7 @@ class UserService(
         )
         categoryPort.persist(category)
 
-        Category(
+        val favoriteCategory = Category(
             userId = savedUser.id,
             categoryName = FAVORITE.displayName,
             categoryImage = image,
@@ -73,6 +73,7 @@ class UserService(
             isFavorite = true
         )
         categoryPort.persist(category)
+        categoryPort.persist(favoriteCategory)
 
         request.interests.forEach {
             interestPort.persist(
