@@ -68,6 +68,9 @@ class UserController(
     fun getInterests(): ResponseEntity<List<InterestTypeResponse>> =
         InterestType.values()
             .filter { it != InterestType.DEFAULT }
+            .filter { it != InterestType.OFFICE }
+            .filter { it != InterestType.FASHION }
+            .filter { it != InterestType.RESTAURANT }
             .map { InterestTypeResponse(it.name, it.kor) }
             .wrapOk()
 
