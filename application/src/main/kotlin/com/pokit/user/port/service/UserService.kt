@@ -117,8 +117,11 @@ class UserService(
     }
 
     override fun getUserInfo(userId: Long): User {
-        return userCachePort.loadById(userId)
-            ?: userPort.loadById(userId)?.also { userCachePort.persist(it) }
+        cacheOrNull { userCachePort.loadById(userId) }
+            ?.let { return it }
+
+        return userPort.loadById(userId)
+            ?.also { tryCachePersist(it) }
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
     }
 
@@ -160,5 +163,13 @@ class UserService(
         interestTypes.forEach {
             interestPort.persist(Interest(userId = userId, interestType = it))
         }
+    }
+
+    // redis fallback
+    private inline fun <T> cacheOrNull(block: () -> T?): T? =
+        runCatching(block).getOrNull()
+
+    private fun tryCachePersist(user: User) {
+        runCatching { userCachePort.persist(user) }
     }
 }
