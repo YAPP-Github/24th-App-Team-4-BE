@@ -47,9 +47,7 @@ class CategoryService(
             throw InvalidRequestException(CategoryErrorCode.UNAVAILABLE_CATEGORY_NAME)
         }
 
-        if (categoryPort.existsByNameAndUserId(command.categoryName, userId)) {
-            throw AlreadyExistsException(CategoryErrorCode.ALREADY_EXISTS_CATEGORY)
-        }
+        categoryPort.existsByNameAndIdOrThrow(command.categoryName, userId)
 
         if (categoryPort.countByUserId(userId) >= MAX_CATEGORY_COUNT) {
             throw InvalidRequestException(CategoryErrorCode.MAX_CATEGORY_LIMIT_EXCEEDED)
@@ -85,6 +83,8 @@ class CategoryService(
 
         val categoryImage = categoryImagePort.loadById(categoryCommand.categoryImageId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY_IMAGE)
+
+        categoryPort.existsByNameAndIdOrThrow(categoryCommand.categoryName, userId)
 
         category.update(categoryCommand, categoryImage)
         return categoryPort.persist(category)
@@ -327,3 +327,9 @@ fun CategoryPort.loadCategoryOrThrow(categoryId: Long, userId: Long): Category {
 fun CategoryPort.loadByIdOrThrow(categoryId: Long) =
     loadById(categoryId)
         ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+
+fun CategoryPort.existsByNameAndIdOrThrow(categoryName: String, userId: Long) {
+    if (existsByNameAndUserId(categoryName, userId)) {
+        throw AlreadyExistsException(CategoryErrorCode.ALREADY_EXISTS_CATEGORY)
+    }
+}
