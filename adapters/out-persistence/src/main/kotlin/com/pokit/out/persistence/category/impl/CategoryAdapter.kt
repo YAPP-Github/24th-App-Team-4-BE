@@ -50,12 +50,18 @@ class CategoryAdapter(
     }
 
     override fun loadAllInId(categoryIds: List<Long>, pageable: Pageable): Slice<Category> {
-        return if (pageable.sort.equals("createdAt")) {
-            categoryRepository.findAllByIdInAndCreatedAtSort(categoryIds, pageable, false)
-                .map { it.toDomain() }
-        } else {
-            categoryRepository.findAllByIdInAndNameSort(categoryIds, pageable, false)
-                .map { it.toDomain() }
+        val order = pageable.sort.firstOrNull()
+        val property = order?.property
+
+        return when (property) {
+            "createdAt" -> {
+                categoryRepository.findAllByIdInAndCreatedAtSort(categoryIds, pageable, false)
+                    .map { it.toDomain() }
+            }
+            else -> {
+                categoryRepository.findAllByIdInAndNameSort(categoryIds, pageable, false)
+                    .map { it.toDomain() }
+            }
         }
     }
 
