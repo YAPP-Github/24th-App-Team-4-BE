@@ -82,9 +82,16 @@ class ContentAdapter(
             userImageEntity.url
         )
             .from(contentEntity)
-            .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
+            .leftJoin(userLogEntity).on(
+                userLogEntity.contentId.eq(contentEntity.id)
+                    .and(userLogEntity.userId.eq(userId))
+            )
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
+            .leftJoin(bookmarkEntity).on(
+                bookmarkEntity.contentId.eq(contentEntity.id)
+                    .and(bookmarkEntity.userId.eq(userId))
+                    .and(bookmarkEntity.deleted.isFalse)
+            )
             .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
             .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
 
@@ -135,9 +142,16 @@ class ContentAdapter(
             userImageEntity.url
         )
             .from(contentEntity)
-            .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
+            .leftJoin(userLogEntity).on(
+                userLogEntity.contentId.eq(contentEntity.id)
+                    .and(userLogEntity.userId.eq(userId))
+            )
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
-            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
+            .leftJoin(bookmarkEntity).on(
+                bookmarkEntity.contentId.eq(contentEntity.id)
+                    .and(bookmarkEntity.userId.eq(userId))
+                    .and(bookmarkEntity.deleted.isFalse)
+            )
             .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
             .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
             .where(
@@ -177,10 +191,17 @@ class ContentAdapter(
             userImageEntity.url
         )
             .from(contentEntity)
-            .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
+            .leftJoin(userLogEntity).on(
+                userLogEntity.contentId.eq(contentEntity.id)
+                    .and(userLogEntity.userId.eq(userId))
+            )
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
-            .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
+            .leftJoin(bookmarkEntity).on(
+                bookmarkEntity.contentId.eq(contentEntity.id)
+                    .and(bookmarkEntity.userId.eq(userId))
+                    .and(bookmarkEntity.deleted.isFalse)
+            )
             .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
             .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
             .where(
@@ -351,7 +372,7 @@ class ContentAdapter(
 
     private fun isUnread(read: Boolean?, userId: Long): Predicate? {
         return read?.let {
-            userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ)).and(categoryEntity.userId.eq(userId))
+            userLogEntity.id.isNull.or(userLogEntity.type.ne(LogType.READ))
         }
     }
 
