@@ -25,7 +25,7 @@ class UserLogEntity(
     companion object {
         fun of(userLog: UserLog) = UserLogEntity(
             contentId = userLog.contentId,
-            userId = userLog.contentId,
+            userId = userLog.userId,
             type = userLog.type
         )
     }
