@@ -16,6 +16,8 @@ import com.pokit.out.persistence.content.persist.QContentEntity.contentEntity
 import com.pokit.out.persistence.content.persist.QReportedContentEntity.reportedContentEntity
 import com.pokit.out.persistence.content.persist.toDomain
 import com.pokit.out.persistence.log.persist.QUserLogEntity.userLogEntity
+import com.pokit.out.persistence.user.persist.QUserEntity.userEntity
+import com.pokit.out.persistence.user.persist.QUserImageEntity.userImageEntity
 import com.pokit.user.model.InterestType
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Predicate
@@ -71,11 +73,20 @@ class ContentAdapter(
                 reportedContentEntity.isDeleted.isFalse
             )
 
-        val query = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
+        val query = queryFactory.select(
+            contentEntity,
+            categoryEntity.name,
+            userLogEntity.count(),
+            bookmarkEntity.count(),
+            userEntity.nickname,
+            userImageEntity.url
+        )
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
+            .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
+            .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
 
         if(condition.favorites == true) { // 즐겨찾기 필터링
             query.where(bookmarkEntity.isNotNull)
@@ -92,7 +103,7 @@ class ContentAdapter(
             containsWord(condition.searchWord),
         )
             .offset(pageable.offset)
-            .groupBy(contentEntity)
+            .groupBy(contentEntity, userEntity.nickname, userImageEntity.url)
             .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
             .limit(pageable.pageSize + 1L)
 
@@ -105,7 +116,9 @@ class ContentAdapter(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
                 it[userLogEntity.count()]!!,
-                it[bookmarkEntity.count()]!!
+                it[bookmarkEntity.count()]!!,
+                it[userEntity.nickname]!!,
+                it[userImageEntity.url]
             )
         }
 
@@ -113,18 +126,27 @@ class ContentAdapter(
     }
 
     override fun loadByUserIdAndCategoryName(userId: Long, categoryName: String, pageable: Pageable): Slice<ContentsResult> {
-        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
+        val contents = queryFactory.select(
+            contentEntity,
+            categoryEntity.name,
+            userLogEntity.count(),
+            bookmarkEntity.count(),
+            userEntity.nickname,
+            userImageEntity.url
+        )
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
+            .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
+            .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
             .where(
                 categoryEntity.userId.eq(userId),
                 categoryEntity.name.eq(categoryName),
                 contentEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
-            .groupBy(contentEntity)
+            .groupBy(contentEntity, userEntity.nickname, userImageEntity.url)
             .limit((pageable.pageSize + 1).toLong())
             .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
             .fetch()
@@ -136,7 +158,9 @@ class ContentAdapter(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
                 it[userLogEntity.count()]!!,
-                it[bookmarkEntity.count()]!!
+                it[bookmarkEntity.count()]!!,
+                it[userEntity.nickname]!!,
+                it[userImageEntity.url]
             )
         }
 
@@ -144,12 +168,21 @@ class ContentAdapter(
     }
 
     override fun loadBookmarkedContentsByUserId(userId: Long, pageable: Pageable): Slice<ContentsResult> {
-        val contents = queryFactory.select(contentEntity, categoryEntity.name, userLogEntity.count(), bookmarkEntity.count())
+        val contents = queryFactory.select(
+            contentEntity,
+            categoryEntity.name,
+            userLogEntity.count(),
+            bookmarkEntity.count(),
+            userEntity.nickname,
+            userImageEntity.url
+        )
             .from(contentEntity)
             .leftJoin(userLogEntity).on(userLogEntity.contentId.eq(contentEntity.id))
             .join(categoryEntity).on(categoryEntity.id.eq(contentEntity.categoryId))
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
             .leftJoin(bookmarkEntity).on(bookmarkEntity.contentId.eq(contentEntity.id).and(bookmarkEntity.deleted.isFalse))
+            .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
+            .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
             .where(
                 categoryEntity.userId.eq(userId),
                 reportedContentEntity.reporterId.ne(userId).or(reportedContentEntity.reporterId.isNull),
@@ -157,7 +190,7 @@ class ContentAdapter(
                 bookmarkEntity.deleted.isFalse,
             )
             .offset(pageable.offset)
-            .groupBy(contentEntity)
+            .groupBy(contentEntity, userEntity.nickname, userImageEntity.url)
             .limit((pageable.pageSize + 1).toLong())
             .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
             .fetch()
@@ -169,7 +202,9 @@ class ContentAdapter(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
                 it[userLogEntity.count()]!!,
-                it[bookmarkEntity.count()]!!
+                it[bookmarkEntity.count()]!!,
+                it[userEntity.nickname]!!,
+                it[userImageEntity.url]
             )
         }
 
@@ -230,10 +265,18 @@ class ContentAdapter(
     }
 
     override fun loadAllByKeyword(userId: Long, searchKeywords: List<InterestType>, pageable: Pageable): Slice<ContentsResult> {
-        val contents = queryFactory.select(contentEntity, categoryEntity.name, categoryEntity.keyword)
+        val contents = queryFactory.select(
+            contentEntity,
+            categoryEntity.name,
+            categoryEntity.keyword,
+            userEntity.nickname,
+            userImageEntity.url
+        )
             .from(contentEntity)
             .join(categoryEntity).on(contentEntity.categoryId.eq(categoryEntity.id))
             .leftJoin(reportedContentEntity).on(reportedContentEntity.contentId.eq(contentEntity.id))
+            .join(userEntity).on(userEntity.id.eq(contentEntity.userId))
+            .leftJoin(userImageEntity).on(userImageEntity.id.eq(userEntity.image.id))
             .where(
                 reportedContentEntity.reporterId.ne(userId).or(reportedContentEntity.reporterId.isNull),
                 categoryEntity.openType.eq(OpenType.PUBLIC),
@@ -242,7 +285,7 @@ class ContentAdapter(
                 contentEntity.deleted.isFalse
             )
             .offset(pageable.offset)
-            .groupBy(contentEntity)
+            .groupBy(contentEntity, userEntity.nickname, userImageEntity.url)
             .limit((pageable.pageSize + 1).toLong())
             .orderBy(getSortOrder(contentEntity.createdAt, "createdAt", pageable))
             .fetch()
@@ -253,8 +296,10 @@ class ContentAdapter(
             ContentsResult.of(
                 it[contentEntity]!!.toDomain(),
                 it[categoryEntity.name]!!,
-                0,
-                0,
+                0L,
+                0L,
+                it[userEntity.nickname]!!,
+                it[userImageEntity.url],
                 it[categoryEntity.keyword]!!.kor
             )
         }

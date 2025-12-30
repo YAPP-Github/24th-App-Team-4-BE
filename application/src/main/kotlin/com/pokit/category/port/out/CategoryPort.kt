@@ -10,6 +10,7 @@ interface CategoryPort {
     fun loadByIdAndUserId(id: Long, userId: Long): Category?
     fun loadById(id: Long): Category?
     fun existsByNameAndUserId(name: String, userId: Long): Boolean
+    fun existsByNameAndUserIdAndIdNot(id: Long, name: String, userId: Long): Boolean
     fun persist(category: Category): Category
     fun delete(category: Category)
     fun countByUserId(userId: Long): Int

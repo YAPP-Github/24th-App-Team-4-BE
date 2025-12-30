@@ -18,6 +18,7 @@ data class ContentsResponse(
     val isFavorite: Boolean,
     val keyword: String,
     val memoExists: Boolean,
+    val author: AuthorProfile,
 )
 
 fun ContentsResult.toResponse(): ContentsResponse {
@@ -37,5 +38,6 @@ fun ContentsResult.toResponse(): ContentsResponse {
         isFavorite = this.isFavorite,
         keyword = this.keyword,
         memoExists = this.memoExists,
+        author = this.author,
     )
 }

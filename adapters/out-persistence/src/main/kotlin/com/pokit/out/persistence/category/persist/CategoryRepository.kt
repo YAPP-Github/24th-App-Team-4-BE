@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param
 
 interface CategoryRepository : JpaRepository<CategoryEntity, Long> {
     fun existsByNameAndUserIdAndDeleted(name: String, userId: Long, deleted: Boolean): Boolean
+    fun existsByNameAndUserIdAndDeletedAndIdNot(name: String, userId: Long, deleted: Boolean, id: Long): Boolean
     fun findByUserIdAndDeleted(userId: Long, deleted: Boolean, pageable: Pageable): Slice<CategoryEntity>
     fun findByIdAndUserIdAndDeleted(id: Long, userId: Long, deleted: Boolean): CategoryEntity?
     fun countByUserIdAndDeleted(userId: Long, deleted: Boolean): Int
