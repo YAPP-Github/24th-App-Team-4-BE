@@ -13,9 +13,11 @@ import com.pokit.content.dto.request.*
 import com.pokit.content.dto.response.BookMarkContentResponse
 import com.pokit.content.dto.response.ContentResponse
 import com.pokit.content.dto.response.ContentsResponse
+import com.pokit.content.dto.response.ReportReasonResponse
 import com.pokit.content.dto.response.toResponse
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
+import com.pokit.content.model.ReportReason
 import com.pokit.content.port.`in`.ContentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
@@ -229,9 +231,18 @@ class ContentController(
     fun reportContent(
         @AuthenticationPrincipal user: PrincipalUser,
         @PathVariable("contentId") contentId: Long,
+        @Valid @RequestBody request: ReportContentRequest,
     ): ResponseEntity<Unit> {
-        return contentUseCase.report(user.id, contentId)
+        val reportReason = ReportReason.of(request.reportReason)
+        return contentUseCase.report(user.id, contentId, reportReason)
             .wrapUnit()
+    }
+
+    @GetMapping("/report/reasons")
+    @Operation(summary = "신고 사유 목록 조회 API", description = "컨텐츠 신고 시 사용 가능한 사유 목록 조회")
+    fun getReportReasons(): ResponseEntity<List<ReportReasonResponse>> {
+        val reasons = ReportReason.entries.map { it.toResponse() }
+        return ResponseEntity.ok(reasons)
     }
 }
 

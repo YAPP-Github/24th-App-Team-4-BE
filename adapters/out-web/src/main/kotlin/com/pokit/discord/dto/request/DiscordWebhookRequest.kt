@@ -21,6 +21,7 @@ internal fun DiscordRequest.toWebhookRequest(): DiscordWebhookRequest {
             신고자 ID : ${this.reporterId}
             신고된 링크 작성자 ID : ${this.contentsUserId}
             신고된 링크 : ${this.data}
+            신고 사유 : ${this.reportReason.description}
         """.trimIndent()
     )
 

@@ -8,4 +8,5 @@ enum class ContentErrorCode(
 ) : ErrorCode {
     NOT_FOUND_CONTENT("존재하지 않는 컨텐츠입니다.", "C_001"),
     NOT_UNCATEGORIZED_CONTENT("해당 링크는 미분류 카테고리에 있지 않습니다.", "C_002"),
+    INVALID_REPORT_REASON("유효하지 않은 신고 사유입니다.", "C_003"),
 }
