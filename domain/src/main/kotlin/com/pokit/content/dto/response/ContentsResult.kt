@@ -19,6 +19,7 @@ data class ContentsResult(
     val isFavorite: Boolean,
     val keyword: String,
     val memoExists: Boolean,
+    val author: AuthorProfile,
 ) {
     companion object {
         fun of(
@@ -26,6 +27,8 @@ data class ContentsResult(
             categoryName: String,
             isRead: Long,
             isFavorite: Long,
+            authorNickname: String,
+            authorProfileImageUrl: String?,
             keyword: String = "default"
         ): ContentsResult {
             return ContentsResult(
@@ -42,7 +45,18 @@ data class ContentsResult(
                 isFavorite = isFavorite > 0,
                 keyword = keyword,
                 memoExists = content.memo.isNotBlank(),
+                author = AuthorProfile(
+                    userId = content.userId,
+                    nickname = authorNickname,
+                    profileImageUrl = authorProfileImageUrl
+                )
             )
         }
     }
 }
+
+data class AuthorProfile(
+    val userId: Long,
+    val nickname: String,
+    val profileImageUrl: String?
+)

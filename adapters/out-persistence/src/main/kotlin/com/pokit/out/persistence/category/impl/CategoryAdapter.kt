@@ -28,6 +28,10 @@ class CategoryAdapter(
     override fun existsByNameAndUserId(name: String, userId: Long): Boolean =
         categoryRepository.existsByNameAndUserIdAndDeleted(name, userId, false)
 
+    override fun existsByNameAndUserIdAndIdNot(id: Long, name: String, userId: Long): Boolean {
+        return categoryRepository.existsByNameAndUserIdAndDeletedAndIdNot(name, userId, false, id)
+    }
+
     override fun persist(category: Category): Category {
         val categoryEntity = CategoryEntity.of(category)
         return categoryRepository.save(categoryEntity).toDomain()
