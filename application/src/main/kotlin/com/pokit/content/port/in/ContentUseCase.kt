@@ -5,6 +5,7 @@ import com.pokit.content.dto.request.ContentCommand
 import com.pokit.content.dto.request.ContentSearchCondition
 import com.pokit.content.dto.response.*
 import com.pokit.content.model.Content
+import com.pokit.content.model.ReportReason
 import com.pokit.user.model.User
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -52,5 +53,5 @@ interface ContentUseCase {
 
     fun getRecommendedContent(userId: Long, keyword: String?, pageable: Pageable): Slice<ContentsResult>
 
-    fun report(userId: Long, contentId: Long)
+    fun report(userId: Long, contentId: Long, reportReason: ReportReason)
 }

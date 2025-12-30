@@ -4,4 +4,5 @@ data class ReportedContent(
     val id: Long = 0L,
     val reporterId: Long,
     val contentId: Long,
+    val reportReason: ReportReason,
 )

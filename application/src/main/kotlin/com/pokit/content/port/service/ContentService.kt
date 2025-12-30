@@ -21,6 +21,7 @@ import com.pokit.content.dto.request.toDomain
 import com.pokit.content.dto.response.*
 import com.pokit.content.exception.ContentErrorCode
 import com.pokit.content.model.Content
+import com.pokit.content.model.ReportReason
 import com.pokit.content.model.ReportedContent
 import com.pokit.content.port.`in`.ContentUseCase
 import com.pokit.content.port.out.ContentCountPort
@@ -230,7 +231,7 @@ class ContentService(
     }
 
     @Transactional
-    override fun report(userId: Long, contentId: Long) {
+    override fun report(userId: Long, contentId: Long, reportReason: ReportReason) {
         val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
         val content = verifyContent(contentId)
 
@@ -239,12 +240,14 @@ class ContentService(
             reporterId = userId,
             contentsUserId = content.userId,
             data = content.data,
+            reportReason = reportReason,
             createdAt = formatter.format(content.createdAt),
         )
 
         val reportedContent = ReportedContent(
-            reporterId = userId, // 신고자 ID
+            reporterId = userId,
             contentId = contentId,
+            reportReason = reportReason,
         )
 
         publisher.publishEvent(request)
