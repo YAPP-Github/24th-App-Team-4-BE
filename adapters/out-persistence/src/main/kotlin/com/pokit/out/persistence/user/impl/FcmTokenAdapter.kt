@@ -20,4 +20,8 @@ class FcmTokenAdapter(
         return fcmTokenRepository.findByUserId(userId)
             .map { it.toDomain() }
     }
+
+    override fun loadByUserIdAndToken(userId: Long, token: String): FcmToken? {
+        return fcmTokenRepository.findByUserIdAndToken(userId, token)?.toDomain()
+    }
 }
