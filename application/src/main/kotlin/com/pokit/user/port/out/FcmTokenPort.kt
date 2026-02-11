@@ -6,4 +6,6 @@ interface FcmTokenPort {
     fun persist(fcmToken: FcmToken): FcmToken
 
     fun loadByUserId(userId: Long): List<FcmToken>
+
+    fun loadByUserIdAndToken(userId: Long, token: String): FcmToken?
 }

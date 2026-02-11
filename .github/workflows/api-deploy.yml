@@ -40,8 +40,8 @@ jobs:
         run: |
           mkdir -p ./adapters/out-persistence/src/main/resources
           echo "${{ secrets.OUT_PERSISTENCE_YML }}" > ./adapters/out-persistence/src/main/resources/application-out-persistence.yml
-          mkdir -p ./adapters/out-web/src/main/resources
-          echo "${{ secrets.OUT_WEB_GOOGLE }}" | base64 --decode > ./adapters/out-web/src/main/resources/google-services.json
+          mkdir -p ./adapters/out-web/src/main/resources/firebase
+          echo "${{ secrets.OUT_WEB_GOOGLE }}" | base64 --decode > ./adapters/out-web/src/main/resources/firebase/push-account-key.json
           echo "${{ secrets.OUT_WEB_YML }}" > ./adapters/out-web/src/main/resources/application-out-web.yml
           mkdir -p ./application/src/main/resources
           echo "${{ secrets.APPLICATION_CORE }}" > ./application/src/main/resources/application-core.yml

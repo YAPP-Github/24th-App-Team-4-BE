@@ -112,6 +112,9 @@ class UserService(
     override fun createFcmToken(userId: Long, request: CreateFcmTokenRequest): FcmToken {
         val user = userPort.loadById(userId)
             ?: throw NotFoundCustomException(UserErrorCode.NOT_FOUND_USER)
+        fcmTokenPort.loadByUserIdAndToken(user.id, request.token)
+            ?.let { return it }
+
         val fcmToken = FcmToken(user.id, request.token)
         return fcmTokenPort.persist(fcmToken)
     }

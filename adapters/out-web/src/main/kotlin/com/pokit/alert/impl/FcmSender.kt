@@ -1,15 +1,32 @@
 package com.pokit.alert.impl
 
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.Notification
 import com.pokit.alert.port.out.AlertSender
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.annotation.PostConstruct
+import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 
 @Component
 class FcmSender : AlertSender {
+    @PostConstruct
+    fun init() {
+        if (FirebaseApp.getApps().isEmpty()) {
+            val firebaseCredentials = ClassPathResource("/firebase/push-account-key.json").inputStream
+            val options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(firebaseCredentials))
+                .build()
+            FirebaseApp.initializeApp(options)
+        }
+    }
+
+
     private val logger = KotlinLogging.logger { }
 
     companion object {
