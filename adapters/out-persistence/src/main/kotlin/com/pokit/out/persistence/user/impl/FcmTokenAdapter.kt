@@ -22,6 +22,6 @@ class FcmTokenAdapter(
     }
 
     override fun loadByUserIdAndToken(userId: Long, token: String): FcmToken? {
-        return fcmTokenRepository.findByUserIdAndToken(userId, token)?.toDomain()
+        return fcmTokenRepository.findByUserIdAndTokenAndDeleted(userId, token, false)?.toDomain()
     }
 }
