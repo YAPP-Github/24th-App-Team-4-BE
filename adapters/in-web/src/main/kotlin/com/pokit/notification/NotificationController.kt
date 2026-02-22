@@ -5,6 +5,7 @@ import com.pokit.auth.model.PrincipalUser
 import com.pokit.common.dto.SliceResponseDto
 import com.pokit.common.wrapper.ResponseWrapper.wrapOk
 import com.pokit.common.wrapper.ResponseWrapper.wrapSlice
+import com.pokit.common.wrapper.ResponseWrapper.wrapUnit
 import com.pokit.notification.dto.response.NotificationResponse
 import com.pokit.notification.dto.response.UnreadCountResponse
 import com.pokit.notification.dto.response.toResponse
@@ -57,9 +58,9 @@ class NotificationController(
     fun markAsRead(
         @AuthenticationPrincipal user: PrincipalUser,
         @PathVariable notificationId: Long
-    ): ResponseEntity<Map<String, String>> {
-        notificationUseCase.markAsRead(user.id, notificationId)
-        return mapOf("message" to "success").wrapOk()
+    ): ResponseEntity<Unit> {
+        return notificationUseCase.markAsRead(user.id, notificationId)
+            .wrapUnit()
     }
 
     @DeleteMapping("/{notificationId}")
@@ -68,8 +69,8 @@ class NotificationController(
     fun deleteNotification(
         @AuthenticationPrincipal user: PrincipalUser,
         @PathVariable notificationId: Long
-    ): ResponseEntity<Map<String, String>> {
-        notificationUseCase.deleteNotification(user.id, notificationId)
-        return mapOf("message" to "success").wrapOk()
+    ): ResponseEntity<Unit> {
+        return notificationUseCase.deleteNotification(user.id, notificationId)
+            .wrapUnit()
     }
 }
