@@ -5,6 +5,8 @@ import com.pokit.notification.exception.NotificationErrorCode
 import com.pokit.notification.model.Notification
 import com.pokit.notification.port.`in`.NotificationUseCase
 import com.pokit.notification.port.out.NotificationPort
+import com.pokit.notification.port.out.NotificationSender
+import com.pokit.user.port.out.FcmTokenPort
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
@@ -13,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class NotificationService(
-    private val notificationPort: NotificationPort
+    private val notificationPort: NotificationPort,
+    private val fcmTokenPort: FcmTokenPort,
+    private val notificationSender: NotificationSender,
 ) : NotificationUseCase {
 
     override fun getNotifications(userId: Long, pageable: Pageable): Slice<Notification> {
@@ -36,5 +40,15 @@ class NotificationService(
 
     override fun getUnreadCount(userId: Long): Long {
         return notificationPort.countUnreadByUserId(userId)
+    }
+
+    @Transactional
+    override fun createAndSend(notification: Notification): Notification {
+        val saved = notificationPort.persist(notification)
+        val token = fcmTokenPort.loadLatestByUserId(notification.userId)
+        if (token != null) {
+            notificationSender.send(saved, listOf(token.token))
+        }
+        return saved
     }
 }

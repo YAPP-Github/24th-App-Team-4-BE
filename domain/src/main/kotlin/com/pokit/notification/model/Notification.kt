@@ -8,7 +8,7 @@ data class Notification(
     val notificationType: NotificationType,
     val title: String,
     val body: String,
-    val thumbnailUrl: String? = null,
+    val categoryImageUrl: String? = null,
     val isRead: Boolean = false,
     val navigationType: NavigationType = NavigationType.NONE,
     val deepLink: String? = null,
@@ -16,6 +16,4 @@ data class Notification(
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
     fun markAsRead(): Notification = copy(isRead = true)
-
-    fun isNavigable(): Boolean = navigationType != NavigationType.NONE
 }

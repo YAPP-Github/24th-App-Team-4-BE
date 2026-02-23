@@ -27,8 +27,8 @@ class NotificationEntity(
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     val body: String,
 
-    @Column(name = "thumbnail_url", length = 2048)
-    val thumbnailUrl: String? = null,
+    @Column(name = "category_image_url", length = 2048)
+    val categoryImageUrl: String? = null,
 
     @Column(name = "is_read", nullable = false)
     val isRead: Boolean = false,
@@ -51,7 +51,7 @@ class NotificationEntity(
             notificationType = notification.notificationType,
             title = notification.title,
             body = notification.body,
-            thumbnailUrl = notification.thumbnailUrl,
+            categoryImageUrl = notification.categoryImageUrl,
             isRead = notification.isRead,
             navigationType = notification.navigationType,
             deepLink = notification.deepLink,
@@ -66,7 +66,7 @@ fun NotificationEntity.toDomain() = Notification(
     notificationType = this.notificationType,
     title = this.title,
     body = this.body,
-    thumbnailUrl = this.thumbnailUrl,
+    categoryImageUrl = this.categoryImageUrl,
     isRead = this.isRead,
     navigationType = this.navigationType,
     deepLink = this.deepLink,
