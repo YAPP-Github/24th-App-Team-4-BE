@@ -8,4 +8,6 @@ interface FcmTokenPort {
     fun loadByUserId(userId: Long): List<FcmToken>
 
     fun loadByUserIdAndToken(userId: Long, token: String): FcmToken?
+
+    fun loadLatestByUserId(userId: Long): FcmToken?
 }

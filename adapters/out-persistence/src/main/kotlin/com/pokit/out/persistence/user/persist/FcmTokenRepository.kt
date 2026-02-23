@@ -6,4 +6,6 @@ interface FcmTokenRepository : JpaRepository<FcmTokenEntity, Long> {
     fun findByUserId(userId: Long): List<FcmTokenEntity>
 
     fun findByUserIdAndTokenAndDeleted(userId: Long, token: String, isDeleted: Boolean): FcmTokenEntity?
+
+    fun findTopByUserIdAndDeletedOrderByIdDesc(userId: Long, deleted: Boolean): FcmTokenEntity?
 }

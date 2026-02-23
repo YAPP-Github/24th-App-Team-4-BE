@@ -12,4 +12,6 @@ interface NotificationUseCase {
     fun deleteNotification(userId: Long, notificationId: Long)
 
     fun getUnreadCount(userId: Long): Long
+
+    fun createAndSend(notification: Notification): Notification
 }

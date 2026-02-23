@@ -18,6 +18,10 @@ import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.InvalidRequestException
 import com.pokit.common.exception.NotFoundCustomException
 import com.pokit.content.port.out.ContentPort
+import com.pokit.notification.model.DeepLinkBuilder
+import com.pokit.notification.model.NotificationType
+import com.pokit.notification.port.`in`.NotificationUseCase
+import com.pokit.notification.port.out.PushMessageTemplatePort
 import com.pokit.user.model.User
 import com.pokit.user.port.out.UserPort
 import org.springframework.data.domain.PageRequest
@@ -36,6 +40,8 @@ class CategoryService(
     private val sharedCategoryPort: SharedCategoryPort,
     private val userPort: UserPort,
     private val bookmarkPort: BookmarkPort,
+    private val notificationUseCase: NotificationUseCase,
+    private val pushMessageTemplatePort: PushMessageTemplatePort,
 ) : CategoryUseCase {
     companion object {
         private const val MAX_CATEGORY_COUNT = 30
@@ -202,6 +208,26 @@ class CategoryService(
             categoryId = category.categoryId,
         )
         sharedCategoryPort.persist(sharedCategory)
+
+        val template = pushMessageTemplatePort.loadByType(NotificationType.NEW_MEMBER_JOINED)
+        if (template != null) {
+            val joiningUser = userPort.loadById(userId)
+            if (joiningUser != null) {
+                val sharedMembers = sharedCategoryPort.loadByCategoryId(category.categoryId)
+                sharedMembers
+                    .filter { it.userId != userId }
+                    .forEach { member ->
+                        val notification = template.toNotification(
+                            userId = member.userId,
+                            categoryName = category.categoryName,
+                            nickname = joiningUser.nickName,
+                            categoryImageUrl = category.categoryImage.imageUrl,
+                            deepLink = DeepLinkBuilder.forCategory(category.categoryId, userId),
+                        )
+                        notificationUseCase.createAndSend(notification)
+                    }
+            }
+        }
     }
 
     @Transactional
@@ -217,6 +243,16 @@ class CategoryService(
 
         category.minusUserCount() // 포킷 인원수 감소
         categoryPort.persist(category)
+
+        val template = pushMessageTemplatePort.loadByType(NotificationType.POKIT_USE_RESTRICTION)
+        if (template != null) {
+            val notification = template.toNotification(
+                userId = resignUserId,
+                categoryName = category.categoryName,
+                categoryImageUrl = category.categoryImage.imageUrl,
+            )
+            notificationUseCase.createAndSend(notification)
+        }
     }
 
     @Transactional

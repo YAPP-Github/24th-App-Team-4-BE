@@ -20,8 +20,8 @@ data class NotificationResponse(
     @Schema(description = "알림 본문", example = "OO님이 추가한 링크를 지금 확인해보세요")
     val body: String,
 
-    @Schema(description = "썸네일 URL (없을 수 있음)", nullable = true)
-    val thumbnailUrl: String?,
+    @Schema(description = "카테고리 이미지 URL (없을 수 있음)", nullable = true)
+    val categoryImageUrl: String?,
 
     @Schema(description = "읽음 여부")
     val isRead: Boolean,
@@ -41,7 +41,7 @@ internal fun Notification.toResponse() = NotificationResponse(
     notificationType = this.notificationType,
     title = this.title,
     body = this.body,
-    thumbnailUrl = this.thumbnailUrl,
+    categoryImageUrl = this.categoryImageUrl,
     isRead = this.isRead,
     navigationType = this.navigationType,
     deepLink = this.deepLink,

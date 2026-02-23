@@ -11,6 +11,7 @@ import com.pokit.category.model.CategoryStatus
 import com.pokit.category.model.CategoryStatus.UNCATEGORIZED
 import com.pokit.category.model.OpenType
 import com.pokit.category.port.out.CategoryPort
+import com.pokit.category.port.out.SharedCategoryPort
 import com.pokit.common.exception.AlreadyExistsException
 import com.pokit.common.exception.ClientValidationException
 import com.pokit.common.exception.NotFoundCustomException
@@ -30,6 +31,10 @@ import com.pokit.content.port.out.ReportedContentPort
 import com.pokit.log.model.LogType
 import com.pokit.log.model.UserLog
 import com.pokit.log.port.out.UserLogPort
+import com.pokit.notification.model.DeepLinkBuilder
+import com.pokit.notification.model.NotificationType
+import com.pokit.notification.port.`in`.NotificationUseCase
+import com.pokit.notification.port.out.PushMessageTemplatePort
 import com.pokit.user.exception.UserErrorCode
 import com.pokit.user.model.InterestType
 import com.pokit.user.model.User
@@ -56,6 +61,9 @@ class ContentService(
     private val interestPort: InterestPort,
     private val userPort: UserPort,
     private val reportedContentPort: ReportedContentPort,
+    private val sharedCategoryPort: SharedCategoryPort,
+    private val notificationUseCase: NotificationUseCase,
+    private val pushMessageTemplatePort: PushMessageTemplatePort,
 ) : ContentUseCase {
     companion object {
         private const val MIN_CONTENT_COUNT = 3
@@ -84,6 +92,25 @@ class ContentService(
 
         if (contentCommand.alertYn == YES) {
             publisher.publishEvent(CreateAlertRequest(userId = user.id, contetId = contentResult.contentId))
+        }
+
+        if (category.isShared) {
+            val template = pushMessageTemplatePort.loadByType(NotificationType.LINK_ADDED)
+            if (template != null) {
+                val sharedMembers = sharedCategoryPort.loadByCategoryId(category.categoryId)
+                sharedMembers
+                    .filter { it.userId != user.id }
+                    .forEach { member ->
+                        val notification = template.toNotification(
+                            userId = member.userId,
+                            categoryName = category.categoryName,
+                            nickname = user.nickName,
+                            categoryImageUrl = category.categoryImage.imageUrl,
+                            deepLink = DeepLinkBuilder.forContent(category.categoryId, contentResult.contentId),
+                        )
+                        notificationUseCase.createAndSend(notification)
+                    }
+            }
         }
 
         return contentResult
