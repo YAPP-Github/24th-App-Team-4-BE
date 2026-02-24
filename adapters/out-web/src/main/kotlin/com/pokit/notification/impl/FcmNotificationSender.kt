@@ -43,7 +43,7 @@ class FcmNotificationSender : NotificationSender {
         val messages = tokens.map { token ->
             Message.builder()
                 .setNotification(fcmNotification)
-                .putData("deepLink", notification.deepLink)
+                .apply { notification.deepLink?.let { putData("deepLink", it) } }
                 .setToken(token)
                 .build()
         }
