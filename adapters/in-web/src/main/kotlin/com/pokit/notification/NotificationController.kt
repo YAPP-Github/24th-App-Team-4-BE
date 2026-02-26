@@ -10,7 +10,10 @@ import com.pokit.notification.dto.response.NotificationResponse
 import com.pokit.notification.dto.response.UnreadCountResponse
 import com.pokit.notification.dto.response.toResponse
 import com.pokit.notification.exception.NotificationErrorCode
+import com.pokit.notification.model.Notification
+import com.pokit.notification.model.NotificationType
 import com.pokit.notification.port.`in`.NotificationUseCase
+import com.pokit.notification.port.out.NotificationSender
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable
@@ -24,8 +27,22 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v2/notifications")
 class NotificationController(
-    private val notificationUseCase: NotificationUseCase
+    private val notificationUseCase: NotificationUseCase,
+    private val notificationSender: NotificationSender,
 ) {
+    @GetMapping("/testNoti")
+    fun testNoti(
+        @RequestParam("fcmToken") fcmToken: String,
+    ) {
+        val notification = Notification(
+            userId = 1L,
+            notificationType = NotificationType.EXPORT_REMINDER,
+            title = "테스트 알림",
+            body = "테스트 알림"
+        )
+        notificationSender.send(notification, listOf(fcmToken))
+    }
+
     @GetMapping
     @Operation(summary = "알림 목록 조회 API", description = "사용자의 알림 목록을 최신순으로 페이징 조회합니다. (10개 단위 무한 스크롤)")
     fun getNotifications(
