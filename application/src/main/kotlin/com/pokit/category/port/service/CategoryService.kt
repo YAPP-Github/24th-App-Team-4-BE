@@ -93,6 +93,14 @@ class CategoryService(
         categoryPort.existsByNameAndUserIdAndIdNot(category.categoryId, categoryCommand.categoryName, userId)
 
         category.update(categoryCommand, categoryImage)
+
+        categoryCommand.alertEnabled?.let { alertEnabled ->
+            val sharedCategory = sharedCategoryPort.loadByUserIdAndCategoryId(userId, categoryId)
+            if (sharedCategory != null) {
+                sharedCategoryPort.persist(sharedCategory.copy(alertEnabled = alertEnabled))
+            }
+        }
+
         return categoryPort.persist(category)
     }
 
@@ -215,7 +223,7 @@ class CategoryService(
             if (joiningUser != null) {
                 val sharedMembers = sharedCategoryPort.loadByCategoryId(category.categoryId)
                 sharedMembers
-                    .filter { it.userId != userId }
+                    .filter { it.userId != userId && it.alertEnabled }
                     .forEach { member ->
                         val notification = template.toNotification(
                             userId = member.userId,
@@ -239,19 +247,23 @@ class CategoryService(
         val sharedCategory = (sharedCategoryPort.loadByUserIdAndCategoryId(resignUserId, category.categoryId)
             ?: throw NotFoundCustomException(CategoryErrorCode.NEVER_ACCPTED))
 
+        val shouldNotify = sharedCategory.alertEnabled
+
         sharedCategoryPort.delete(sharedCategory)
 
         category.minusUserCount() // 포킷 인원수 감소
         categoryPort.persist(category)
 
-        val template = pushMessageTemplatePort.loadByType(NotificationType.POKIT_USE_RESTRICTION)
-        if (template != null) {
-            val notification = template.toNotification(
-                userId = resignUserId,
-                categoryName = category.categoryName,
-                categoryImageUrl = category.categoryImage.imageUrl,
-            )
-            notificationUseCase.createAndSend(notification)
+        if (shouldNotify) {
+            val template = pushMessageTemplatePort.loadByType(NotificationType.POKIT_USE_RESTRICTION)
+            if (template != null) {
+                val notification = template.toNotification(
+                    userId = resignUserId,
+                    categoryName = category.categoryName,
+                    categoryImageUrl = category.categoryImage.imageUrl,
+                )
+                notificationUseCase.createAndSend(notification)
+            }
         }
     }
 

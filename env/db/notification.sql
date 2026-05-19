@@ -34,3 +34,6 @@ VALUES ('LINK_ADDED', '''{categoryName}'' 포킷에 링크가 추가되었어요
        ('POKIT_USE_RESTRICTION', '''{categoryName}'' 포킷 사용이 제한되었어요', '포킷 관리자가 회원님을 내보냈어요', 'NONE', NOW(), NOW()),
        ('NEW_MEMBER_JOINED', '새로운 멤버가 참여했어요!', '''{categoryName}'' 포킷에 {nickname}님이 참여했어요', 'CATEGORY_DETAIL', NOW(), NOW());
 
+-- SHARED_CATEGORY 테이블에 알림 설정 컬럼 추가
+ALTER TABLE SHARED_CATEGORY ADD COLUMN alert_enabled BOOLEAN NOT NULL DEFAULT TRUE;
+

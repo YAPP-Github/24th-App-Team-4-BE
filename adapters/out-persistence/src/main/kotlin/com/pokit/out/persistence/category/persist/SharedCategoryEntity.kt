@@ -18,17 +18,25 @@ class SharedCategoryEntity(
     val categoryId: Long,
 
     @Column(name = "is_deleted")
-    var isDeleted: Boolean = false
+    var isDeleted: Boolean = false,
+
+    @Column(name = "alert_enabled")
+    var alertEnabled: Boolean = true
 ) : BaseEntity() {
     fun delete() {
         this.isDeleted = true
+    }
+
+    fun updateAlertEnabled(enabled: Boolean) {
+        this.alertEnabled = enabled
     }
 
     companion object {
         fun of(sharedCategory: SharedCategory) = SharedCategoryEntity(
             id = sharedCategory.id,
             userId = sharedCategory.userId,
-            categoryId = sharedCategory.categoryId
+            categoryId = sharedCategory.categoryId,
+            alertEnabled = sharedCategory.alertEnabled
         )
     }
 }
@@ -36,5 +44,6 @@ class SharedCategoryEntity(
 internal fun SharedCategoryEntity.toDomain() = SharedCategory(
     id = this.id,
     userId = this.userId,
-    categoryId = this.categoryId
+    categoryId = this.categoryId,
+    alertEnabled = this.alertEnabled
 )

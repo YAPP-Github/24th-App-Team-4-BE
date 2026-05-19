@@ -8,4 +8,5 @@ data class CategoryCommand(
     val categoryImageId: Int,
     val openType: OpenType = OpenType.PRIVATE,
     val keywordType: InterestType = InterestType.DEFAULT,
+    val alertEnabled: Boolean? = null,
 )

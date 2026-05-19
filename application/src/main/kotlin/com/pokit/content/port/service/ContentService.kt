@@ -99,7 +99,7 @@ class ContentService(
             if (template != null) {
                 val sharedMembers = sharedCategoryPort.loadByCategoryId(category.categoryId)
                 sharedMembers
-                    .filter { it.userId != user.id }
+                    .filter { it.userId != user.id && it.alertEnabled }
                     .forEach { member ->
                         val notification = template.toNotification(
                             userId = member.userId,
