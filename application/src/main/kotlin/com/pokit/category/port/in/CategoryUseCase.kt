@@ -26,4 +26,5 @@ interface CategoryUseCase {
     fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean, filterFavorite: Boolean): Slice<CategoriesResponse>
     fun getInvitedUsers(userId: Long, categoryId: Long): List<User>
     fun duplicateCategoryV2(userId: Long, command: DuplicateCategoryCommandV2)
+    fun updateAlertEnabled(userId: Long, categoryId: Long, alertEnabled: Boolean)
 }

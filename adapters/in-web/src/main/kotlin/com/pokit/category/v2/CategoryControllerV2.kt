@@ -54,6 +54,19 @@ class CategoryControllerV2(
             .wrapOk()
     }
 
+    @Operation(summary = "포킷 알림 설정 API")
+    @ErrorOperation(CategoryErrorCode::class)
+    @PatchMapping("/{categoryId}/alert")
+    fun updateAlertEnabled(
+        @AuthenticationPrincipal user: PrincipalUser,
+        @PathVariable categoryId: Long,
+        @RequestBody request: Map<String, Boolean>,
+    ): ResponseEntity<Unit> {
+        val alertEnabled = request["alertEnabled"] ?: false
+        categoryUseCase.updateAlertEnabled(user.id, categoryId, alertEnabled)
+        return ResponseEntity.noContent().build()
+    }
+
     @Operation(summary = "포킷 목록 조회 API Ver2")
     @GetMapping
     fun getCategory(

@@ -288,6 +288,7 @@ class CategoryService(
     override fun getCategoriesV2(userId: Long, pageable: Pageable, filterUncategorized: Boolean, filterFavorite: Boolean): Slice<CategoriesResponse> {
         val sharedCategories = sharedCategoryPort.loadByUserId(userId)
         val categoryIds = sharedCategories.map { it.categoryId }
+        val alertEnabledMap = sharedCategories.associate { it.categoryId to it.alertEnabled }
         val categoriesSlice = categoryPort.loadAllInId(categoryIds, pageable)
 
         val bookmark = contentPort.loadBookmarkedContentsByUserId(userId, pageable)
@@ -298,11 +299,11 @@ class CategoryService(
             val contentCount = contentPort.fetchContentCountByCategoryId(category.categoryId)
             category.copy(contentCount = contentCount)
         }.map { category ->
-            category.toCategoriesResponse(category.isFavorite)
+            category.toCategoriesResponse(category.isFavorite, alertEnabledMap[category.categoryId] ?: false)
         }.toMutableList()
 
         if (!filterFavorite && pageable.pageNumber == 0) {
-            val favoriteResponse = favoriteCategory.toCategoriesResponse(favoriteCategory.isFavorite)
+            val favoriteResponse = favoriteCategory.toCategoriesResponse(favoriteCategory.isFavorite, alertEnabledMap[favoriteCategory.categoryId] ?: false)
             categories.add(0, favoriteResponse)
         }
 
@@ -364,6 +365,14 @@ class CategoryService(
 
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
+
+    @Transactional
+    override fun updateAlertEnabled(userId: Long, categoryId: Long, alertEnabled: Boolean) {
+        val sharedCategory = sharedCategoryPort.loadByUserIdAndCategoryId(userId, categoryId)
+            ?: throw NotFoundCustomException(CategoryErrorCode.NOT_FOUND_CATEGORY)
+
+        sharedCategoryPort.persist(sharedCategory.copy(alertEnabled = alertEnabled))
+    }
 
 }
 

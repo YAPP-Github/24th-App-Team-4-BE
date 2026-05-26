@@ -15,9 +15,10 @@ data class CategoriesResponse(
     val keywordType: String,
     val userCount: Int,
     val isFavorite: Boolean,
+    val alertEnabled: Boolean = false,
 )
 
-fun Category.toCategoriesResponse(isFavorite: Boolean): CategoriesResponse {
+fun Category.toCategoriesResponse(isFavorite: Boolean, alertEnabled: Boolean = false): CategoriesResponse {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     return CategoriesResponse(
@@ -31,5 +32,6 @@ fun Category.toCategoriesResponse(isFavorite: Boolean): CategoriesResponse {
         keywordType = this.keyword.kor,
         userCount = this.userCount,
         isFavorite = isFavorite,
+        alertEnabled = alertEnabled,
     )
 }

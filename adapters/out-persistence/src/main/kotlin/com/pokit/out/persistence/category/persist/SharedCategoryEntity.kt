@@ -21,7 +21,7 @@ class SharedCategoryEntity(
     var isDeleted: Boolean = false,
 
     @Column(name = "alert_enabled")
-    var alertEnabled: Boolean = true
+    var alertEnabled: Boolean = false
 ) : BaseEntity() {
     fun delete() {
         this.isDeleted = true
