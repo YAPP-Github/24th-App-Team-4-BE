@@ -63,10 +63,11 @@ class CategoryController(
     fun getCategory(
         @AuthenticationPrincipal user: PrincipalUser,
         @PathVariable categoryId: Long,
-    ): ResponseEntity<CategoryResponse> =
-        categoryUseCase.getCategory(user.id, categoryId)
-            .toResponse()
-            .wrapOk()
+    ): ResponseEntity<CategoryResponse> {
+        val category = categoryUseCase.getCategory(user.id, categoryId)
+        val alertEnabled = categoryUseCase.getAlertEnabled(user.id, categoryId)
+        return category.toResponse(alertEnabled).wrapOk()
+    }
 
     @Operation(summary = "포킷 수정 API")
     @ErrorOperation(CategoryErrorCode::class)

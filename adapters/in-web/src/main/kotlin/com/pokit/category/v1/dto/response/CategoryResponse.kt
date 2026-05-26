@@ -7,14 +7,16 @@ data class CategoryResponse(
     val categoryId: Long,
     var categoryName: String,
     var categoryImage: CategoryImage,
+    val alertEnabled: Boolean = false,
 )
 
 data class CategoryCountResponse(
     val categoryTotalCount: Int,
 )
 
-fun Category.toResponse(): CategoryResponse = CategoryResponse(
+fun Category.toResponse(alertEnabled: Boolean = false): CategoryResponse = CategoryResponse(
     categoryId = this.categoryId,
     categoryName = this.categoryName,
     categoryImage = this.categoryImage,
+    alertEnabled = alertEnabled,
 )

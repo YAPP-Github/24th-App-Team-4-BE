@@ -366,6 +366,11 @@ class CategoryService(
     override fun getAllCategoryImages(): List<CategoryImage> =
         categoryImagePort.loadAll()
 
+    override fun getAlertEnabled(userId: Long, categoryId: Long): Boolean {
+        val sharedCategory = sharedCategoryPort.loadByUserIdAndCategoryId(userId, categoryId)
+        return sharedCategory?.alertEnabled ?: false
+    }
+
     @Transactional
     override fun updateAlertEnabled(userId: Long, categoryId: Long, alertEnabled: Boolean) {
         val sharedCategory = sharedCategoryPort.loadByUserIdAndCategoryId(userId, categoryId)

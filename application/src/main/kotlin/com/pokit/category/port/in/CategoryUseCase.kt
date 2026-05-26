@@ -27,4 +27,5 @@ interface CategoryUseCase {
     fun getInvitedUsers(userId: Long, categoryId: Long): List<User>
     fun duplicateCategoryV2(userId: Long, command: DuplicateCategoryCommandV2)
     fun updateAlertEnabled(userId: Long, categoryId: Long, alertEnabled: Boolean)
+    fun getAlertEnabled(userId: Long, categoryId: Long): Boolean
 }
